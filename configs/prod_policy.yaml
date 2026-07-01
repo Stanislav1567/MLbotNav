@@ -1,0 +1,53 @@
+prod:
+  cpu_budget:
+    enabled: true
+    max_cpu_pct: 85.0
+    check_interval_sec: 5
+    max_wait_sec: 300
+    max_threads_per_job: 6
+  kpi:
+    min_walkforward_auc: 0.52
+    min_walkforward_f1: 0.05
+    max_drawdown_pct_abs: 20.0
+    max_no_trade_ratio: 0.80
+    max_no_trade_ratio_days: 0.80
+    min_inference_availability_pct: 99.5
+    max_inference_p95_latency_ms: 300.0
+  rollback:
+    enabled: true
+    max_allowed_drawdown_breach_pct: 25.0
+    max_allowed_error_rate: 0.03
+    max_allowed_latency_ms: 300
+    expected_rollback_sla_minutes: 5
+  promotion:
+    require_vs_champion: true
+    min_net_return_improvement_pct: 0.0
+    max_mdd_degradation_pct: 2.0
+    min_sharpe_improvement: -0.10
+    deployment_gate:
+      require_pipeline_gate_pass: true
+      require_stage_ready: true
+      required_stage_terminal: READY
+      required_last_completed_stage: D90
+      require_security_gate: true
+      require_model_artifact_exists: true
+      require_inference_sla_gate: true
+      require_inference_metrics: true
+      max_sla_report_age_minutes: 180
+  cycle:
+    run_incremental_ingest: true
+    run_technical_analysis: true
+    run_stage_ladder: false
+    run_stage_engine: true
+    run_inference: true
+    run_inference_service_probe: true
+    run_paper_trading: true
+    run_drift_monitor: true
+    run_drift_retrain_trigger: true
+    run_pack_on_cycle: true
+    run_sla_monitor: true
+    hard_fail_on_sla: true
+    require_inference_metrics: true
+  automation:
+    scheduler_interval_sec: 60
+    drift_alert_sla_sec: 120

@@ -1,0 +1,25 @@
+dq:
+  completeness_historical_pct: 99.9
+  completeness_current_day_pct: 99.0
+  fail_on_invalid_price: true
+  fail_on_invalid_time: true
+
+gates:
+  min_auc: 0.52
+  min_f1: 0.05
+  min_net_return_pct: 10.0
+  max_drawdown_pct_abs: 20.0
+  min_trades: 20
+  trades_per_day_min: 1
+  trades_per_day_max: 40
+  max_no_trade_ratio: 0.80
+  max_no_trade_ratio_days: 0.80
+  min_sortino: -1.0
+  min_cagr: -1.0
+
+gates_signal_mode_overrides:
+  short_only:
+    min_trades: 1
+    min_net_return_pct: 0.0
+    trades_per_day_min: 0.10
+    max_no_trade_ratio_days: 0.95

@@ -1,0 +1,10 @@
+locked_timeframe: 1m
+require_user_confirmation_for_30d: true
+allow_30d_window: true
+minute_study_completed: true
+confirmation_note: user confirmed minute result for P31 stage C
+confirmed_at_utc: '2026-05-26T14:00:57.155963+00:00'
+require_data_window_readiness: true
+data_window_readiness_min_days: 30
+data_window_readiness_layer: raw
+data_window_readiness_require_full_coverage: true

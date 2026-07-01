@@ -1,0 +1,82 @@
+akfp:
+  enabled: false
+  mode: shadow
+  description: "AKFP sidecar orchestrator for feature/hypothesis calibration."
+
+  # Main routing to existing project bridges.
+  bridges:
+    core_runner: "run_p23_operator_unified.ps1"
+    latest_pass_runner: "run_p24_latest_pass_report.ps1"
+
+  # Execution profile (safe defaults).
+  execution:
+    symbol: "SOLUSDT"
+    timeframe: "1m"
+    train_date: "2026-05-19"
+    test_date: "2026-05-20"
+    repeats: 5
+    threads: 8
+    search_workers: 8
+    cpu_max_pct: 85
+    freeze_check_mode: "freeze"
+    step_label_prefix: "AKFP"
+
+  # Separate contours are mandatory.
+  contours:
+    enabled_modes:
+      - long_only
+      - short_only
+      - combined
+
+  # Safety: no full-grid explosion.
+  calibration:
+    strategy: "ablation_random_halving_refine"
+    max_candidates_per_contour: 128
+    min_coverage_ratio: 0.08
+    min_covered_count: 1
+    shortlist_agent_enabled: true
+    shortlist_top_k: 5
+    shortlist_min_trades: 1
+    shortlist_min_net_return_pct: 0.0
+    combo_strict_acceptance: false
+    candidate_types:
+      - STRAT_BASELINE
+      - HYP_ONLY
+      - FEAT_ONLY
+      - HYP_PLUS_FEAT
+      - COMBO_WORKING
+
+  # Strict calibration windows policy (closed days only).
+  calibration_windows:
+    active_profile: "tuning_3d2d"
+    profiles:
+      smoke_1d1d:
+        train_days: 1
+        test_days: 1
+        repeats: 1
+        description_ru: "Быстрый smoke: 1 день обучение + следующий закрытый день тест."
+      tuning_1d1d:
+        train_days: 1
+        test_days: 1
+        repeats: 3
+        description_ru: "Базовая калибровка: 1д обучение + 1д тест, несколько повторов."
+      tuning_3d2d:
+        train_days: 3
+        test_days: 2
+        repeats: 5
+        description_ru: "Расширенная калибровка: 3д обучение + 2д тест."
+      preprod_14d7d:
+        train_days: 14
+        test_days: 7
+        repeats: 10
+        description_ru: "Предпрод: 2 недели обучение + 1 неделя тест."
+      production_21d7d:
+        train_days: 21
+        test_days: 7
+        repeats: 10
+        description_ru: "Прод-контроль: 3 недели обучение + 1 неделя тест."
+    rules:
+      closed_day_only: true
+      disallow_current_unclosed_day: true
+      strict_24h_test_window: true
+      force_restore_readiness_after_run: true

@@ -1,0 +1,73 @@
+governance:
+  retention:
+    logs_days: 30
+    reports_days: 60
+    packs_days: 90
+    archive_packs_before_delete: true
+    cold_storage_root: data/cold_storage/packs
+  quarantine:
+    enabled: true
+    move_on_dq_fail: true
+    quarantine_root: data/quarantine
+  secret_scan:
+    enabled: true
+    include_roots:
+      - reports
+      - logs
+      - packs
+    exclude_extensions:
+      - .png
+      - .jpg
+      - .jpeg
+      - .joblib
+      - .parquet
+      - .db
+  rbac:
+    roles:
+      - DataEngineer
+      - MLEngineer
+      - Reviewer
+      - Admin
+    action_owner_map:
+      ingest: DataEngineer
+      train_eval: MLEngineer
+      inference: MLEngineer
+      paper_trading: MLEngineer
+      pack: MLEngineer
+      registry_promote: Reviewer
+      policy_override: Admin
+  artifact_signing:
+    enabled: true
+    signature_alg: HMAC-SHA256
+
+security:
+  provider:
+    required: env
+    allow_fallback: false
+    vault_addr_env: VAULT_ADDR
+    vault_token_env: VAULT_TOKEN
+    vault_token_file_env: VAULT_TOKEN_FILE
+    vault_kv_path_env: VAULT_KV_PATH
+    vault_kv_path: secret/data/mlbotnav
+    kms_key_id_env: KMS_KEY_ID
+    kms_decrypt_endpoint_env: KMS_DECRYPT_ENDPOINT
+    kms_auth_token_env: KMS_AUTH_TOKEN
+    kms_ciphertext_suffix: _ENC_B64
+  gate:
+    active: true
+    tls_required: true
+    at_rest_encryption_required: true
+  cv_scan:
+    enabled: true
+    mode: quarantine
+    max_file_size_mb: 20
+    blocked_extensions:
+      - .exe
+      - .dll
+      - .bat
+      - .cmd
+      - .ps1
+      - .vbs
+      - .js
+      - .msi
+      - .scr

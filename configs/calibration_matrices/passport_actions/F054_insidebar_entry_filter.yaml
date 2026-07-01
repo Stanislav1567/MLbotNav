@@ -1,0 +1,91 @@
+version: 1
+status: active_passport_action_matrix
+created_utc: "2026-06-22T18:45:00Z"
+
+source_of_truth:
+  action_passport_registry: configs/calibration_action_passports.yaml
+  action_passport: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+  feature_formulas: src/mlbotnav/dataset.py
+  backtest_runtime: src/mlbotnav/backtest.py
+
+passport_mode:
+  enabled: true
+  registry_path: configs/calibration_action_passports.yaml
+  registry_block_id: B019
+  registry_passport_id: F054
+  action_passport_id: F054
+  action_id: F054_INSIDEBAR_ALLOW
+  policy: allowlist
+  allowed_calibration_params:
+    - F054_containment_mode
+    - F054_max_inside_range_ratio
+    - F054_mother_min_range_pct
+
+optuna_switches:
+  enabled: true
+  block_switches:
+    price_volatility: false
+    trend_momentum: false
+    volume_flow: false
+    density_profile: false
+    structure_ta: false
+    pattern: true
+  hypothesis_switches:
+    enabled: true
+    strict_block_purity: true
+  context_blocks:
+    enabled: false
+    always_on: []
+    calibration_policy: passport_action_only
+    comparison_policy: none
+
+grid_presets:
+  wide: {description: "full passport profile value range"}
+  medium: {description: "every second passport value with preserved max"}
+  narrow: {description: "compact passport value set with preserved min/max anchors"}
+
+parameter_profiles:
+  F054_containment_mode:
+    values: [1, 2]
+    count: 2
+    axis: containment_mode
+  F054_max_inside_range_ratio:
+    min: 0.30
+    max: 1.00
+    step: 0.05
+    count: 15
+    axis: max_inside_range_ratio
+  F054_mother_min_range_pct:
+    min: 0.02
+    max: 2.00
+    step: 0.01
+    count: 199
+    axis: mother_min_range_pct
+
+feature_rows:
+  - block: pattern
+    feature: inside_bar_flag_1m
+    action_id: F054_INSIDEBAR_ALLOW
+    action_type: ENTRY_FILTER
+    calibrate: true
+    optuna_toggle: true
+    params:
+      - F054_containment_mode
+      - F054_max_inside_range_ratio
+      - F054_mother_min_range_pct
+
+hypothesis_rows:
+  - hypothesis: none
+    calibrate: true
+    optuna_toggle: true
+    params: []
+
+search_grid_rows: []
+constraints: []
+
+backtest_subpassport:
+  exit_policy: tp_sl_timeout
+  timeout_exit_enabled: true
+  disable_timeout_exit: false
+  note: "Backtest exit controls are baseline runtime controls, not F054 knobs."
+

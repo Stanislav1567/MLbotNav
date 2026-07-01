@@ -1,0 +1,64 @@
+optuna:
+  enabled: true
+  direction: maximize
+  n_trials: 200
+  timeout_sec: 7200
+  n_jobs: 1
+  seed: 20260526
+  profile_sampling_mode: linked_union
+  always_sample_profiles: []
+  calibration_grid_preset: wide
+  force_profile_edge_coverage: true
+  stages:
+    A:
+      n_trials: 160
+      timeout_sec: 3600
+      workers_max: 8
+    B:
+      n_trials: 160
+      timeout_sec: 3600
+      workers_max: 8
+    C:
+      n_trials: 320
+      timeout_sec: 10800
+      workers_max: 12
+
+  sampler:
+    name: tpe
+    multivariate: true
+    group: true
+    constant_liar: false
+    n_startup_trials: 40
+
+  pruner:
+    name: median
+    n_startup_trials: 30
+    n_warmup_steps: 1
+    interval_steps: 1
+    n_min_trials: 10
+
+  storage:
+    mode: postgres
+    require_postgres: true
+    url_env: OPTUNA_STORAGE_URL
+    sqlite_fallback_path: reports/optuna/optuna_local.db
+
+  objective:
+    drawdown_penalty: 0.5
+    gate_bonus: 2.0
+    no_trade_penalty: 100.0
+    lambda_block: 0.2
+    lambda_hypothesis: 0.1
+    zero_raw_penalty: 1.0
+    zero_filter_penalty: 2.0
+    zero_filter_relax_short_to_none: true
+    zero_raw_relax_short_thresholds: true
+    signal_mode_overrides:
+      short_only:
+        no_trade_penalty: 300.0
+        zero_filter_penalty: 8.0
+  resources:
+    cpu_target_pct: 85
+    cpu_ramp_allowed_pct: 35
+    threads_default: 8
+    search_workers_default: 8

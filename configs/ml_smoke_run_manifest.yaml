@@ -1,0 +1,34 @@
+schema_version: 1
+wbs_item: "7.1"
+manifest_status: SMOKE_WINDOW_SELECTED
+purpose: Optuna-to-ML smoke bridge clean window selection
+
+symbol: SOLUSDT
+timeframe: 1m
+data_layer: core
+
+train_window:
+  start: "2026-05-25"
+  end: "2026-05-26"
+test_window:
+  start: "2026-05-27"
+  end: "2026-05-27"
+
+data_root: data/core/bybit_ohlcv
+expected_file_name: part-final.csv
+
+forbidden_dates:
+  - "2026-06-01"
+forbidden_data_layers:
+  - raw
+  - quarantine
+  - raw/quarantine
+
+stage_7_boundaries:
+  package_created: false
+  package_approved_for_ml: false
+  registry_mutated: false
+  ml_training_started: false
+  ml_ingest_started: false
+
+next_wbs_item: "7.2 Build test package"

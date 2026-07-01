@@ -1,0 +1,9 @@
+preflight:
+  raw:
+    layer: raw
+    min_train_rows: 900
+    n_folds: 2
+    horizons_grid: "1,2,3,4,5,6,8,12,16"
+  core:
+    layer: core
+    require_full_coverage: true

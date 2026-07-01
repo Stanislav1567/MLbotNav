@@ -1,0 +1,107 @@
+version: 1
+status: active_passport_action_matrix
+created_utc: "2026-06-22T18:45:00Z"
+
+source_of_truth:
+  action_passport_registry: configs/calibration_action_passports.yaml
+  action_passport: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+  feature_formulas: src/mlbotnav/dataset.py
+  backtest_runtime: src/mlbotnav/backtest.py
+
+passport_mode:
+  enabled: true
+  registry_path: configs/calibration_action_passports.yaml
+  registry_block_id: B019
+  registry_passport_id: F059
+  action_passport_id: F059
+  action_id: F059_ENGULFBULL_ALLOW
+  policy: allowlist
+  allowed_calibration_params:
+    - F059_engulf_mode
+    - F059_min_engulf_ratio
+    - F059_min_body_pct
+    - F059_trend_lookback_bars
+    - F059_trend_min_drop_pct
+
+optuna_switches:
+  enabled: true
+  block_switches:
+    price_volatility: false
+    trend_momentum: false
+    volume_flow: false
+    density_profile: false
+    structure_ta: false
+    pattern: true
+  hypothesis_switches:
+    enabled: true
+    strict_block_purity: true
+  context_blocks:
+    enabled: false
+    always_on: []
+    calibration_policy: passport_action_only
+    comparison_policy: none
+
+grid_presets:
+  wide: {description: "full passport profile value range"}
+  medium: {description: "every second passport value with preserved max"}
+  narrow: {description: "compact passport value set with preserved min/max anchors"}
+
+parameter_profiles:
+  F059_engulf_mode:
+    values: [1, 2]
+    count: 2
+    axis: engulf_mode
+  F059_min_engulf_ratio:
+    min: 1.0
+    max: 2.0
+    step: 0.1
+    count: 11
+    axis: min_engulf_ratio
+  F059_min_body_pct:
+    min: 10
+    max: 70
+    step: 5
+    count: 13
+    axis: min_body_pct
+  F059_trend_lookback_bars:
+    min: 2
+    max: 20
+    step: 1
+    count: 19
+    axis: trend_lookback_bars
+  F059_trend_min_drop_pct:
+    min: 0.00
+    max: 2.00
+    step: 0.05
+    count: 41
+    axis: trend_min_drop_pct
+
+feature_rows:
+  - block: pattern
+    feature: engulf_bull_flag_1m
+    action_id: F059_ENGULFBULL_ALLOW
+    action_type: ENTRY_FILTER
+    calibrate: true
+    optuna_toggle: true
+    params:
+      - F059_engulf_mode
+      - F059_min_engulf_ratio
+      - F059_min_body_pct
+      - F059_trend_lookback_bars
+      - F059_trend_min_drop_pct
+
+hypothesis_rows:
+  - hypothesis: none
+    calibrate: true
+    optuna_toggle: true
+    params: []
+
+search_grid_rows: []
+constraints: []
+
+backtest_subpassport:
+  exit_policy: tp_sl_timeout
+  timeout_exit_enabled: true
+  disable_timeout_exit: false
+  note: "Backtest exit controls are baseline runtime controls, not F059 knobs."
+

@@ -1,0 +1,368 @@
+version: 1
+status: feature_sweep_h002_generated
+source_of_truth:
+  features_block: configs/features_block.yaml
+  feature_formulas: src/mlbotnav/dataset.py
+  hypothesis_runtime: src/mlbotnav/adaptive_auto_train.py
+  search_grid_runtime: src/mlbotnav/search_gate_candidate.py
+notes_ru:
+- Это целевая матрица калибровки (что калибруем), а не ограничение текущей реализации.
+- Long/Short калибровать раздельно.
+- Для period/window/lookback ось = влево/вправо (меньше/больше окно по истории).
+- Для threshold/ratio/bin_pct ось = вниз/вверх (мягче/жестче фильтр).
+- 'Направление по времени: только назад, вперед запрещено.'
+optuna_switches:
+  enabled: true
+  block_switches:
+    price_volatility: true
+    trend_momentum: false
+    volume_flow: false
+    density_profile: false
+    structure_ta: false
+    pattern: false
+  hypothesis_switches:
+    enabled: true
+    strict_block_purity: true
+  context_blocks:
+    enabled: true
+    always_on:
+    - volume_flow
+    - price_volatility
+    calibration_policy: include_context_profiles
+    comparison_policy: clone_context_off_matrix_for_ab_delta
+grid_presets:
+  wide:
+    description: full profile value range (all points)
+  medium:
+    description: every second point + guaranteed max
+  narrow:
+    description: compact center-focused set with preserved min/max anchors
+parameter_profiles:
+  return_lookback:
+    min: 3
+    max: 30
+    step: 3
+    count: 10
+    axis: left_right
+  rolling_window:
+    min: 20
+    max: 180
+    step: 20
+    count: 9
+    axis: left_right
+  period_standard:
+    min: 7
+    max: 35
+    step: 2
+    count: 15
+    axis: left_right
+  ema_slow_period:
+    min: 20
+    max: 120
+    step: 10
+    count: 11
+    axis: left_right
+  ema_ultra_period:
+    min: 120
+    max: 300
+    step: 20
+    count: 10
+    axis: left_right
+  macd_fast_period:
+    min: 7
+    max: 21
+    step: 2
+    count: 8
+    axis: left_right
+  macd_slow_period:
+    min: 19
+    max: 43
+    step: 2
+    count: 13
+    axis: left_right
+  macd_signal_period:
+    min: 5
+    max: 17
+    step: 2
+    count: 7
+    axis: left_right
+  stoch_d_period:
+    min: 3
+    max: 15
+    step: 2
+    count: 7
+    axis: left_right
+  threshold_fine:
+    min: 0.0005
+    max: 0.01
+    step: 0.0005
+    count: 20
+    axis: down_up
+  doji_threshold:
+    min: 0.05
+    max: 0.2
+    step: 0.01
+    count: 16
+    axis: down_up
+  ratio_pattern:
+    min: 1.2
+    max: 3.4
+    step: 0.2
+    count: 12
+    axis: down_up
+  ratio_opposite_wick_cap:
+    min: 0.4
+    max: 1.2
+    step: 0.1
+    count: 9
+    axis: down_up
+  density_window_short:
+    min: 20
+    max: 120
+    step: 20
+    count: 6
+    axis: left_right
+  density_window_long:
+    min: 120
+    max: 360
+    step: 30
+    count: 9
+    axis: left_right
+  density_bin_pct:
+    min: 0.0003
+    max: 0.0012
+    step: 0.0001
+    count: 10
+    axis: down_up
+  div_lookback:
+    min: 3
+    max: 30
+    step: 3
+    count: 10
+    axis: left_right
+  pattern_age_cap:
+    min: 5
+    max: 100
+    step: 5
+    count: 20
+    axis: left_right
+  adx_threshold:
+    min: 15
+    max: 35
+    step: 2
+    count: 11
+    axis: down_up
+  min_abs_ema_gap:
+    min: 0.0
+    max: 0.08
+    step: 0.01
+    count: 9
+    axis: down_up
+  horizon_bars:
+    min: 1
+    max: 20
+    step: 1
+    count: 20
+    axis: left_right
+  p_enter_long:
+    min: 0.52
+    max: 0.8
+    step: 0.02
+    count: 15
+    axis: down_up
+  p_enter_short:
+    min: 0.2
+    max: 0.48
+    step: 0.02
+    count: 15
+    axis: down_up
+  min_expected_move:
+    min: 0.0005
+    max: 0.01
+    step: 0.0005
+    count: 20
+    axis: down_up
+  notional_usd:
+    min: 5
+    max: 100
+    step: 5
+    count: 20
+    axis: down_up
+  imbalance_threshold:
+    min: 0.05
+    max: 0.5
+    step: 0.05
+    count: 10
+    axis: down_up
+  spread_z_threshold:
+    min: 0.5
+    max: 3.0
+    step: 0.25
+    count: 11
+    axis: down_up
+feature_rows:
+- block: price_volatility
+  feature: ret_3
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+hypothesis_rows:
+- hypothesis: none
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - min_abs_ema_gap
+- hypothesis: ema_gap_sign
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - min_abs_ema_gap
+  - period_standard
+  - ema_slow_period
+- hypothesis: ema_cross_20_50
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - min_abs_ema_gap
+  - period_standard
+  - ema_slow_period
+- hypothesis: ema_cross_20_200
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - min_abs_ema_gap
+  - period_standard
+  - ema_ultra_period
+- hypothesis: ema_stack_bull
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - min_abs_ema_gap
+  - period_standard
+  - ema_slow_period
+  - ema_ultra_period
+- hypothesis: channel_breakout_50
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+  - threshold_fine
+- hypothesis: adx_trend_18
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+  - adx_threshold
+- hypothesis: fib_retrace_0382_0618_trend_resume
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+  - threshold_fine
+- hypothesis: fib_extension_targets
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+  - threshold_fine
+- hypothesis: swing_hl_hh_long
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+  - threshold_fine
+- hypothesis: swing_lh_ll_short
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+  - threshold_fine
+- hypothesis: bos_continuation_confirm
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+  - threshold_fine
+- hypothesis: min_max_range_revert
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+  - threshold_fine
+- hypothesis: max_low_pullback_long
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+  - threshold_fine
+- hypothesis: hvn_lvn_density_reaction
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_short
+  - density_window_long
+  - density_bin_pct
+- hypothesis: volume_profile_poc_vah_val_retest
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_short
+  - density_window_long
+  - density_bin_pct
+- hypothesis: value_area_rotation_vs_breakout
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_short
+  - density_window_long
+  - density_bin_pct
+  - threshold_fine
+- hypothesis: wedge_breakout_plus_profile_acceptance
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+  - threshold_fine
+- hypothesis: orderbook_imbalance_l1_l50
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - imbalance_threshold
+- hypothesis: spread_pressure_and_delta_absorption
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - spread_z_threshold
+search_grid_rows:
+- name: horizon_bars
+  profile: horizon_bars
+- name: p_enter_long
+  profile: p_enter_long
+- name: p_enter_short
+  profile: p_enter_short
+- name: min_expected_move
+  profile: min_expected_move
+- name: notional_usd
+  profile: notional_usd
+constraints:
+- ema_fast < ema_slow < ema_ultra
+- ema_slow - ema_fast >= 5
+- ema_ultra - ema_slow >= 20
+- macd_fast < macd_slow
+- macd_signal < macd_slow
+- stoch_d_period <= stoch_k_period
+- density_window_long > density_window_short
+- window >= lookback + 2
+- p_short < p_long
+- time_direction = past_only
+sweep_slot:
+  slot_id: H002
+  created_at_utc: '2026-06-03T15:37:04Z'
+  source_matrix: configs/calibration_full_matrix_v1.yaml
+  block: price_volatility
+  feature: ret_3
+  params:
+  - return_lookback
+  policy: single feature row for sequential min-max sweep; context blocks remain per
+    optuna_switches.context_blocks

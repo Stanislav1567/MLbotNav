@@ -1,0 +1,756 @@
+calibration_config_draft:
+  source: configs/features_block.yaml
+  scope: feature_formula_and_hypothesis_grid
+  count_check:
+    features_expected: 68
+    features_mapped: 68
+    missing: []
+    extra: []
+  global_rules:
+  - count = floor((max-min)/step)+1
+  - tune long_only and short_only separately
+  - no forward-looking params; only backward windows/lookbacks
+  - 'constraints: ema_fast < ema_slow < ema_ultra; macd_fast < macd_slow; stoch_d_period
+    <= stoch_k_period; density_window_long > density_window_short'
+  hypotheses:
+    trend_filter:
+    - adx_trend_18
+    - bos_continuation_confirm
+    - channel_breakout_50
+    - ema_cross_20_200
+    - ema_cross_20_50
+    - ema_gap_sign
+    - ema_stack_bull
+    - fib_extension_targets
+    - fib_retrace_0382_0618_trend_resume
+    - hvn_lvn_density_reaction
+    - min_max_range_revert
+    - none
+    - swing_lh_ll_short
+    - value_area_rotation_vs_breakout
+    - volume_profile_poc_vah_val_retest
+    - wedge_breakout_plus_profile_acceptance
+    backlog:
+    - bos_continuation_confirm
+    - fib_extension_targets
+    - fib_retrace_0382_0618_trend_resume
+    - hvn_lvn_density_reaction
+    - max_low_pullback_long
+    - min_max_range_revert
+    - orderbook_imbalance_l1_l50
+    - spread_pressure_and_delta_absorption
+    - swing_hl_hh_long
+    - swing_lh_ll_short
+    - value_area_rotation_vs_breakout
+    - volume_profile_poc_vah_val_retest
+    - wedge_breakout_plus_profile_acceptance
+    shared_calibration_params:
+    - name: min_abs_ema_gap
+      min: 0.0
+      max: 0.08
+      step: 0.01
+      count: 9
+      axis: up_down
+      notes: applies to trend filters
+    - name: horizon_bars
+      min: 1
+      max: 20
+      step: 1
+      count: 20
+      axis: left_right
+      notes: entry/exit horizon
+    - name: p_enter_long
+      min: 0.52
+      max: 0.8
+      step: 0.02
+      count: 15
+      axis: up_down
+      notes: long probability threshold
+    - name: p_enter_short
+      min: 0.2
+      max: 0.48
+      step: 0.02
+      count: 15
+      axis: up_down
+      notes: short probability threshold; must be < p_enter_long
+    - name: min_expected_move_pct
+      min: 0.0005
+      max: 0.01
+      step: 0.0005
+      count: 20
+      axis: up_down
+      notes: minimum move filter
+    - name: notional_usd
+      min: 5
+      max: 100
+      step: 5
+      count: 20
+      axis: up_down
+      notes: position notional for risk normalization
+  blocks:
+    price_volatility:
+      ret_1:
+        calibration_params:
+        - name: return_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: lag in bars for pct_change
+      ret_3:
+        calibration_params:
+        - name: return_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: lag in bars for pct_change
+      ret_6:
+        calibration_params:
+        - name: return_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: lag in bars for pct_change
+      ret_12:
+        calibration_params:
+        - name: return_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: lag in bars for pct_change
+      ret_24:
+        calibration_params:
+        - name: return_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: lag in bars for pct_change
+      hl_spread:
+        calibration_params: []
+        notes: derived ratio; keep fixed
+      rolling_std_20:
+        calibration_params:
+        - name: rolling_std_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: volatility window
+      atr14:
+        calibration_params:
+        - name: atr_period
+          min: 7
+          max: 35
+          step: 2
+          count: 15
+          axis: left_right
+          notes: ATR period
+    trend_momentum:
+      ema_gap:
+        calibration_params:
+        - name: ema_fast
+          min: 7
+          max: 35
+          step: 2
+          count: 15
+          axis: left_right
+          notes: must be < ema_slow
+        - name: ema_slow
+          min: 20
+          max: 120
+          step: 10
+          count: 11
+          axis: left_right
+          notes: must be > ema_fast
+      ema_slope_5:
+        calibration_params:
+        - name: ema_base_period
+          min: 7
+          max: 35
+          step: 2
+          count: 15
+          axis: left_right
+          notes: EMA for slope base
+        - name: slope_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: bars for slope
+      ema200_gap:
+        calibration_params:
+        - name: ema_ultra
+          min: 120
+          max: 300
+          step: 20
+          count: 10
+          axis: left_right
+          notes: must be > ema_slow
+      rsi14:
+        calibration_params:
+        - name: rsi_period
+          min: 7
+          max: 35
+          step: 2
+          count: 15
+          axis: left_right
+          notes: RSI period
+      macd_line:
+        calibration_params:
+        - name: macd_fast
+          min: 7
+          max: 21
+          step: 2
+          count: 8
+          axis: left_right
+          notes: must be < macd_slow
+        - name: macd_slow
+          min: 19
+          max: 43
+          step: 2
+          count: 13
+          axis: left_right
+          notes: must be > macd_fast
+      macd_signal:
+        calibration_params:
+        - name: macd_signal_period
+          min: 5
+          max: 17
+          step: 2
+          count: 7
+          axis: left_right
+          notes: signal EMA period
+      macd_hist:
+        calibration_params: []
+        notes: derived from macd_line and macd_signal
+      adx14:
+        calibration_params:
+        - name: adx_period
+          min: 7
+          max: 35
+          step: 2
+          count: 15
+          axis: left_right
+          notes: ADX period
+      stoch_k14:
+        calibration_params:
+        - name: stoch_k_period
+          min: 7
+          max: 35
+          step: 2
+          count: 15
+          axis: left_right
+          notes: stochastic K period
+      stoch_d14:
+        calibration_params:
+        - name: stoch_d_period
+          min: 3
+          max: 15
+          step: 2
+          count: 7
+          axis: left_right
+          notes: must be <= stoch_k_period
+    volume_flow:
+      vol_chg:
+        calibration_params:
+        - name: vol_change_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: volume pct_change lag
+      vol_z:
+        calibration_params:
+        - name: vol_z_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: zscore window
+      delta_volume:
+        calibration_params:
+        - name: delta_volume_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: volume diff lag
+      obv_slope_5:
+        calibration_params:
+        - name: obv_slope_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: OBV slope lookback
+      mfi14:
+        calibration_params:
+        - name: mfi_period
+          min: 7
+          max: 35
+          step: 2
+          count: 15
+          axis: left_right
+          notes: MFI period
+      vwap_distance:
+        calibration_params: []
+        notes: derived from session VWAP; keep fixed initially
+    density_profile:
+      density_vpoc_distance_60:
+        calibration_params:
+        - name: density_window_short
+          min: 20
+          max: 120
+          step: 20
+          count: 6
+          axis: left_right
+          notes: short density window
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+      density_bin_share_60:
+        calibration_params:
+        - name: density_window_short
+          min: 20
+          max: 120
+          step: 20
+          count: 6
+          axis: left_right
+          notes: short density window
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+      density_cluster_share_60:
+        calibration_params:
+        - name: density_window_short
+          min: 20
+          max: 120
+          step: 20
+          count: 6
+          axis: left_right
+          notes: short density window
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+      density_vpoc_share_60:
+        calibration_params:
+        - name: density_window_short
+          min: 20
+          max: 120
+          step: 20
+          count: 6
+          axis: left_right
+          notes: short density window
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+      density_vpoc_distance_240:
+        calibration_params:
+        - name: density_window_long
+          min: 120
+          max: 360
+          step: 30
+          count: 9
+          axis: left_right
+          notes: long density window; must be > short
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+      density_bin_share_240:
+        calibration_params:
+        - name: density_window_long
+          min: 120
+          max: 360
+          step: 30
+          count: 9
+          axis: left_right
+          notes: long density window; must be > short
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+      density_cluster_share_240:
+        calibration_params:
+        - name: density_window_long
+          min: 120
+          max: 360
+          step: 30
+          count: 9
+          axis: left_right
+          notes: long density window; must be > short
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+      density_vpoc_share_240:
+        calibration_params:
+        - name: density_window_long
+          min: 120
+          max: 360
+          step: 30
+          count: 9
+          axis: left_right
+          notes: long density window; must be > short
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+      density_vpoc_drift_20:
+        calibration_params:
+        - name: vpoc_drift_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: diff lookback
+      density_cluster_ratio_60_240:
+        calibration_params:
+        - name: density_window_short
+          min: 20
+          max: 120
+          step: 20
+          count: 6
+          axis: left_right
+          notes: paired with long window
+        - name: density_window_long
+          min: 120
+          max: 360
+          step: 30
+          count: 9
+          axis: left_right
+          notes: must be > short
+        - name: bin_pct
+          min: 0.0003
+          max: 0.0012
+          step: 0.0001
+          count: 10
+          axis: up_down
+          notes: price bin width pct
+    structure_ta:
+      support_distance:
+        calibration_params:
+        - name: sr_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: support/resistance rolling window
+      resistance_distance:
+        calibration_params:
+        - name: sr_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: support/resistance rolling window
+      level_strength:
+        calibration_params:
+        - name: sr_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: rolling window
+        - name: touch_threshold
+          min: 0.0005
+          max: 0.01
+          step: 0.0005
+          count: 20
+          axis: up_down
+          notes: distance threshold for touches
+      position_in_range:
+        calibration_params:
+        - name: sr_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: support/resistance rolling window
+      trend_channel_pos:
+        calibration_params:
+        - name: channel_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: channel rolling window
+      fib_0382_distance:
+        calibration_params:
+        - name: fib_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: range window for fib levels
+        - name: fib_level
+          min: 0.236
+          max: 0.786
+          step: 0.146
+          count: 5
+          axis: up_down
+          notes: discrete set [0.236,0.382,0.5,0.618,0.786]
+      fib_0618_distance:
+        calibration_params:
+        - name: fib_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: range window for fib levels
+        - name: fib_level
+          min: 0.236
+          max: 0.786
+          step: 0.146
+          count: 5
+          axis: up_down
+          notes: discrete set [0.236,0.382,0.5,0.618,0.786]
+      tp_context_distance:
+        calibration_params: []
+        notes: derived; no direct tuning
+      sl_context_distance:
+        calibration_params: []
+        notes: derived; no direct tuning
+      rr_context_estimate:
+        calibration_params: []
+        notes: derived; no direct tuning
+      breakout_flag:
+        calibration_params:
+        - name: sr_window
+          min: 20
+          max: 180
+          step: 20
+          count: 9
+          axis: left_right
+          notes: support/resistance rolling window
+      false_breakout_flag:
+        calibration_params:
+        - name: false_breakout_retest_threshold
+          min: 0.0005
+          max: 0.01
+          step: 0.0005
+          count: 20
+          axis: up_down
+          notes: price-return threshold
+      retest_flag:
+        calibration_params:
+        - name: retest_threshold
+          min: 0.0005
+          max: 0.01
+          step: 0.0005
+          count: 20
+          axis: up_down
+          notes: retest closeness threshold
+      swing_high_break_flag:
+        calibration_params:
+        - name: swing_window
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: left_right
+          notes: swing high/low window
+      swing_low_break_flag:
+        calibration_params:
+        - name: swing_window
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: left_right
+          notes: swing high/low window
+      bos_up_flag:
+        calibration_params: []
+        notes: derived; no direct tuning
+      bos_down_flag:
+        calibration_params: []
+        notes: derived; no direct tuning
+      choch_flag:
+        calibration_params: []
+        notes: derived; no direct tuning
+    pattern:
+      doji_flag:
+        calibration_params:
+        - name: doji_body_to_range_max
+          min: 0.05
+          max: 0.2
+          step: 0.01
+          count: 16
+          axis: up_down
+          notes: smaller is stricter doji
+      inside_bar_flag:
+        calibration_params: []
+        notes: rule-based, usually fixed
+      pin_bar_bull_flag:
+        calibration_params:
+        - name: pin_wick_to_body_min
+          min: 1.2
+          max: 3.4
+          step: 0.2
+          count: 12
+          axis: up_down
+          notes: minimum wick/body ratio
+      pin_bar_bear_flag:
+        calibration_params:
+        - name: pin_wick_to_body_min
+          min: 1.2
+          max: 3.4
+          step: 0.2
+          count: 12
+          axis: up_down
+          notes: minimum wick/body ratio
+      hammer_flag:
+        calibration_params:
+        - name: hammer_lower_wick_ratio_min
+          min: 1.2
+          max: 3.4
+          step: 0.2
+          count: 12
+          axis: up_down
+          notes: lower wick/body minimum
+        - name: hammer_upper_wick_ratio_max
+          min: 0.4
+          max: 1.2
+          step: 0.1
+          count: 9
+          axis: up_down
+          notes: upper wick/body cap
+      shooting_star_flag:
+        calibration_params:
+        - name: star_upper_wick_ratio_min
+          min: 1.2
+          max: 3.4
+          step: 0.2
+          count: 12
+          axis: up_down
+          notes: upper wick/body minimum
+        - name: star_lower_wick_ratio_max
+          min: 0.4
+          max: 1.2
+          step: 0.1
+          count: 9
+          axis: up_down
+          notes: lower wick/body cap
+      engulf_bull_flag:
+        calibration_params: []
+        notes: rule-based, usually fixed
+      engulf_bear_flag:
+        calibration_params: []
+        notes: rule-based, usually fixed
+      rsi_bull_div_flag:
+        calibration_params:
+        - name: divergence_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: bars to evaluate divergence
+      rsi_bear_div_flag:
+        calibration_params:
+        - name: divergence_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: bars to evaluate divergence
+      macd_bull_div_flag:
+        calibration_params:
+        - name: divergence_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: bars to evaluate divergence
+      macd_bear_div_flag:
+        calibration_params:
+        - name: divergence_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: bars to evaluate divergence
+      obv_bull_div_flag:
+        calibration_params:
+        - name: divergence_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: bars to evaluate divergence
+      obv_bear_div_flag:
+        calibration_params:
+        - name: divergence_lookback
+          min: 3
+          max: 30
+          step: 3
+          count: 10
+          axis: backward
+          notes: bars to evaluate divergence
+      pattern_strength:
+        calibration_params: []
+        notes: derived aggregate score
+      pattern_age_bars:
+        calibration_params:
+        - name: pattern_age_cap
+          min: 5
+          max: 100
+          step: 5
+          count: 20
+          axis: backward
+          notes: max bars since pattern for validity

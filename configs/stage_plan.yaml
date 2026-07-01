@@ -1,0 +1,62 @@
+stage_plan:
+  stages: ["D1", "D2", "D3", "D5", "D30", "D60", "D90", "READY"]
+  windows_days:
+    D1: 1
+    D2: 2
+    D3: 3
+    D5: 5
+    D30: 30
+    D60: 60
+    D90: 90
+  d1_exhaustive:
+    enabled: true
+    min_train_rows: 800
+    n_folds: 3
+    horizons_grid: "1,2,3,4,5,6,8,12,16"
+    p_long_grid: "0.52,0.54,0.56,0.58,0.60"
+    p_short_grid: "0.48,0.46,0.44,0.42,0.40"
+    min_expected_move_grid: "0.0,0.001,0.002,0.003"
+    notional_usd_grid: "10"
+  transitions:
+    D1:
+      min_rating: 60
+      max_drawdown_pct_abs: 8.0
+      min_trades: 20
+      max_no_trade_ratio_days: 0.70
+    D2:
+      min_rating: 65
+      max_drawdown_pct_abs: 10.0
+      min_trades: 25
+      max_no_trade_ratio_days: 0.70
+      max_drawdown_regression_pp_vs_prev_stage: 2.0
+    D3:
+      min_rating: 70
+      max_drawdown_pct_abs: 10.0
+      min_trades: 30
+      require_positive_net_pnl_each_day: true
+      max_no_trade_ratio_days: 0.70
+    D5:
+      min_rating: 72
+      max_drawdown_pct_abs: 12.0
+      min_trades: 40
+      min_stability_score: 0.60
+      max_no_trade_ratio_days: 0.70
+    D30:
+      min_rating: 75
+      max_drawdown_pct_abs: 12.0
+      min_trades: 80
+      max_no_trade_ratio_days: 0.70
+    D60:
+      min_rating: 78
+      max_drawdown_pct_abs: 14.0
+      min_trades: 120
+      max_drawdown_regression_pp_vs_prev_stage: 2.0
+      max_no_trade_ratio_days: 0.70
+    D90:
+      min_rating: 80
+      max_drawdown_pct_abs: 15.0
+      min_trades: 150
+      max_drawdown_regression_pp_vs_prev_stage: 2.0
+      max_no_trade_ratio_days: 0.70
+negative_memory:
+  cooldown_hours: 48

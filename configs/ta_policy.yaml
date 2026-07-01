@@ -1,0 +1,49 @@
+ta:
+  profiles:
+    default:
+      pattern_detection:
+        double_tolerance: 0.003
+        min_sep_bars: 5
+        max_sep_bars: 120
+        hs_shoulder_tolerance: 0.008
+        hs_head_excess_min: 0.003
+        triangle_width_max: 0.04
+        wedge_width_max: 0.035
+        range_width_max: 0.02
+        divergence_lookback_bars: 10
+      signal:
+        adx_min: 18.0
+        mfi_long_min: 45.0
+        mfi_short_max: 55.0
+        rr_min: 1.0
+        min_tp_reach_prob: 0.58
+        enable_structure_fallback: true
+      density_controls:
+        enabled: true
+        default_max_events_per_day: 800
+        per_pattern_type:
+          range: 600
+          wedge_rising: 450
+          wedge_falling: 450
+          triangle: 200
+          pennant: 200
+          double_top: 200
+          double_bottom: 200
+          head_and_shoulders: 150
+          inverse_head_and_shoulders: 150
+    "1m":
+      pattern_detection:
+        max_sep_bars: 240
+      signal:
+        adx_min: 16.0
+      density_controls:
+        default_max_events_per_day: 1000
+        per_pattern_type:
+          range: 700
+    "60m":
+      pattern_detection:
+        max_sep_bars: 80
+      signal:
+        adx_min: 20.0
+      density_controls:
+        default_max_events_per_day: 200

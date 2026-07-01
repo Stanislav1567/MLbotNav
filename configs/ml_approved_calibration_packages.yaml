@@ -1,0 +1,51 @@
+schema_version: 1
+registry_status: HAS_APPROVED_PACKAGES
+manual_approval_required: true
+deny_result: ML_ADMISSION_DENY
+
+approval_bans:
+  forbidden_statuses:
+    - DRAFT
+    - NEEDS_AUDIT
+    - NO_GO
+    - VALIDATION_FAIL
+    - REJECTED
+    - UNKNOWN
+  require_contract_audit_pass: true
+  require_manifest_valid: true
+  forbid_clean_input_data_layers:
+    - raw
+    - quarantine
+    - raw/quarantine
+  forbid_missing_package_files:
+    - manifest.json
+    - trade_log.csv
+    - audit.md
+  forbid_direct_ml_ingest_roots:
+    - reports/optuna
+    - reports/pipeline
+    - reports/final_review
+
+# Manual ML approval registry format:
+#
+# approved_packages:
+#   - run_id: oos_SOLUSDT_1m_YYYY-MM-DD_side_YYYYMMDDTHHMMSSZ
+#     status: APPROVED_FOR_ML
+#     package_path: reports/ml_candidates/<run_id>
+#     approved_by: manual
+#     approved_utc: YYYY-MM-DDTHH:MM:SSZ
+#     comment: manual approval after OOS audit
+#
+# Required rules:
+# 1. status must be exactly APPROVED_FOR_ML.
+# 2. package_path must point to reports/ml_candidates/<run_id>.
+# 3. package must contain manifest.json, trade_log.csv, and audit.md.
+# 4. trade_log.csv must pass ml_trade_dataset_contract.
+# 5. DRAFT, NO_GO, VALIDATION_FAIL, REJECTED, UNKNOWN, and empty status are not ML-approved statuses.
+approved_packages:
+  - run_id: smoke_SOLUSDT_1m_2026-05-27_short_only_20260623T182600Z
+    status: APPROVED_FOR_ML
+    package_path: reports/ml_candidates/smoke_SOLUSDT_1m_2026-05-27_short_only_20260623T182600Z
+    approved_by: manual
+    approved_utc: 2026-06-23T18:42:22Z
+    comment: manual approval for Stage 7.4 smoke bridge after Stage 7.3 contract and alignment PASS

@@ -1,0 +1,34 @@
+schema_version: 1
+wbs_item: "8.1"
+manifest_status: LARGE_CLEAN_WINDOW_FIXED
+purpose: Stage 8 large clean Optuna-to-ML window selection
+
+symbol: SOLUSDT
+timeframe: 1m
+data_layer: core
+
+train_window:
+  start: "2026-05-11"
+  end: "2026-05-24"
+test_window:
+  start: "2026-05-25"
+  end: "2026-05-31"
+
+data_root: data/core/bybit_ohlcv
+expected_file_name: part-final.csv
+
+forbidden_dates:
+  - "2026-06-01"
+forbidden_data_layers:
+  - raw
+  - quarantine
+  - raw/quarantine
+
+stage_8_boundaries:
+  optuna_calibration_started: false
+  package_created: false
+  package_approved_for_ml: false
+  ml_ingest_started: false
+  ml_training_started: false
+
+next_wbs_item: "8.2 Run Optuna calibration"

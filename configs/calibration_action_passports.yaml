@@ -1,0 +1,3331 @@
+version: 3
+status: active_block_passport_registry
+updated_utc: "2026-06-22T13:25:00Z"
+
+registry:
+  schema: block_passport_registry
+  source_of_truth: docs/CALIBRATION_NODE_CURRENT/passports
+  active_matrix_root: configs/calibration_matrices/passport_actions
+  rule: "Every new calibration/backtest action must be registered here before Optuna can use it."
+
+block_naming_policy:
+  id_format: "B001, B002, B003..."
+  name_rule: "Each block has a short Russian name and a technical block_key."
+  feature_rule: "Each feature/action inside the block has F001, F002, F003... within the current passport route."
+  no_mixing_rule: "Do not calibrate unrelated instruments together. A block may contain several related features, but baseline selection is solo unless the user approves a combination passport."
+
+passport_flow:
+  - "1. User gives a passport."
+  - "2. Codex registers it under the correct Bxxx block."
+  - "3. Codex creates/updates the executable YAML matrix for that passport."
+  - "4. Optuna calibrates only params declared by that passport."
+  - "5. Backtest reads only runtime action columns declared by that passport."
+  - "6. Result is written back as PASS/NO_GO and candidate/non-candidate."
+
+rules:
+  legacy_matrix_policy: frozen_reference_only
+  baseline_exit_policy: tp_sl_timeout
+  long_short_policy: separate_runs_only
+  optuna_policy: allow_only_params_declared_by_action_passport
+  backtest_policy: use_only_action_outputs_declared_by_action_passport
+  ml_policy: use_promoted_passport_candidates_only
+  passport_matrix_policy: require_registry_match
+
+blocks:
+  B001:
+    order: 1
+    block_key: price_volatility
+    name_ru: "Цена и волатильность"
+    name_en: price_volatility
+    status: active
+    description_ru: "Действия по движению цены, доходности закрытых свечей и режимам волатильности."
+    comment_ru: "Первый паспортный блок. Сейчас внутри только RET_N фичи F001-F005. Базово ищем лучшую одиночную фичу, не смешиваем все фичи вместе."
+    active_passports:
+      F001:
+        status: active
+        feature_key: ret_1
+        feature_name_ru: "Доходность последней закрытой 1m свечи"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F001_ret_1_RU.md
+        action_id: F001_RET1_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F001_ret1_entry_filter.yaml
+        allowed_calibration_params:
+          - F001_move
+          - F001_thr_pct
+        not_calibrated_here:
+          - return_lookback
+          - side
+          - stop_loss
+          - take_profit
+          - timeout
+          - order_size
+          - entry_exit
+          - min_abs_ema_gap
+          - trend_filter
+        runtime_action_columns:
+          - F001_RET1_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F001 calibration knobs."
+      F002:
+        status: active
+        feature_key: ret_3
+        feature_name_ru: "Доходность за 3 закрытые 1m свечи"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/RET_N_F001_F005_strict_passports.md
+        action_id: F002_RET3_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F002_ret3_entry_filter.yaml
+        allowed_calibration_params:
+          - F002_move
+          - F002_thr_pct
+        not_calibrated_here:
+          - return_lookback
+          - side
+          - stop_loss
+          - take_profit
+          - timeout
+          - order_size
+          - entry_exit
+          - min_abs_ema_gap
+          - trend_filter
+        runtime_action_columns:
+          - F002_RET3_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F002 calibration knobs."
+      F003:
+        status: active
+        feature_key: ret_6
+        feature_name_ru: "Доходность за 6 закрытых 1m свечей"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/RET_N_F001_F005_strict_passports.md
+        action_id: F003_RET6_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F003_ret6_entry_filter.yaml
+        allowed_calibration_params:
+          - F003_move
+          - F003_thr_pct
+        not_calibrated_here:
+          - return_lookback
+          - side
+          - stop_loss
+          - take_profit
+          - timeout
+          - order_size
+          - entry_exit
+          - min_abs_ema_gap
+          - trend_filter
+        runtime_action_columns:
+          - F003_RET6_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F003 calibration knobs."
+      F004:
+        status: active
+        feature_key: ret_12
+        feature_name_ru: "Доходность за 12 закрытых 1m свечей"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/RET_N_F001_F005_strict_passports.md
+        action_id: F004_RET12_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F004_ret12_entry_filter.yaml
+        allowed_calibration_params:
+          - F004_move
+          - F004_thr_pct
+        not_calibrated_here:
+          - return_lookback
+          - side
+          - stop_loss
+          - take_profit
+          - timeout
+          - order_size
+          - entry_exit
+          - min_abs_ema_gap
+          - trend_filter
+        runtime_action_columns:
+          - F004_RET12_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F004 calibration knobs."
+      F005:
+        status: active
+        feature_key: ret_24
+        feature_name_ru: "Доходность за 24 закрытые 1m свечи"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/RET_N_F001_F005_strict_passports.md
+        action_id: F005_RET24_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F005_ret24_entry_filter.yaml
+        allowed_calibration_params:
+          - F005_move
+          - F005_thr_pct
+        not_calibrated_here:
+          - return_lookback
+          - side
+          - stop_loss
+          - take_profit
+          - timeout
+          - order_size
+          - entry_exit
+          - min_abs_ema_gap
+          - trend_filter
+        runtime_action_columns:
+          - F005_RET24_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F005 calibration knobs."
+      B001_RET_N_TOURNAMENT:
+        status: diagnostic_only_disabled_for_baseline
+        feature_key: ret_n_family
+        feature_name_ru: "Диагностический турнир RET_N внутри блока B001"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/RET_N_F001_F005_strict_passports.md
+        action_id: B001_RET_N_ALLOW
+        action_type: ENTRY_FILTER_TOURNAMENT
+        output: binary_1_0
+        active_matrix_root: reports/qa_gate
+        allowed_calibration_params:
+          - F001_move
+          - F001_thr_pct
+          - F002_move
+          - F002_thr_pct
+          - F003_move
+          - F003_thr_pct
+          - F004_move
+          - F004_thr_pct
+          - F005_move
+          - F005_thr_pct
+          - B001_family_move
+          - entry_action_min_confirmations
+        allowlist_policy: subset_allowlist
+        tournament_policy:
+          family: ret_N_1m
+          candidate_passports:
+            - F001
+            - F002
+            - F003
+            - F004
+            - F005
+          combination_policy: all_non_empty_subsets
+          combinations_count: 31
+          gate_policy: n_of_m_runtime_action_columns
+          selection_policy: diagnostic_only_not_baseline
+          baseline_decision: disabled_after_2026_06_22_run
+          baseline_reason: "31-combo AND tournament produced 28/31 zero-trade combinations; use solo feature selection instead."
+          new_diagnostic_policy: "B001_COMBO_DIAG may retune F001-F005 together and choose entry_action_min_confirmations as N-of-M; diagnostic only, no ML."
+        baseline_policy:
+          active_mode: solo_feature_selection_only
+          solo_indexes:
+            - F001
+            - F002
+            - F003
+            - F004
+            - F005
+          promotion_rule: "Promote only a single feature that is tradeful and non-negative on OOS; do not combine features in baseline."
+        not_calibrated_here:
+          - return_lookback
+          - side
+          - stop_loss
+          - take_profit
+          - timeout
+          - order_size
+          - entry_exit
+          - min_abs_ema_gap
+          - trend_filter
+        runtime_action_columns:
+          - F001_RET1_ALLOW
+          - F002_RET3_ALLOW
+          - F003_RET6_ALLOW
+          - F004_RET12_ALLOW
+          - F005_RET24_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Tournament compares RET_N entry-filter combinations; exit rules stay baseline."
+    planned_passports: {}
+
+  B002:
+    order: 2
+    block_key: price_volatility
+    name_ru: "Диапазон свечи High-Low"
+    name_en: hl_spread_1m
+    status: active
+    description_ru: "Фильтр по диапазону последней закрытой 1m свечи: (High-Low)/Open."
+    comment_ru: "Второй паспортный блок по новой очереди пользователя. Внутри активен F006: hl_spread_1m."
+    active_passports:
+      F006:
+        status: active
+        feature_key: hl_spread_1m
+        feature_name_ru: "Диапазон High-Low последней закрытой 1m свечи к Open"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F006_hl_spread_1m_strict_passport_v2.md
+        action_id: F006_HLSPREAD_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F006_hl_spread_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F006_cmp
+          - F006_thr_pct
+        param_encoding:
+          F006_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - vol_window
+          - log_simple
+          - momentum_reversal
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+          - candle_direction
+        runtime_action_columns:
+          - F006_HLSPREAD_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F006 calibration knobs."
+    planned_passports: {}
+
+  B003:
+    order: 3
+    block_key: price_volatility
+    name_ru: "Скользящая волатильность 20"
+    name_en: rolling_std_20_1m
+    status: active
+    description_ru: "Фильтр по скользящей population volatility за 20 закрытых 1m свечей."
+    comment_ru: "Третий паспортный блок по новой очереди пользователя. Внутри активен F007: rolling_std_20_1m."
+    active_passports:
+      F007:
+        status: active
+        feature_key: rolling_std_20_1m
+        feature_name_ru: "Скользящая волатильность за 20 закрытых 1m свечей"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F007_rolling_std20_1m_strict_passport.md
+        action_id: F007_RSTD20_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F007_rolling_std20_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F007_cmp
+          - F007_thr_pct
+        param_encoding:
+          F007_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here:
+          - side
+          - tf
+          - window
+          - calc_method
+          - price_source
+          - std_method
+          - log_simple
+          - momentum_reversal
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+          - candle_direction
+        runtime_action_columns:
+          - F007_RSTD20_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F007 calibration knobs."
+    planned_passports: {}
+
+  B004:
+    order: 4
+    block_key: price_volatility
+    name_ru: "ATR14 волатильность"
+    name_en: atr14_1m
+    status: active
+    description_ru: "Фильтр по Wilder ATR%(14) на закрытых 1m свечах."
+    comment_ru: "Четвертый паспортный блок по новой очереди пользователя. Внутри активен F008: atr14_1m."
+    active_passports:
+      F008:
+        status: active
+        feature_key: atr14_1m
+        feature_name_ru: "ATR%(14) на закрытой 1m свече"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F008_atr14_1m_strict_passport_v2.md
+        action_id: F008_ATR14_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F008_atr14_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F008_cmp
+          - F008_thr_pct
+        param_encoding:
+          F008_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here:
+          - side
+          - tf
+          - atr_period
+          - atr_method
+          - calc_method
+          - price_source
+          - log_simple
+          - momentum_reversal
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+          - candle_direction
+        runtime_action_columns:
+          - F008_ATR14_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F008 calibration knobs."
+    planned_passports: {}
+
+  B005:
+    order: 5
+    block_key: trend_momentum
+    name_ru: "EMA тренд и наклон"
+    name_en: ema_family
+    status: active
+    description_ru: "EMA-фильтры направления и дистанции: gap EMA20/50, slope EMA20 за 5 баров, gap к EMA200."
+    comment_ru: "Пятый паспортный блок по новой очереди пользователя. Внутри активны F009-F011 из EMA family."
+    active_passports:
+      F009:
+        status: active
+        feature_key: ema_gap_20_50_1m
+        feature_name_ru: "Разрыв EMA20 к EMA50"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/EMA_F009_F011_strict_passports.md
+        action_id: F009_EMAGAP_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F009_ema_gap_20_50_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F009_bias
+          - F009_thr_pct
+        param_encoding:
+          F009_bias:
+            1: ABOVE
+            -1: BELOW
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - ema_periods
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F009_EMAGAP_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F009 calibration knobs."
+      F010:
+        status: active
+        feature_key: ema20_slope_5_1m
+        feature_name_ru: "Наклон EMA20 за 5 баров"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/EMA_F009_F011_strict_passports.md
+        action_id: F010_EMASLOPE5_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F010_ema20_slope_5_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F010_slope
+          - F010_thr_pct
+        param_encoding:
+          F010_slope:
+            1: UP
+            -1: DOWN
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - ema_periods
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F010_EMASLOPE5_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F010 calibration knobs."
+      F011:
+        status: active
+        feature_key: ema200_gap_1m
+        feature_name_ru: "Дистанция Close к EMA200"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/EMA_F009_F011_strict_passports.md
+        action_id: F011_EMA200GAP_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F011_ema200_gap_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F011_position
+          - F011_thr_pct
+        param_encoding:
+          F011_position:
+            1: ABOVE
+            -1: BELOW
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - ema_periods
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F011_EMA200GAP_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F011 calibration knobs."
+    planned_passports: {}
+
+  B006:
+    order: 6
+    block_key: trend_momentum
+    name_ru: "RSI14 impulse"
+    name_en: rsi14_combined
+    status: active
+    description_ru: "RSI14 LEVEL/RSI_MA entry filter on closed 1m bars."
+    description_en: "RSI14 entry filter with LEVEL and RSI_MA signal modes on closed 1m bars."
+    active_passports:
+      F012:
+        status: active
+        feature_key: rsi14_1m
+        feature_name_en: "RSI14 on closed 1m candle"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F012_rsi14_combined_strict_passport.md
+        action_id: F012_RSI14_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F012_rsi14_combined_entry_filter.yaml
+        allowed_calibration_params:
+          - F012_signal_mode
+          - F012_cmp
+          - F012_level
+          - F012_relation
+          - F012_gap
+        param_encoding:
+          F012_signal_mode:
+            1: LEVEL
+            2: RSI_MA
+          F012_cmp:
+            1: GREATER
+            -1: LESS
+          F012_relation:
+            1: ABOVE
+            -1: BELOW
+        not_calibrated_here:
+          - side
+          - tf
+          - rsi_period
+          - shift
+          - calc_method
+          - price_source
+          - rsi_ma_method
+          - rsi_ma_period
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F012_RSI14_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F012 calibration knobs."
+    planned_passports: {}
+
+  B007:
+    order: 7
+    block_key: trend_momentum
+    name_ru: "MACD импульс"
+    name_en: macd_family
+    status: active
+    description_ru: "MACD 12/26/9 entry filters on closed 1m bars: line, signal line, histogram."
+    description_en: "MACD 12/26/9 entry filters on closed 1m bars: line, signal line, histogram."
+    comment_ru: "Седьмой паспортный блок по новой очереди пользователя. Внутри активны F013-F015 из MACD family; baseline selection is solo feature only."
+    active_passports:
+      F013:
+        status: active
+        feature_key: macd_line_1m
+        feature_name_ru: "Линия MACD 12/26/9 на закрытой 1m свече"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/MACD_F013_F015_strict_passports_v2.md
+        action_id: F013_MACDLINE_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F013_macd_line_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F013_state
+          - F013_thr_pct
+        param_encoding:
+          F013_state:
+            1: POSITIVE
+            -1: NEGATIVE
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - macd_fast_ema
+          - macd_slow_ema
+          - macd_signal_ema
+          - shift
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F013_MACDLINE_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F013 calibration knobs."
+      F014:
+        status: active
+        feature_key: macd_signal_1m
+        feature_name_ru: "Сигнальная линия MACD 12/26/9 на закрытой 1m свече"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/MACD_F013_F015_strict_passports_v2.md
+        action_id: F014_MACDSIGNAL_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F014_macd_signal_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F014_state
+          - F014_thr_pct
+        param_encoding:
+          F014_state:
+            1: POSITIVE
+            -1: NEGATIVE
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - macd_fast_ema
+          - macd_slow_ema
+          - macd_signal_ema
+          - shift
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F014_MACDSIGNAL_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F014 calibration knobs."
+      F015:
+        status: active
+        feature_key: macd_hist_1m
+        feature_name_ru: "Гистограмма MACD 12/26/9 на закрытой 1m свече"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/MACD_F013_F015_strict_passports_v2.md
+        action_id: F015_MACDHIST_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F015_macd_hist_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F015_state
+          - F015_thr_pct
+        param_encoding:
+          F015_state:
+            1: POSITIVE
+            -1: NEGATIVE
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - macd_fast_ema
+          - macd_slow_ema
+          - macd_signal_ema
+          - shift
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F015_MACDHIST_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F015 calibration knobs."
+    planned_passports: {}
+
+  B008:
+    order: 8
+    block_key: trend_momentum
+    name_ru: "ADX14 сила тренда"
+    name_en: adx14_1m
+    status: active
+    description_ru: "ADX(14) entry filter on closed 1m bars; measures trend strength only, not direction."
+    description_en: "ADX(14) entry filter on closed 1m bars; measures trend strength only, not direction."
+    comment_ru: "Восьмой паспортный блок по новой очереди пользователя. Внутри активен F016: ADX14_ALLOW; baseline selection is solo feature only."
+    active_passports:
+      F016:
+        status: active
+        feature_key: adx14_1m
+        feature_name_ru: "ADX(14) на закрытой 1m свече"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F016_adx14_1m_strict_passport.md
+        action_id: F016_ADX14_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F016_adx14_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F016_cmp
+          - F016_level
+        param_encoding:
+          F016_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here:
+          - side
+          - tf
+          - adx_period
+          - adx_smoothing
+          - shift
+          - calc_method
+          - price_source
+          - plus_di
+          - minus_di
+          - trend_direction
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F016_ADX14_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F016 calibration knobs."
+    planned_passports: {}
+
+  B009:
+    order: 9
+    block_key: trend_momentum
+    name_ru: "Stochastic 14 K/D"
+    name_en: stochastic_14_family
+    status: active
+    description_ru: "Stochastic(14) entry filter on closed 1m bars with K/D level and K/D cross modes."
+    description_en: "Stochastic(14) entry filter on closed 1m bars with K/D level and K/D cross modes."
+    comment_ru: "Девятый паспортный блок по новой очереди пользователя. Внутри активен комбинированный паспорт F017_F018: %K/%D; baseline selection is one combined action, not two unrelated gates."
+    active_passports:
+      F017_F018:
+        status: active
+        feature_key: stochastic_14_1m
+        feature_name_ru: "Stochastic(14) %K/%D на закрытой 1m свече"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/STOCH_F017_F018_combined_strict_passport.md
+        action_id: F017_F018_STOCH14_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F017_F018_stoch14_combined_entry_filter.yaml
+        allowed_calibration_params:
+          - F017_F018_signal_mode
+          - F017_F018_line
+          - F017_F018_cmp
+          - F017_F018_level
+          - F017_F018_cross_dir
+          - F017_F018_zone_filter
+          - F017_F018_low_level
+          - F017_F018_high_level
+          - F017_F018_gap
+        param_encoding:
+          F017_F018_signal_mode:
+            1: LEVEL
+            2: KD_CROSS
+          F017_F018_line:
+            1: K
+            2: D
+          F017_F018_cmp:
+            1: GREATER
+            -1: LESS
+          F017_F018_cross_dir:
+            1: UP
+            -1: DOWN
+          F017_F018_zone_filter:
+            0: NONE
+            -1: LOW
+            1: HIGH
+        not_calibrated_here:
+          - side
+          - tf
+          - stoch_period
+          - smooth_k
+          - smooth_d
+          - shift
+          - calc_method
+          - price_source
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F017_F018_STOCH14_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F017_F018 calibration knobs."
+    planned_passports: {}
+
+  B010:
+    order: 10
+    block_key: volume_flow
+    name_ru: "Объем и поток"
+    name_en: volume_family
+    status: active
+    description_ru: "Volume entry filters on closed 1m bars: volume change, volume z-score, delta volume pressure."
+    description_en: "Volume entry filters on closed 1m bars: volume change, volume z-score, delta volume pressure."
+    comment_ru: "Десятый паспортный блок по новой очереди пользователя. Внутри активны F019-F021 из volume family; baseline selection is solo feature only."
+    active_passports:
+      F019:
+        status: active
+        feature_key: vol_chg_1m
+        feature_name_ru: "Изменение объема последней закрытой 1m свечи"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/VOLUME_F019_F021_strict_passports_v2.md
+        action_id: F019_VOLCHG_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F019_vol_chg_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F019_direction
+          - F019_thr_pct
+        param_encoding:
+          F019_direction:
+            1: UP
+            -1: DOWN
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - volume_source
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F019_VOLCHG_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F019 calibration knobs."
+      F020:
+        status: active
+        feature_key: vol_z_20_1m
+        feature_name_ru: "Volume z-score 20 на закрытой 1m свече"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/VOLUME_F019_F021_strict_passports_v2.md
+        action_id: F020_VOLZ20_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F020_vol_z20_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F020_state
+          - F020_z_level
+        param_encoding:
+          F020_state:
+            1: HIGH
+            -1: LOW
+        not_calibrated_here:
+          - side
+          - tf
+          - z_window
+          - std_method
+          - calc_method
+          - volume_source
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F020_VOLZ20_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F020 calibration knobs."
+      F021:
+        status: active
+        feature_key: delta_volume_1m
+        feature_name_ru: "Дельта объема / proxy-delta последней закрытой 1m свечи"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/VOLUME_F019_F021_strict_passports_v2.md
+        action_id: F021_DELTAVOL_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F021_delta_volume_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F021_delta_mode
+          - F021_pressure
+          - F021_delta_thr
+        param_encoding:
+          F021_delta_mode:
+            1: TRUE_DELTA
+            2: PROXY_DELTA
+          F021_pressure:
+            1: BUY
+            -1: SELL
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F021_DELTAVOL_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F021 calibration knobs."
+    planned_passports: {}
+
+  B011:
+    order: 11
+    block_key: volume_flow
+    name_ru: "OBV slope 5"
+    name_en: obv_slope_5_1m
+    status: active
+    description_ru: "OBV slope over 5 closed 1m bars normalized by 20-bar average volume."
+    description_en: "OBV slope over 5 closed 1m bars normalized by 20-bar average volume."
+    comment_ru: "Eleventh passport block in the new route. Active solo passport F022: obv_slope_5_1m; baseline selection is solo feature only."
+    active_passports:
+      F022:
+        status: active
+        feature_key: obv_slope_5_1m
+        feature_name_ru: "OBV slope over 5 closed 1m bars"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F022_obv_slope5_1m_strict_passport.md
+        action_id: F022_OBVSLOPE5_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F022_obv_slope5_1m_entry_filter.yaml
+        allowed_calibration_params:
+          - F022_slope_dir
+          - F022_slope_thr
+        param_encoding:
+          F022_slope_dir:
+            1: UP
+            -1: DOWN
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - volume_source
+          - slope_bars
+          - norm_window
+          - obv_start_value
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F022_OBVSLOPE5_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F022 calibration knobs."
+    planned_passports: {}
+
+  B012:
+    order: 12
+    block_key: volume_flow
+    name_ru: "MFI14"
+    name_en: mfi14_1m
+    status: active
+    description_ru: "Money Flow Index 14 entry filter on closed 1m bars with LEVEL and CROSS_LEVEL modes."
+    description_en: "Money Flow Index 14 entry filter on closed 1m bars with LEVEL and CROSS_LEVEL modes."
+    comment_ru: "Twelfth passport block in the new route. Active combined passport F023: mfi14_1m; baseline selection is one solo action."
+    active_passports:
+      F023:
+        status: active
+        feature_key: mfi14_1m
+        feature_name_ru: "MFI(14) on closed 1m candle"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F023_mfi14_1m_combined_strict_passport.md
+        action_id: F023_MFI14_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F023_mfi14_1m_combined_entry_filter.yaml
+        allowed_calibration_params:
+          - F023_signal_mode
+          - F023_cmp
+          - F023_level
+          - F023_cross_dir
+          - F023_cross_level
+        param_encoding:
+          F023_signal_mode:
+            1: LEVEL
+            2: CROSS_LEVEL
+          F023_cmp:
+            1: GREATER
+            -1: LESS
+          F023_cross_dir:
+            1: UP
+            -1: DOWN
+        not_calibrated_here:
+          - side
+          - tf
+          - mfi_period
+          - shift
+          - calc_method
+          - price_source
+          - volume_source
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F023_MFI14_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F023 calibration knobs."
+    planned_passports: {}
+
+  B013:
+    order: 13
+    block_key: density_profile
+    name_ru: "DENSITY_A VPOC core"
+    name_en: density_a_vpoc_core
+    status: active
+    description_ru: "Density/VPOC core entry filters: VPOC distance 60/240, VPOC drift 20, cluster ratio 60/240."
+    description_en: "Density/VPOC core entry filters: VPOC distance 60/240, VPOC drift 20, cluster ratio 60/240."
+    comment_ru: "Thirteenth passport block in the new route. Active Block A passports from DENSITY/VPOC family; baseline selection is solo feature only."
+    active_passports:
+      F025:
+        status: active
+        feature_key: density_vpoc_distance_60_1m
+        feature_name_ru: "VPOC distance 60"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F025_VPOCDIST60_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F025_vpocdist60_entry_filter.yaml
+        allowed_calibration_params:
+          - F025_signal_mode
+          - F025_side_state
+          - F025_distance_state
+          - F025_dist_thr_pct
+        param_encoding:
+          F025_signal_mode:
+            1: SIDE
+            2: DISTANCE
+          F025_side_state:
+            1: ABOVE
+            -1: BELOW
+          F025_distance_state:
+            1: FAR
+            -1: NEAR
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - volume_source
+          - profile_method
+          - bin_source_price
+          - bin_size_mode
+          - bin_step_pct
+          - cluster_radius_bins
+          - vpoc_rule
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F025_VPOCDIST60_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F025 calibration knobs."
+      F026:
+        status: active
+        feature_key: density_bin_share_60_1m
+        feature_name_ru: "Bin share 60"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F026_BINSHARE60_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F026_binshare60_entry_filter.yaml
+        allowed_calibration_params:
+          - F026_cmp
+          - F026_share_thr_pct
+        param_encoding:
+          F026_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here: &density_share_not_calibrated
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - volume_source
+          - profile_method
+          - bin_source_price
+          - bin_size_mode
+          - bin_step_pct
+          - cluster_radius_bins
+          - vpoc_rule
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F026_BINSHARE60_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F026 calibration knobs."
+      F027:
+        status: active
+        feature_key: density_cluster_share_60_1m
+        feature_name_ru: "Cluster share 60"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F027_CLUSTERSHARE60_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F027_clustershare60_entry_filter.yaml
+        allowed_calibration_params:
+          - F027_cmp
+          - F027_share_thr_pct
+        param_encoding:
+          F027_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here: *density_share_not_calibrated
+        runtime_action_columns:
+          - F027_CLUSTERSHARE60_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F027 calibration knobs."
+      F028:
+        status: active
+        feature_key: density_vpoc_share_60_1m
+        feature_name_ru: "VPOC share 60"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F028_VPOCSHARE60_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F028_vpocshare60_entry_filter.yaml
+        allowed_calibration_params:
+          - F028_cmp
+          - F028_share_thr_pct
+        param_encoding:
+          F028_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here: *density_share_not_calibrated
+        runtime_action_columns:
+          - F028_VPOCSHARE60_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F028 calibration knobs."
+      F029:
+        status: active
+        feature_key: density_vpoc_distance_240_1m
+        feature_name_ru: "VPOC distance 240"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F029_VPOCDIST240_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F029_vpocdist240_entry_filter.yaml
+        allowed_calibration_params:
+          - F029_signal_mode
+          - F029_side_state
+          - F029_distance_state
+          - F029_dist_thr_pct
+        param_encoding:
+          F029_signal_mode:
+            1: SIDE
+            2: DISTANCE
+          F029_side_state:
+            1: ABOVE
+            -1: BELOW
+          F029_distance_state:
+            1: FAR
+            -1: NEAR
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - volume_source
+          - profile_method
+          - bin_source_price
+          - bin_size_mode
+          - bin_step_pct
+          - cluster_radius_bins
+          - vpoc_rule
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F029_VPOCDIST240_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F029 calibration knobs."
+      F030:
+        status: active
+        feature_key: density_bin_share_240_1m
+        feature_name_ru: "Bin share 240"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F030_BINSHARE240_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F030_binshare240_entry_filter.yaml
+        allowed_calibration_params:
+          - F030_cmp
+          - F030_share_thr_pct
+        param_encoding:
+          F030_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here: *density_share_not_calibrated
+        runtime_action_columns:
+          - F030_BINSHARE240_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F030 calibration knobs."
+      F031:
+        status: active
+        feature_key: density_cluster_share_240_1m
+        feature_name_ru: "Cluster share 240"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F031_CLUSTERSHARE240_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F031_clustershare240_entry_filter.yaml
+        allowed_calibration_params:
+          - F031_cmp
+          - F031_share_thr_pct
+        param_encoding:
+          F031_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here: *density_share_not_calibrated
+        runtime_action_columns:
+          - F031_CLUSTERSHARE240_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F031 calibration knobs."
+      F032:
+        status: active
+        feature_key: density_vpoc_share_240_1m
+        feature_name_ru: "VPOC share 240"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F032_VPOCSHARE240_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F032_vpocshare240_entry_filter.yaml
+        allowed_calibration_params:
+          - F032_cmp
+          - F032_share_thr_pct
+        param_encoding:
+          F032_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here: *density_share_not_calibrated
+        runtime_action_columns:
+          - F032_VPOCSHARE240_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F032 calibration knobs."
+      F033:
+        status: active
+        feature_key: density_vpoc_drift_20_1m
+        feature_name_ru: "VPOC drift 20 from 60-window VPOC"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F033_VPOCDRIFT20_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F033_vpocdrift20_entry_filter.yaml
+        allowed_calibration_params:
+          - F033_drift_dir
+          - F033_drift_thr_pct
+        param_encoding:
+          F033_drift_dir:
+            1: UP
+            -1: DOWN
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - volume_source
+          - profile_method
+          - bin_source_price
+          - bin_size_mode
+          - bin_step_pct
+          - cluster_radius_bins
+          - vpoc_rule
+          - vpoc_window
+          - drift_bars
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F033_VPOCDRIFT20_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F033 calibration knobs."
+      F034:
+        status: active
+        feature_key: density_cluster_ratio_60_240_1m
+        feature_name_ru: "Cluster ratio 60/240"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DENSITY_VPOC_F025_F034_3BLOCK_FIXED_COMMENTS.md
+        action_id: F034_CLUSTERRATIO_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F034_clusterratio_entry_filter.yaml
+        allowed_calibration_params:
+          - F034_cmp
+          - F034_ratio_level
+        param_encoding:
+          F034_cmp:
+            1: GREATER
+            -1: LESS
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - volume_source
+          - profile_method
+          - bin_source_price
+          - bin_size_mode
+          - bin_step_pct
+          - cluster_radius_bins
+          - vpoc_rule
+          - window_fast
+          - window_slow
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F034_CLUSTERRATIO_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F034 calibration knobs."
+    planned_passports: {}
+
+  B014:
+    order: 14
+    block_key: structure_ta
+    name_ru: "LEVEL_A уровни поддержки/сопротивления"
+    name_en: level_a_support_resistance
+    status: active
+    description_ru: "Block A from LEVEL/RANGE/CHANNEL family: distance to support, distance to resistance, and level strength."
+    description_en: "Block A from LEVEL/RANGE/CHANNEL family: support distance, resistance distance, and level strength."
+    comment_ru: "Fourteenth passport block in the new route. Active LEVEL/RANGE/CHANNEL passports F035-F039 are calibrated as isolated actions and are not mixed into one combined run."
+    active_passports:
+      F035:
+        status: active
+        feature_key: support_distance_1m
+        feature_name_ru: "Расстояние до поддержки"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/LEVEL_RANGE_CHANNEL_F035_F039_strict_passport.md
+        action_id: F035_SUPPORTDIST_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F035_supportdist_entry_filter.yaml
+        allowed_calibration_params:
+          - F035_distance_state
+          - F035_dist_thr_pct
+        param_encoding:
+          F035_distance_state:
+            -1: NEAR
+            1: FAR
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - level_method
+          - level_lookback
+          - pivot_left
+          - pivot_right
+          - merge_tolerance_pct
+          - touch_tolerance_pct
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F035_SUPPORTDIST_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F035 calibration knobs."
+      F036:
+        status: active
+        feature_key: resistance_distance_1m
+        feature_name_ru: "Расстояние до сопротивления"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/LEVEL_RANGE_CHANNEL_F035_F039_strict_passport.md
+        action_id: F036_RESDIST_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F036_resdist_entry_filter.yaml
+        allowed_calibration_params:
+          - F036_distance_state
+          - F036_dist_thr_pct
+        param_encoding:
+          F036_distance_state:
+            -1: NEAR
+            1: FAR
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - level_method
+          - level_lookback
+          - pivot_left
+          - pivot_right
+          - merge_tolerance_pct
+          - touch_tolerance_pct
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F036_RESDIST_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F036 calibration knobs."
+      F037:
+        status: active
+        feature_key: level_strength_1m
+        feature_name_ru: "Сила уровня"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/LEVEL_RANGE_CHANNEL_F035_F039_strict_passport.md
+        action_id: F037_LEVELSTRENGTH_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F037_levelstrength_entry_filter.yaml
+        allowed_calibration_params:
+          - F037_level_type
+          - F037_strength_state
+          - F037_strength_thr
+        param_encoding:
+          F037_level_type:
+            1: SUPPORT
+            2: RESISTANCE
+            3: NEAREST
+          F037_strength_state:
+            -1: WEAK
+            1: STRONG
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - level_method
+          - level_lookback
+          - pivot_left
+          - pivot_right
+          - merge_tolerance_pct
+          - touch_tolerance_pct
+          - avg_volume_window
+          - max_volume_score
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F037_LEVELSTRENGTH_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F037 calibration knobs."
+      F038:
+        status: active
+        feature_key: position_in_range_1m
+        feature_name_ru: "Position in range"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/LEVEL_RANGE_CHANNEL_F035_F039_strict_passport.md
+        action_id: F038_RANGEPOSE_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F038_rangepose_entry_filter.yaml
+        allowed_calibration_params:
+          - F038_zone
+          - F038_level
+        param_encoding:
+          F038_zone:
+            -1: LOW
+            1: HIGH
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - range_method
+          - range_lookback
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F038_RANGEPOSE_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F038 calibration knobs."
+      F039:
+        status: active
+        feature_key: trend_channel_pos_1m
+        feature_name_ru: "Trend channel position"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/LEVEL_RANGE_CHANNEL_F035_F039_strict_passport.md
+        action_id: F039_CHANNELPOS_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F039_channelpos_entry_filter.yaml
+        allowed_calibration_params:
+          - F039_zone
+          - F039_level
+          - F039_outside_thr
+        param_encoding:
+          F039_zone:
+            1: LOWER
+            2: UPPER
+            3: OUTSIDE_UP
+            4: OUTSIDE_DOWN
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - channel_method
+          - channel_lookback
+          - channel_k
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F039_CHANNELPOS_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F039 calibration knobs."
+    planned_passports: {}
+
+  B015:
+    order: 15
+    block_key: structure_ta
+    name_ru: "FIBONACCI_GRID anchor grid"
+    name_en: fibonacci_grid_anchor
+    status: active
+    description_ru: "Fibonacci grid entry filters for distances to confirmed-anchor 0.382 and 0.618 levels."
+    description_en: "Fibonacci grid entry filters for distances to confirmed-anchor 0.382 and 0.618 levels."
+    comment_ru: "Fifteenth passport block in the new route. F040 and F041 are calibrated as separate solo actions; fixed anchor engine is not calibrated."
+    active_passports:
+      F040:
+        status: active
+        feature_key: fib_0382_distance_1m
+        feature_name_ru: "Fibonacci 0.382 distance"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/FIBONACCI_F040_F041_anchor_grid_strict_passport_v3.md
+        action_id: F040_FIB0382DIST_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F040_fib0382dist_entry_filter.yaml
+        allowed_calibration_params:
+          - F040_signal_mode
+          - F040_side_state
+          - F040_distance_state
+          - F040_dist_thr_pct
+        param_encoding:
+          F040_signal_mode:
+            1: SIDE
+            2: DISTANCE
+          F040_side_state:
+            1: ABOVE
+            -1: BELOW
+          F040_distance_state:
+            -1: NEAR
+            1: FAR
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - fib_method
+          - anchor_rule
+          - max_lookback_bars
+          - depth_bars
+          - deviation_pct
+          - pivot_source
+          - update_rule
+          - repaint_policy
+          - fib_direction
+          - fib_grid_levels
+          - main_levels
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F040_FIB0382DIST_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F040 calibration knobs."
+      F041:
+        status: active
+        feature_key: fib_0618_distance_1m
+        feature_name_ru: "Fibonacci 0.618 distance"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/FIBONACCI_F040_F041_anchor_grid_strict_passport_v3.md
+        action_id: F041_FIB0618DIST_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F041_fib0618dist_entry_filter.yaml
+        allowed_calibration_params:
+          - F041_signal_mode
+          - F041_side_state
+          - F041_distance_state
+          - F041_dist_thr_pct
+        param_encoding:
+          F041_signal_mode:
+            1: SIDE
+            2: DISTANCE
+          F041_side_state:
+            1: ABOVE
+            -1: BELOW
+          F041_distance_state:
+            -1: NEAR
+            1: FAR
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - fib_method
+          - anchor_rule
+          - max_lookback_bars
+          - depth_bars
+          - deviation_pct
+          - pivot_source
+          - update_rule
+          - repaint_policy
+          - fib_direction
+          - fib_grid_levels
+          - main_levels
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F041_FIB0618DIST_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F041 calibration knobs."
+    planned_passports: {}
+
+  B016:
+    order: 16
+    block_key: structure_ta
+    name_ru: "ENTRY_QUALITY_CONTEXT контекст входа"
+    name_en: entry_quality_context
+    status: active
+    description_ru: "Фильтры качества входа по расстоянию до потенциальной цели, риска и RR до открытия сделки."
+    description_en: "Entry quality filters for potential TP context, SL context, and estimated RR before opening a trade."
+    comment_ru: "Sixteenth passport block in the new route. F042-F044 are calibrated as separate solo actions; level engines and trade side are not calibrated inside this block."
+    active_passports:
+      F042:
+        status: active
+        feature_key: tp_context_distance_1m
+        feature_name_ru: "Расстояние до потенциальной цели"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/ENTRY_QUALITY_CONTEXT_F042_F044_strict_passport_v2.md
+        action_id: F042_TPCONTEXT_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F042_tpcontext_entry_filter.yaml
+        allowed_calibration_params:
+          - F042_level_source_mode
+          - F042_cmp
+          - F042_tp_dist_thr_pct
+        param_encoding:
+          F042_level_source_mode:
+            1: SWING_LEVELS
+            2: DENSITY_VPOC
+            3: FIBONACCI_GRID
+          F042_cmp:
+            -1: LESS
+            1: GREATER
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - entry_ref_price
+          - level_engines
+          - swing_level_engine_params
+          - density_vpoc_engine_params
+          - fibonacci_grid_engine_params
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F042_TPCONTEXT_ALLOW
+          - F042_TPCONTEXT_ALLOW_LONG
+          - F042_TPCONTEXT_ALLOW_SHORT
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F042 calibration knobs."
+      F043:
+        status: active
+        feature_key: sl_context_distance_1m
+        feature_name_ru: "Расстояние до потенциального риска"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/ENTRY_QUALITY_CONTEXT_F042_F044_strict_passport_v2.md
+        action_id: F043_SLCONTEXT_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F043_slcontext_entry_filter.yaml
+        allowed_calibration_params:
+          - F043_level_source_mode
+          - F043_cmp
+          - F043_sl_dist_thr_pct
+        param_encoding:
+          F043_level_source_mode:
+            1: SWING_LEVELS
+            2: DENSITY_VPOC
+            3: FIBONACCI_GRID
+          F043_cmp:
+            -1: LESS
+            1: GREATER
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - entry_ref_price
+          - level_engines
+          - swing_level_engine_params
+          - density_vpoc_engine_params
+          - fibonacci_grid_engine_params
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F043_SLCONTEXT_ALLOW
+          - F043_SLCONTEXT_ALLOW_LONG
+          - F043_SLCONTEXT_ALLOW_SHORT
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F043 calibration knobs."
+      F044:
+        status: active
+        feature_key: rr_context_estimate_1m
+        feature_name_ru: "Оценка RR контекста"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/ENTRY_QUALITY_CONTEXT_F042_F044_strict_passport_v2.md
+        action_id: F044_RRCONTEXT_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F044_rrcontext_entry_filter.yaml
+        allowed_calibration_params:
+          - F044_level_source_mode
+          - F044_rr_state
+          - F044_rr_level
+        param_encoding:
+          F044_level_source_mode:
+            1: SWING_LEVELS
+            2: DENSITY_VPOC
+            3: FIBONACCI_GRID
+          F044_rr_state:
+            -1: POOR
+            1: GOOD
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - entry_ref_price
+          - level_engines
+          - swing_level_engine_params
+          - density_vpoc_engine_params
+          - fibonacci_grid_engine_params
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F044_RRCONTEXT_ALLOW
+          - F044_RRCONTEXT_ALLOW_LONG
+          - F044_RRCONTEXT_ALLOW_SHORT
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F044 calibration knobs."
+    planned_passports: {}
+
+  B017:
+    order: 17
+    block_key: structure_ta
+    name_ru: "BREAKOUT_RETEST пробой/ретест"
+    name_en: breakout_retest
+    status: active
+    description_ru: "Фильтры входа по пробою уровня, ложному пробою и ретесту после пробоя."
+    description_en: "Entry filters for level breakout, false breakout, and post-breakout retest."
+    comment_ru: "Seventeenth passport block in the new route. F045-F049 are calibrated as separate solo actions; level engines and trade side are not calibrated inside this block."
+    active_passports:
+      F048:
+        status: active
+        feature_key: swing_high_break_flag_1m
+        feature_name_ru: "Пробой swing high"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/BREAKOUT_RETEST_F045_F049_strict_passport.md
+        action_id: F048_SWINGHIGHBREAK_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F048_swinghighbreak_entry_filter.yaml
+        allowed_calibration_params:
+          - F048_break_buffer_pct
+          - F048_confirm_bars
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - swing_source
+          - swing_lookback
+          - pivot_left
+          - pivot_right
+          - break_dir
+          - event_memory_engine
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F048_SWINGHIGHBREAK_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F048 calibration knobs."
+      F049:
+        status: active
+        feature_key: swing_low_break_flag_1m
+        feature_name_ru: "Пробой swing low"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/BREAKOUT_RETEST_F045_F049_strict_passport.md
+        action_id: F049_SWINGLOWBREAK_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F049_swinglowbreak_entry_filter.yaml
+        allowed_calibration_params:
+          - F049_break_buffer_pct
+          - F049_confirm_bars
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - swing_source
+          - swing_lookback
+          - pivot_left
+          - pivot_right
+          - break_dir
+          - event_memory_engine
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F049_SWINGLOWBREAK_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F049 calibration knobs."
+      F045:
+        status: active
+        feature_key: breakout_flag_1m
+        feature_name_ru: "Пробой уровня"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/BREAKOUT_RETEST_F045_F049_strict_passport.md
+        action_id: F045_BREAKOUT_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F045_breakout_entry_filter.yaml
+        allowed_calibration_params:
+          - F045_level_source_mode
+          - F045_break_dir
+          - F045_break_buffer_pct
+          - F045_confirm_bars
+        param_encoding:
+          F045_level_source_mode:
+            1: SWING_LEVELS
+            2: DENSITY_VPOC
+            3: FIBONACCI_GRID
+          F045_break_dir:
+            -1: DOWN
+            1: UP
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - level_engines
+          - swing_level_engine_params
+          - density_vpoc_engine_params
+          - fibonacci_grid_engine_params
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F045_BREAKOUT_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F045 calibration knobs."
+      F047:
+        status: active
+        feature_key: retest_flag_1m
+        feature_name_ru: "Ретест после пробоя"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/BREAKOUT_RETEST_F045_F049_strict_passport.md
+        action_id: F047_RETEST_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F047_retest_entry_filter.yaml
+        allowed_calibration_params:
+          - F047_level_source_mode
+          - F047_break_dir
+          - F047_retest_window_bars
+          - F047_retest_tolerance_pct
+          - F047_reaction_confirm_pct
+        param_encoding:
+          F047_level_source_mode:
+            1: SWING_LEVELS
+            2: DENSITY_VPOC
+            3: FIBONACCI_GRID
+          F047_break_dir:
+            -1: DOWN
+            1: UP
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - level_engines
+          - swing_level_engine_params
+          - density_vpoc_engine_params
+          - fibonacci_grid_engine_params
+          - breakout_event_memory_engine
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F047_RETEST_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F047 calibration knobs."
+      F046:
+        status: active
+        feature_key: false_breakout_flag_1m
+        feature_name_ru: "Ложный пробой уровня"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/BREAKOUT_RETEST_F045_F049_strict_passport.md
+        action_id: F046_FALSEBREAK_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F046_falsebreak_entry_filter.yaml
+        allowed_calibration_params:
+          - F046_level_source_mode
+          - F046_break_dir
+          - F046_false_mode
+          - F046_break_buffer_pct
+          - F046_return_window_bars
+          - F046_return_tolerance_pct
+        param_encoding:
+          F046_level_source_mode:
+            1: SWING_LEVELS
+            2: DENSITY_VPOC
+            3: FIBONACCI_GRID
+          F046_break_dir:
+            -1: DOWN
+            1: UP
+          F046_false_mode:
+            1: WICK_REJECT
+            2: CLOSE_RETURN
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - level_engines
+          - swing_level_engine_params
+          - density_vpoc_engine_params
+          - fibonacci_grid_engine_params
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F046_FALSEBREAK_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F046 calibration knobs."
+    planned_passports: {}
+
+  B018:
+    order: 18
+    block_key: structure_ta
+    name_ru: "MARKET_STRUCTURE BOS/CHOCH"
+    name_en: market_structure
+    status: active
+    description_ru: "Фильтры входа по состоянию рыночной структуры: BOS вверх, BOS вниз, CHOCH."
+    description_en: "Entry filters for market structure state: BOS up, BOS down, and CHOCH."
+    comment_ru: "Eighteenth passport block in the new route. F050-F052 are calibrated as separate solo actions; internal/external engine params and trade side are not calibrated inside this block."
+    active_passports:
+      F050:
+        status: active
+        feature_key: bos_up_flag_1m
+        feature_name_ru: "BOS вверх"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/MARKET_STRUCTURE_F050_F052_strict_passport.md
+        action_id: F050_BOSUP_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F050_bosup_entry_filter.yaml
+        allowed_calibration_params:
+          - F050_structure_scope
+          - F050_break_buffer_pct
+          - F050_confirm_bars
+          - F050_require_bias
+        param_encoding:
+          F050_structure_scope:
+            1: INTERNAL
+            2: EXTERNAL
+          F050_require_bias:
+            1: BULLISH
+            2: NOT_BEARISH
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - confirmation_price
+          - wick_break_policy
+          - internal_engine_params
+          - external_engine_params
+          - swing_label_logic
+          - structure_bias_logic
+          - event_memory_fields
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F050_BOSUP_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F050 calibration knobs."
+      F051:
+        status: active
+        feature_key: bos_down_flag_1m
+        feature_name_ru: "BOS вниз"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/MARKET_STRUCTURE_F050_F052_strict_passport.md
+        action_id: F051_BOSDOWN_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F051_bosdown_entry_filter.yaml
+        allowed_calibration_params:
+          - F051_structure_scope
+          - F051_break_buffer_pct
+          - F051_confirm_bars
+          - F051_require_bias
+        param_encoding:
+          F051_structure_scope:
+            1: INTERNAL
+            2: EXTERNAL
+          F051_require_bias:
+            1: BEARISH
+            2: NOT_BULLISH
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - confirmation_price
+          - wick_break_policy
+          - internal_engine_params
+          - external_engine_params
+          - swing_label_logic
+          - structure_bias_logic
+          - event_memory_fields
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F051_BOSDOWN_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F051 calibration knobs."
+      F052:
+        status: active
+        feature_key: choch_flag_1m
+        feature_name_ru: "CHOCH смена характера структуры"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/MARKET_STRUCTURE_F050_F052_strict_passport.md
+        action_id: F052_CHOCH_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F052_choch_entry_filter.yaml
+        allowed_calibration_params:
+          - F052_structure_scope
+          - F052_choch_dir
+          - F052_break_buffer_pct
+          - F052_confirm_bars
+          - F052_require_opposite_bias
+        param_encoding:
+          F052_structure_scope:
+            1: INTERNAL
+            2: EXTERNAL
+          F052_choch_dir:
+            -1: BEARISH
+            1: BULLISH
+          F052_require_opposite_bias:
+            0: NO
+            1: YES
+        not_calibrated_here:
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - confirmation_price
+          - wick_break_policy
+          - internal_engine_params
+          - external_engine_params
+          - swing_label_logic
+          - structure_bias_logic
+          - event_memory_fields
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F052_CHOCH_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F052 calibration knobs."
+    planned_passports: {}
+
+  B019:
+    order: 19
+    block_key: pattern
+    name_ru: "CANDLE_PATTERNS свечные паттерны"
+    name_en: candle_patterns
+    status: active
+    description_ru: "Фильтры входа по закрытым свечным паттернам F053-F060."
+    description_en: "Entry filters based on closed-candle price-action patterns F053-F060."
+    comment_ru: "Nineteenth passport block in the new route. Each candle pattern is calibrated as a separate solo action. Current unclosed candle, trade side, TP/SL and timeout exit are not calibrated inside this block."
+    active_passports:
+      F055:
+        status: active
+        feature_key: pin_bar_bull_flag_1m
+        feature_name_ru: "бычий pin bar"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+        action_id: F055_PINBULL_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F055_pinbull_entry_filter.yaml
+        allowed_calibration_params:
+          - F055_wick_body_ratio
+          - F055_wick_min_pct
+          - F055_opposite_wick_max_pct
+          - F055_body_zone_pct
+          - F055_min_range_pct
+        not_calibrated_here: &candle_pattern_not_calibrated
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - current_unclosed_candle
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F055_PINBULL_ALLOW
+        backtest_subpassport: &baseline_exit_subpassport
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not candle-pattern calibration knobs."
+      F056:
+        status: active
+        feature_key: pin_bar_bear_flag_1m
+        feature_name_ru: "медвежий pin bar"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+        action_id: F056_PINBEAR_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F056_pinbear_entry_filter.yaml
+        allowed_calibration_params:
+          - F056_wick_body_ratio
+          - F056_wick_min_pct
+          - F056_opposite_wick_max_pct
+          - F056_body_zone_pct
+          - F056_min_range_pct
+        not_calibrated_here: *candle_pattern_not_calibrated
+        runtime_action_columns:
+          - F056_PINBEAR_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F059:
+        status: active
+        feature_key: engulf_bull_flag_1m
+        feature_name_ru: "бычье поглощение"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+        action_id: F059_ENGULFBULL_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F059_engulfbull_entry_filter.yaml
+        allowed_calibration_params:
+          - F059_engulf_mode
+          - F059_min_engulf_ratio
+          - F059_min_body_pct
+          - F059_trend_lookback_bars
+          - F059_trend_min_drop_pct
+        param_encoding:
+          F059_engulf_mode:
+            1: BODY
+            2: FULL_RANGE
+        not_calibrated_here: *candle_pattern_not_calibrated
+        runtime_action_columns:
+          - F059_ENGULFBULL_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F060:
+        status: active
+        feature_key: engulf_bear_flag_1m
+        feature_name_ru: "медвежье поглощение"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+        action_id: F060_ENGULFBEAR_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F060_engulfbear_entry_filter.yaml
+        allowed_calibration_params:
+          - F060_engulf_mode
+          - F060_min_engulf_ratio
+          - F060_min_body_pct
+          - F060_trend_lookback_bars
+          - F060_trend_min_rise_pct
+        param_encoding:
+          F060_engulf_mode:
+            1: BODY
+            2: FULL_RANGE
+        not_calibrated_here: *candle_pattern_not_calibrated
+        runtime_action_columns:
+          - F060_ENGULFBEAR_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F057:
+        status: active
+        feature_key: hammer_flag_1m
+        feature_name_ru: "hammer после снижения"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+        action_id: F057_HAMMER_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F057_hammer_entry_filter.yaml
+        allowed_calibration_params:
+          - F057_wick_body_ratio
+          - F057_lower_wick_min_pct
+          - F057_upper_wick_max_pct
+          - F057_body_zone_pct
+          - F057_trend_lookback_bars
+          - F057_trend_min_drop_pct
+        not_calibrated_here: *candle_pattern_not_calibrated
+        runtime_action_columns:
+          - F057_HAMMER_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F058:
+        status: active
+        feature_key: shooting_star_flag_1m
+        feature_name_ru: "shooting star после роста"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+        action_id: F058_SHOOTINGSTAR_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F058_shootingstar_entry_filter.yaml
+        allowed_calibration_params:
+          - F058_wick_body_ratio
+          - F058_upper_wick_min_pct
+          - F058_lower_wick_max_pct
+          - F058_body_zone_pct
+          - F058_trend_lookback_bars
+          - F058_trend_min_rise_pct
+        not_calibrated_here: *candle_pattern_not_calibrated
+        runtime_action_columns:
+          - F058_SHOOTINGSTAR_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F054:
+        status: active
+        feature_key: inside_bar_flag_1m
+        feature_name_ru: "inside bar"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+        action_id: F054_INSIDEBAR_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F054_insidebar_entry_filter.yaml
+        allowed_calibration_params:
+          - F054_containment_mode
+          - F054_max_inside_range_ratio
+          - F054_mother_min_range_pct
+        param_encoding:
+          F054_containment_mode:
+            1: STRICT
+            2: EQUAL_ALLOWED
+        not_calibrated_here: *candle_pattern_not_calibrated
+        runtime_action_columns:
+          - F054_INSIDEBAR_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F053:
+        status: active
+        feature_key: doji_flag_1m
+        feature_name_ru: "doji"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CANDLE_PATTERNS_F053_F060_strict_passport.md
+        action_id: F053_DOJI_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F053_doji_entry_filter.yaml
+        allowed_calibration_params:
+          - F053_max_body_pct
+          - F053_min_range_pct
+          - F053_wick_mode
+          - F053_wick_balance_max_pct
+        param_encoding:
+          F053_wick_mode:
+            1: ANY
+            2: BALANCED
+        not_calibrated_here: *candle_pattern_not_calibrated
+        runtime_action_columns:
+          - F053_DOJI_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+    planned_passports: {}
+
+  B020:
+    order: 20
+    block_key: pattern
+    name_ru: "DIVERGENCE_PATTERNS дивергенции"
+    name_en: divergence_patterns
+    status: active
+    description_ru: "Фильтры входа по RSI/MACD/OBV дивергенциям F061-F066."
+    description_en: "Entry filters based on RSI, MACD, and OBV divergences F061-F066."
+    comment_ru: "Twentieth passport block in the new route. Each divergence pattern is calibrated as a separate solo action. Pivot engine constants, trade side, TP/SL and timeout exit are not calibrated inside this block."
+    active_passports:
+      F061:
+        status: active
+        feature_key: rsi_bull_div_flag_1m
+        feature_name_ru: "RSI bullish divergence"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DIVERGENCE_PATTERNS_F061_F066_strict_passport.md
+        action_id: F061_RSIBULLDIV_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F061_rsibulldiv_entry_filter.yaml
+        allowed_calibration_params:
+          - F061_pivot_scope
+          - F061_div_type
+          - F061_price_delta_min_pct
+          - F061_rsi_delta_min
+          - F061_max_pivot_gap_bars
+          - F061_confirm_mode
+          - F061_reaction_confirm_pct
+        param_encoding: &divergence_common_encoding
+          pivot_scope:
+            1: INTERNAL
+            2: EXTERNAL
+          div_type:
+            1: REGULAR
+            2: HIDDEN
+          confirm_mode:
+            1: NONE
+            2: PRICE_REACTION
+        not_calibrated_here: &divergence_not_calibrated
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - unconfirmed_pivots
+          - rsi_period
+          - macd_fast_ema
+          - macd_slow_ema
+          - macd_signal_ema
+          - obv_formula
+          - obv_norm_window
+          - pivot_engine_params
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F061_RSIBULLDIV_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F062:
+        status: active
+        feature_key: rsi_bear_div_flag_1m
+        feature_name_ru: "RSI bearish divergence"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DIVERGENCE_PATTERNS_F061_F066_strict_passport.md
+        action_id: F062_RSIBEARDIV_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F062_rsibeardiv_entry_filter.yaml
+        allowed_calibration_params:
+          - F062_pivot_scope
+          - F062_div_type
+          - F062_price_delta_min_pct
+          - F062_rsi_delta_min
+          - F062_max_pivot_gap_bars
+          - F062_confirm_mode
+          - F062_reaction_confirm_pct
+        param_encoding: *divergence_common_encoding
+        not_calibrated_here: *divergence_not_calibrated
+        runtime_action_columns:
+          - F062_RSIBEARDIV_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F063:
+        status: active
+        feature_key: macd_bull_div_flag_1m
+        feature_name_ru: "MACD bullish divergence"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DIVERGENCE_PATTERNS_F061_F066_strict_passport.md
+        action_id: F063_MACDBULLDIV_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F063_macdbulldiv_entry_filter.yaml
+        allowed_calibration_params:
+          - F063_pivot_scope
+          - F063_div_type
+          - F063_macd_component
+          - F063_price_delta_min_pct
+          - F063_macd_delta_min_pct
+          - F063_max_pivot_gap_bars
+          - F063_confirm_mode
+          - F063_reaction_confirm_pct
+        param_encoding:
+          <<: *divergence_common_encoding
+          macd_component:
+            1: LINE
+            2: HIST
+        not_calibrated_here: *divergence_not_calibrated
+        runtime_action_columns:
+          - F063_MACDBULLDIV_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F064:
+        status: active
+        feature_key: macd_bear_div_flag_1m
+        feature_name_ru: "MACD bearish divergence"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DIVERGENCE_PATTERNS_F061_F066_strict_passport.md
+        action_id: F064_MACDBEARDIV_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F064_macdbeardiv_entry_filter.yaml
+        allowed_calibration_params:
+          - F064_pivot_scope
+          - F064_div_type
+          - F064_macd_component
+          - F064_price_delta_min_pct
+          - F064_macd_delta_min_pct
+          - F064_max_pivot_gap_bars
+          - F064_confirm_mode
+          - F064_reaction_confirm_pct
+        param_encoding:
+          <<: *divergence_common_encoding
+          macd_component:
+            1: LINE
+            2: HIST
+        not_calibrated_here: *divergence_not_calibrated
+        runtime_action_columns:
+          - F064_MACDBEARDIV_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F065:
+        status: active
+        feature_key: obv_bull_div_flag_1m
+        feature_name_ru: "OBV bullish divergence"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DIVERGENCE_PATTERNS_F061_F066_strict_passport.md
+        action_id: F065_OBVBULLDIV_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F065_obvbulldiv_entry_filter.yaml
+        allowed_calibration_params:
+          - F065_pivot_scope
+          - F065_div_type
+          - F065_price_delta_min_pct
+          - F065_obv_delta_min_norm
+          - F065_max_pivot_gap_bars
+          - F065_confirm_mode
+          - F065_reaction_confirm_pct
+        param_encoding: *divergence_common_encoding
+        not_calibrated_here: *divergence_not_calibrated
+        runtime_action_columns:
+          - F065_OBVBULLDIV_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F066:
+        status: active
+        feature_key: obv_bear_div_flag_1m
+        feature_name_ru: "OBV bearish divergence"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/DIVERGENCE_PATTERNS_F061_F066_strict_passport.md
+        action_id: F066_OBVBEARDIV_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F066_obvbeardiv_entry_filter.yaml
+        allowed_calibration_params:
+          - F066_pivot_scope
+          - F066_div_type
+          - F066_price_delta_min_pct
+          - F066_obv_delta_min_norm
+          - F066_max_pivot_gap_bars
+          - F066_confirm_mode
+          - F066_reaction_confirm_pct
+        param_encoding: *divergence_common_encoding
+        not_calibrated_here: *divergence_not_calibrated
+        runtime_action_columns:
+          - F066_OBVBEARDIV_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+    planned_passports: {}
+
+  B021:
+    status: active
+    name_ru: "PATTERN_QUALITY качество паттерна"
+    name_en: pattern_quality
+    description_ru: "Фильтры входа по силе и возрасту уже найденного паттерна F067-F068."
+    description_en: "Entry filters based on strength and age of an already detected pattern F067-F068."
+    comment_ru: "Twenty-first passport block in the new route. The block does not search for patterns from scratch and does not calibrate candle/divergence/chart engines, side, TP/SL or timeout exit."
+    active_passports:
+      F067:
+        status: active
+        feature_key: pattern_strength_1m
+        feature_name_ru: "Сила паттерна"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/PATTERN_QUALITY_F067_F068_strict_passport.md
+        action_id: F067_PATTERNSTRENGTH_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F067_patternstrength_entry_filter.yaml
+        allowed_calibration_params:
+          - F067_strength_state
+          - F067_strength_thr
+          - F067_require_confirmation
+          - F067_require_context
+        param_encoding:
+          strength_state:
+            1: STRONG
+            2: WEAK
+          require_confirmation:
+            0: NO
+            1: YES
+          require_context:
+            0: NO
+            1: YES
+        not_calibrated_here: &pattern_quality_not_calibrated
+          - trade_side
+          - tf
+          - calc_method
+          - pattern_detection_engines
+          - candle_pattern_params
+          - divergence_pattern_params
+          - chart_pattern_params
+          - base_pattern_score_table
+          - level_context_engine
+          - volume_context_engine
+          - structure_context_engine
+          - breakout_context_engine
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F067_PATTERNSTRENGTH_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F068:
+        status: active
+        feature_key: pattern_age_bars_1m
+        feature_name_ru: "Возраст паттерна в барах"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/PATTERN_QUALITY_F067_F068_strict_passport.md
+        action_id: F068_PATTERNAGE_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F068_patternage_entry_filter.yaml
+        allowed_calibration_params:
+          - F068_age_mode
+          - F068_min_age_bars
+          - F068_max_age_bars
+        param_encoding:
+          age_mode:
+            1: FRESH
+            2: MATURE
+            3: EXPIRED
+        not_calibrated_here: *pattern_quality_not_calibrated
+        runtime_action_columns:
+          - F068_PATTERNAGE_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+    planned_passports: {}
+
+  B022:
+    status: active
+    name_ru: "CHART_PATTERNS графические паттерны"
+    name_en: chart_patterns
+    description_ru: "Фильтры входа по графическим паттернам F069-F077."
+    description_en: "Entry filters based on chart patterns F069-F077."
+    comment_ru: "Twenty-second passport block in the new route. Each chart pattern is calibrated as a separate solo action. Pattern engine constants, side, TP/SL and timeout exit are not calibrated inside this block."
+    active_passports:
+      F069:
+        status: active
+        feature_key: double_bottom_flag_1m
+        feature_name_ru: "Double bottom"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F069_DOUBLEBOTTOM_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F069_doublebottom_entry_filter.yaml
+        allowed_calibration_params:
+          - F069_bottom_tolerance_pct
+          - F069_min_separation_bars
+          - F069_neckline_break_required
+          - F069_break_buffer_pct
+          - F069_max_pattern_age_bars
+        param_encoding: &chart_bool_encoding
+          bool:
+            0: NO
+            1: YES
+        not_calibrated_here: &chart_patterns_not_calibrated
+          - trade_side
+          - tf
+          - calc_method
+          - price_source
+          - high_low_source
+          - unconfirmed_pivots
+          - pattern_engine
+          - swing_lookback
+          - pivot_left
+          - pivot_right
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F069_DOUBLEBOTTOM_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F070:
+        status: active
+        feature_key: double_top_flag_1m
+        feature_name_ru: "Double top"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F070_DOUBLETOP_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F070_doubletop_entry_filter.yaml
+        allowed_calibration_params:
+          - F070_top_tolerance_pct
+          - F070_min_separation_bars
+          - F070_neckline_break_required
+          - F070_break_buffer_pct
+          - F070_max_pattern_age_bars
+        param_encoding: *chart_bool_encoding
+        not_calibrated_here: *chart_patterns_not_calibrated
+        runtime_action_columns:
+          - F070_DOUBLETOP_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F071:
+        status: active
+        feature_key: head_shoulders_flag_1m
+        feature_name_ru: "Head and shoulders"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F071_HEADSHOULDERS_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F071_headshoulders_entry_filter.yaml
+        allowed_calibration_params:
+          - F071_shoulder_tolerance_pct
+          - F071_head_min_excess_pct
+          - F071_neckline_break_required
+          - F071_break_buffer_pct
+          - F071_max_pattern_age_bars
+        param_encoding: *chart_bool_encoding
+        not_calibrated_here: *chart_patterns_not_calibrated
+        runtime_action_columns:
+          - F071_HEADSHOULDERS_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F072:
+        status: active
+        feature_key: inverse_head_shoulders_flag_1m
+        feature_name_ru: "Inverse head and shoulders"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F072_INVHEADSHOULDERS_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F072_invheadshoulders_entry_filter.yaml
+        allowed_calibration_params:
+          - F072_shoulder_tolerance_pct
+          - F072_head_min_excess_pct
+          - F072_neckline_break_required
+          - F072_break_buffer_pct
+          - F072_max_pattern_age_bars
+        param_encoding: *chart_bool_encoding
+        not_calibrated_here: *chart_patterns_not_calibrated
+        runtime_action_columns:
+          - F072_INVHEADSHOULDERS_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F073:
+        status: active
+        feature_key: triangle_flag_1m
+        feature_name_ru: "Triangle"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F073_TRIANGLE_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F073_triangle_entry_filter.yaml
+        allowed_calibration_params:
+          - F073_triangle_type
+          - F073_min_touches
+          - F073_convergence_min_pct
+          - F073_breakout_required
+          - F073_break_dir
+          - F073_break_buffer_pct
+        param_encoding: &chart_break_encoding
+          break_dir:
+            -1: DOWN
+            0: ANY
+            1: UP
+          bool:
+            0: NO
+            1: YES
+        not_calibrated_here: *chart_patterns_not_calibrated
+        runtime_action_columns:
+          - F073_TRIANGLE_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F074:
+        status: active
+        feature_key: pennant_flag_1m
+        feature_name_ru: "Pennant"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F074_PENNANT_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F074_pennant_entry_filter.yaml
+        allowed_calibration_params:
+          - F074_impulse_dir
+          - F074_impulse_min_pct
+          - F074_consolidation_bars
+          - F074_compression_min_pct
+          - F074_breakout_required
+          - F074_break_buffer_pct
+        param_encoding:
+          impulse_dir:
+            -1: DOWN
+            1: UP
+          bool:
+            0: NO
+            1: YES
+        not_calibrated_here: *chart_patterns_not_calibrated
+        runtime_action_columns:
+          - F074_PENNANT_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F075:
+        status: active
+        feature_key: wedge_rising_flag_1m
+        feature_name_ru: "Rising wedge"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F075_WEDGERISING_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F075_wedgerising_entry_filter.yaml
+        allowed_calibration_params:
+          - F075_min_touches
+          - F075_convergence_min_pct
+          - F075_breakout_required
+          - F075_break_dir
+          - F075_break_buffer_pct
+        param_encoding: *chart_break_encoding
+        not_calibrated_here: *chart_patterns_not_calibrated
+        runtime_action_columns:
+          - F075_WEDGERISING_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F076:
+        status: active
+        feature_key: wedge_falling_flag_1m
+        feature_name_ru: "Falling wedge"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F076_WEDGEFALLING_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F076_wedgefalling_entry_filter.yaml
+        allowed_calibration_params:
+          - F076_min_touches
+          - F076_convergence_min_pct
+          - F076_breakout_required
+          - F076_break_dir
+          - F076_break_buffer_pct
+        param_encoding: *chart_break_encoding
+        not_calibrated_here: *chart_patterns_not_calibrated
+        runtime_action_columns:
+          - F076_WEDGEFALLING_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F077:
+        status: active
+        feature_key: range_flag_1m
+        feature_name_ru: "Range"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md
+        action_id: F077_RANGEFLAG_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F077_rangeflag_entry_filter.yaml
+        allowed_calibration_params:
+          - F077_range_lookback
+          - F077_max_range_pct
+          - F077_min_touches_high
+          - F077_min_touches_low
+          - F077_range_pos_mode
+          - F077_range_pos_level
+        param_encoding:
+          range_pos_mode:
+            1: ANY
+            2: LOW
+            3: HIGH
+            4: MID
+        not_calibrated_here: *chart_patterns_not_calibrated
+        runtime_action_columns:
+          - F077_RANGEFLAG_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+    planned_passports: {}
+
+  B023:
+    status: active
+    name_ru: "PATTERN_CONFIRMATION podtverzhdenie pattern_event"
+    name_en: pattern_confirmation
+    description_ru: "Filtry vhoda po podtverzhdeniyu uzhe naydennogo pattern_event obemom ili urovnem F078-F079."
+    description_en: "Entry filters that confirm an already detected pattern_event with volume or level context F078-F079."
+    comment_ru: "Twenty-third passport block in the new route. It does not search patterns from scratch and does not calibrate pattern/level engines, side, TP/SL or timeout exit."
+    active_passports:
+      F078:
+        status: active
+        feature_key: pattern_volume_confirm_flag_1m
+        feature_name_ru: "Podtverzhdenie pattern_event obemom"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/PATTERN_CONFIRMATION_F078_F079_strict_passport.md
+        action_id: F078_PATTERNVOLCONF_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F078_patternvolconf_entry_filter.yaml
+        allowed_calibration_params:
+          - F078_confirm_mode
+          - F078_ratio_thr
+          - F078_z_thr
+          - F078_confirm_bar_mode
+          - F078_direction_filter
+        param_encoding: &pattern_confirmation_encoding
+          confirm_mode:
+            1: RATIO
+            2: Z_SCORE
+            3: BOTH
+          confirm_bar_mode:
+            1: PATTERN_BAR
+            2: NEXT_BAR
+            3: BREAKOUT_BAR
+          direction_filter:
+            1: ANY
+            2: MATCH_PATTERN
+          level_source_mode:
+            1: SWING_LEVELS
+            2: DENSITY_VPOC
+            3: FIBONACCI_GRID
+            4: VWAP
+            5: ANY_LEVEL
+          confirm_type:
+            1: NEAR_LEVEL
+            2: REJECTION
+            3: BREAKOUT
+        not_calibrated_here: &pattern_confirmation_not_calibrated
+          - trade_side
+          - tf
+          - calc_method
+          - pattern_detection_engines
+          - pattern_memory_fields
+          - level_engines
+          - volume_ma_window
+          - volume_z_window
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F078_PATTERNVOLCONF_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F079:
+        status: active
+        feature_key: pattern_level_confirm_flag_1m
+        feature_name_ru: "Podtverzhdenie pattern_event urovnem"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/PATTERN_CONFIRMATION_F078_F079_strict_passport.md
+        action_id: F079_PATTERNLEVELCONF_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F079_patternlevelconf_entry_filter.yaml
+        allowed_calibration_params:
+          - F079_level_source_mode
+          - F079_confirm_type
+          - F079_dist_thr_pct
+          - F079_reaction_confirm_pct
+          - F079_direction_filter
+        param_encoding: *pattern_confirmation_encoding
+        not_calibrated_here: *pattern_confirmation_not_calibrated
+        runtime_action_columns:
+          - F079_PATTERNLEVELCONF_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+    planned_passports: {}
+
+  B024:
+    status: active
+    name_ru: "PATTERN_COMPOSITE_ENTRY kompozitnyy pattern entry"
+    name_en: pattern_composite_entry
+    description_ru: "Kompozitnye filtry vhoda F080-F081 poverh gotovyh pattern, quality, confirmation, structure i breakout/retest signalov."
+    description_en: "Composite entry filters F080-F081 built on already emitted pattern, quality, confirmation, structure, and breakout/retest signals."
+    comment_ru: "Twenty-fourth passport block in the new route. It does not search patterns from scratch and does not calibrate pattern engines, TP/SL, timeout exit, or order size."
+    active_passports:
+      F080:
+        status: active
+        feature_key: pattern_structure_volume_entry_long_1m
+        feature_name_ru: "Kompozitnyy pattern vhod LONG"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/PATTERN_COMPOSITE_ENTRY_F080_F081_strict_passport.md
+        action_id: F080_PATTERNLONG_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F080_patternlong_entry_filter.yaml
+        allowed_calibration_params:
+          - F080_pattern_family_filter
+          - F080_direction_mode
+          - F080_logic_mode
+          - F080_use_strength
+          - F080_use_age
+          - F080_use_volume_confirm
+          - F080_use_level_confirm
+          - F080_structure_filter
+          - F080_breakout_filter
+          - F080_min_score
+          - F080_block_opposite_pattern
+        param_encoding: &pattern_composite_long_encoding
+          pattern_family_filter:
+            1: ANY
+            2: CANDLE
+            3: DIVERGENCE
+            4: CHART
+          direction_mode:
+            1: DIRECT_ONLY
+            2: ALLOW_NEUTRAL_WITH_CONTEXT
+          logic_mode:
+            1: STRICT
+            2: SCORE
+          bool:
+            0: NO
+            1: YES
+          structure_filter:
+            1: NONE
+            2: BULLISH_BIAS
+            3: BOS_UP
+            4: BULLISH_CHOCH
+            5: ANY_BULLISH_STRUCTURE
+          breakout_filter:
+            1: NONE
+            2: BREAKOUT_UP
+            3: RETEST_UP
+            4: SWING_HIGH_BREAK
+            5: ANY_UP_BREAK
+        not_calibrated_here: &pattern_composite_not_calibrated
+          - tf
+          - calc_method
+          - pattern_detection_formulas
+          - divergence_formulas
+          - chart_pattern_formulas
+          - pattern_strength_formula
+          - pattern_age_formula
+          - pattern_volume_confirm_formula
+          - pattern_level_confirm_formula
+          - market_structure_formula
+          - breakout_retest_formula
+          - take_profit_order
+          - stop_loss_order
+          - exit_rules
+          - order_size
+        runtime_action_columns:
+          - F080_PATTERNLONG_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F081:
+        status: active
+        feature_key: pattern_structure_volume_entry_short_1m
+        feature_name_ru: "Kompozitnyy pattern vhod SHORT"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/PATTERN_COMPOSITE_ENTRY_F080_F081_strict_passport.md
+        action_id: F081_PATTERNSHORT_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F081_patternshort_entry_filter.yaml
+        allowed_calibration_params:
+          - F081_pattern_family_filter
+          - F081_direction_mode
+          - F081_logic_mode
+          - F081_use_strength
+          - F081_use_age
+          - F081_use_volume_confirm
+          - F081_use_level_confirm
+          - F081_structure_filter
+          - F081_breakout_filter
+          - F081_min_score
+          - F081_block_opposite_pattern
+        param_encoding:
+          pattern_family_filter:
+            1: ANY
+            2: CANDLE
+            3: DIVERGENCE
+            4: CHART
+          direction_mode:
+            1: DIRECT_ONLY
+            2: ALLOW_NEUTRAL_WITH_CONTEXT
+          logic_mode:
+            1: STRICT
+            2: SCORE
+          bool:
+            0: NO
+            1: YES
+          structure_filter:
+            1: NONE
+            2: BEARISH_BIAS
+            3: BOS_DOWN
+            4: BEARISH_CHOCH
+            5: ANY_BEARISH_STRUCTURE
+          breakout_filter:
+            1: NONE
+            2: BREAKOUT_DOWN
+            3: RETEST_DOWN
+            4: SWING_LOW_BREAK
+            5: ANY_DOWN_BREAK
+        not_calibrated_here: *pattern_composite_not_calibrated
+        runtime_action_columns:
+          - F081_PATTERNSHORT_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+    planned_passports: {}
+
+  B025:
+    status: active
+    name_ru: "PATTERN_TRADE_CONTEXT SL/TP context"
+    name_en: pattern_trade_context
+    description_ru: "Filtry vhoda F082-F083 po SL-buffer i TP-ladder kontekstu uzhe naydennogo pattern_event."
+    description_en: "Entry filters F082-F083 for SL-buffer and TP-ladder context of an already detected pattern_event."
+    comment_ru: "Twenty-fifth passport block in the new route. It does not place real SL/TP orders and does not calibrate exits, order size, or trade side."
+    active_passports:
+      F082:
+        status: active
+        feature_key: pattern_sl_buffer_distance_1m
+        feature_name_ru: "Pattern SL buffer distance"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/PATTERN_TRADE_CONTEXT_F082_F083_strict_passport.md
+        action_id: F082_PATTERNSLBUF_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F082_patternslbuf_entry_filter.yaml
+        allowed_calibration_params:
+          - F082_sl_anchor_mode
+          - F082_buffer_mode
+          - F082_buffer_pct
+          - F082_atr_mult
+          - F082_range_mult
+          - F082_sl_distance_mode
+          - F082_min_sl_dist_pct
+          - F082_max_sl_dist_pct
+        param_encoding: &pattern_trade_context_encoding
+          sl_anchor_mode:
+            1: PATTERN_EXTREME
+            2: STRUCTURE_LEVEL
+            3: NEAREST_VALID_LEVEL
+          buffer_mode:
+            1: PCT
+            2: ATR14
+            3: PATTERN_RANGE
+          sl_distance_mode:
+            1: MAX_RISK
+            2: MIN_DISTANCE
+            3: BAND
+          target_source_mode:
+            1: PATTERN_TARGET
+            2: SWING_LEVELS
+            3: DENSITY_VPOC
+            4: FIBONACCI_GRID
+            5: VWAP
+            6: MIXED
+          bool:
+            0: NO
+            1: YES
+          ladder_state:
+            1: GOOD
+            2: POOR
+        not_calibrated_here: &pattern_trade_context_not_calibrated
+          - tf
+          - calc_method
+          - trade_side
+          - pattern_detection_formulas
+          - pattern_event_fields
+          - real_stop_loss_order
+          - real_take_profit_order
+          - exit_rules
+          - order_size
+          - risk_per_trade
+        runtime_action_columns:
+          - F082_PATTERNSLBUF_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+      F083:
+        status: active
+        feature_key: pattern_tp_ladder_score_1m
+        feature_name_ru: "Pattern TP ladder score"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/PATTERN_TRADE_CONTEXT_F082_F083_strict_passport.md
+        action_id: F083_PATTERNTPLADDER_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F083_patterntpladder_entry_filter.yaml
+        allowed_calibration_params:
+          - F083_target_source_mode
+          - F083_min_targets
+          - F083_min_rr_to_target
+          - F083_target_spacing_min_pct
+          - F083_require_clear_path
+          - F083_ladder_state
+          - F083_ladder_score_thr
+        param_encoding: *pattern_trade_context_encoding
+        not_calibrated_here: *pattern_trade_context_not_calibrated
+        runtime_action_columns:
+          - F083_PATTERNTPLADDER_ALLOW
+        backtest_subpassport: *baseline_exit_subpassport
+    planned_passports: {}
+
+  B026:
+    order: 26
+    block_key: volume_flow
+    name_ru: "VWAP distance"
+    name_en: vwap_distance_1m
+    status: active
+    description_ru: "Entry filter F024 by side or distance to session VWAP on closed 1m bars."
+    description_en: "Entry filter F024 by side or distance to session VWAP on closed 1m bars."
+    comment_ru: "Late closure of the missing F024 gap. Kept as a separate block to avoid renumbering already audited B013-B025 passports."
+    active_passports:
+      F024:
+        status: active
+        feature_key: vwap_distance_1m
+        feature_name_ru: "Distance to VWAP on closed 1m candle"
+        passport_path: docs/CALIBRATION_NODE_CURRENT/passports/features/F024_vwap_distance_1m_strict_passport.md
+        action_id: F024_VWAPDIST_ALLOW
+        action_type: ENTRY_FILTER
+        output: binary_1_0
+        active_matrix_path: configs/calibration_matrices/passport_actions/F024_vwapdist_entry_filter.yaml
+        allowed_calibration_params:
+          - F024_signal_mode
+          - F024_side_state
+          - F024_distance_state
+          - F024_dist_thr_pct
+        param_encoding:
+          F024_signal_mode:
+            1: SIDE
+            2: DISTANCE
+          F024_side_state:
+            1: ABOVE
+            -1: BELOW
+          F024_distance_state:
+            1: FAR
+            -1: NEAR
+        not_calibrated_here:
+          - side
+          - tf
+          - calc_method
+          - vwap_formula
+          - session_reset
+          - price_source
+          - volume_source
+          - entry_exit
+          - order_size
+          - stop_loss
+          - take_profit
+        runtime_action_columns:
+          - F024_VWAPDIST_ALLOW
+        backtest_subpassport:
+          status: baseline
+          exit_policy: tp_sl_timeout
+          timeout_exit_enabled: true
+          disable_timeout_exit: false
+          note: "Exit rules are baseline runtime controls, not F024 calibration knobs."
+    planned_passports: {}
+
+legacy_frozen:
+  reason: "Old matrices mixed feature, hypothesis, runtime, risk, and exit knobs without action passports."
+  do_not_use_for_new_baseline:
+    - configs/calibration_full_matrix_v1.yaml
+    - configs/calibration_feature_hypothesis_draft.yaml
+    - configs/calibration_matrices/catalog_blocks/catalog_block_01_price_volatility.yaml
+    - configs/calibration_matrices/catalog_blocks/catalog_block_02_trend_momentum.yaml
+    - configs/calibration_matrices/catalog_blocks/catalog_block_03_volume_flow.yaml
+    - configs/calibration_matrices/catalog_blocks/catalog_block_04_density_profile.yaml
+    - configs/calibration_matrices/catalog_blocks/catalog_block_05_structure_ta.yaml
+    - configs/calibration_matrices/catalog_blocks/catalog_block_06_pattern.yaml
+    - configs/calibration_matrices/feature_sweep/h001_price_volatility_ret_1.yaml
+    - configs/calibration_matrices/feature_sweep/h002_price_volatility_ret_3.yaml
+  allowed_use:
+    - historical_artifact_reference
+    - migration_source_after_passport_review
+
+runtime_backtest_subpassports:
+  baseline_core_runtime:
+    status: needs_decision
+    params:
+      - horizon_bars
+      - p_enter_long
+      - p_enter_short
+      - min_expected_move_pct
+      - notional_usd
+    decision_needed: "Fix single-value grids for pure passport tests or create a separate runtime passport."
+  baseline_exit:
+    status: active_baseline
+    params:
+      - stop_loss_pct
+      - take_profit_pct
+      - hold_bars
+      - timeout_exit_enabled
+      - dynamic_tp_enabled
+      - tp_min_factor
+    baseline_policy: tp_sl_timeout
+    note: "Exit params are not feature/passport knobs until an EXIT_SIGNAL or DYNAMIC_EXIT passport is created."
+
+next_required_work:
+  - "When the user provides the next passport, assign it to B001-B006 by meaning and register it here."
+  - "For each approved passport, create/update exactly one executable matrix under configs/calibration_matrices/passport_actions."
+  - "Run solo passport calibration first; combination passports stay diagnostic until explicitly approved."
+  - "Create exit-action passports before calibrating dynamic exits."

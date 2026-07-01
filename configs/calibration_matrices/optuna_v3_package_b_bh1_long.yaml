@@ -1,0 +1,645 @@
+version: 1
+status: v3_package_b_slice
+source_of_truth:
+  features_block: configs/features_block.yaml
+  feature_formulas: src/mlbotnav/dataset.py
+  hypothesis_runtime: src/mlbotnav/adaptive_auto_train.py
+  search_grid_runtime: src/mlbotnav/search_gate_candidate.py
+notes_ru:
+- Это целевая матрица калибровки (что калибруем), а не ограничение текущей реализации.
+- Long/Short калибровать раздельно.
+- Для period/window/lookback ось = влево/вправо (меньше/больше окно по истории).
+- Для threshold/ratio/bin_pct ось = вниз/вверх (мягче/жестче фильтр).
+- 'Направление по времени: только назад, вперед запрещено.'
+optuna_switches:
+  enabled: true
+  block_switches:
+    price_volatility: true
+    trend_momentum: true
+    volume_flow: true
+    density_profile: true
+    structure_ta: true
+    pattern: true
+  hypothesis_switches:
+    enabled: true
+grid_presets:
+  wide:
+    description: full profile value range (all points)
+  medium:
+    description: every second point + guaranteed max
+  narrow:
+    description: compact center-focused set with preserved min/max anchors
+parameter_profiles:
+  return_lookback:
+    min: 3
+    max: 30
+    step: 3
+    count: 10
+    axis: left_right
+  rolling_window:
+    min: 20
+    max: 180
+    step: 20
+    count: 9
+    axis: left_right
+  period_standard:
+    min: 7
+    max: 35
+    step: 2
+    count: 15
+    axis: left_right
+  ema_slow_period:
+    min: 20
+    max: 120
+    step: 10
+    count: 11
+    axis: left_right
+  ema_ultra_period:
+    min: 120
+    max: 300
+    step: 20
+    count: 10
+    axis: left_right
+  macd_fast_period:
+    min: 7
+    max: 21
+    step: 2
+    count: 8
+    axis: left_right
+  macd_slow_period:
+    min: 19
+    max: 43
+    step: 2
+    count: 13
+    axis: left_right
+  macd_signal_period:
+    min: 5
+    max: 17
+    step: 2
+    count: 7
+    axis: left_right
+  stoch_d_period:
+    min: 3
+    max: 15
+    step: 2
+    count: 7
+    axis: left_right
+  threshold_fine:
+    min: 0.0005
+    max: 0.01
+    step: 0.0005
+    count: 20
+    axis: down_up
+  doji_threshold:
+    min: 0.05
+    max: 0.2
+    step: 0.01
+    count: 16
+    axis: down_up
+  ratio_pattern:
+    min: 1.2
+    max: 3.4
+    step: 0.2
+    count: 12
+    axis: down_up
+  ratio_opposite_wick_cap:
+    min: 0.4
+    max: 1.2
+    step: 0.1
+    count: 9
+    axis: down_up
+  density_window_short:
+    min: 20
+    max: 120
+    step: 20
+    count: 6
+    axis: left_right
+  density_window_long:
+    min: 120
+    max: 360
+    step: 30
+    count: 9
+    axis: left_right
+  density_bin_pct:
+    min: 0.0003
+    max: 0.0012
+    step: 0.0001
+    count: 10
+    axis: down_up
+  div_lookback:
+    min: 3
+    max: 30
+    step: 3
+    count: 10
+    axis: left_right
+  pattern_age_cap:
+    min: 5
+    max: 100
+    step: 5
+    count: 20
+    axis: left_right
+  adx_threshold:
+    min: 15
+    max: 35
+    step: 2
+    count: 11
+    axis: down_up
+  min_abs_ema_gap:
+    min: 0.0
+    max: 0.08
+    step: 0.01
+    count: 9
+    axis: down_up
+  horizon_bars:
+    min: 1
+    max: 20
+    step: 1
+    count: 20
+    axis: left_right
+  p_enter_long:
+    min: 0.52
+    max: 0.8
+    step: 0.02
+    count: 15
+    axis: down_up
+  p_enter_short:
+    min: 0.2
+    max: 0.48
+    step: 0.02
+    count: 15
+    axis: down_up
+  min_expected_move:
+    min: 0.0005
+    max: 0.01
+    step: 0.0005
+    count: 20
+    axis: down_up
+  notional_usd:
+    min: 5
+    max: 100
+    step: 5
+    count: 20
+    axis: down_up
+  imbalance_threshold:
+    min: 0.05
+    max: 0.5
+    step: 0.05
+    count: 10
+    axis: down_up
+  spread_z_threshold:
+    min: 0.5
+    max: 3.0
+    step: 0.25
+    count: 11
+    axis: down_up
+feature_rows:
+- block: price_volatility
+  feature: ret_1
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: price_volatility
+  feature: ret_3
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: price_volatility
+  feature: ret_6
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: price_volatility
+  feature: ret_12
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: price_volatility
+  feature: ret_24
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: price_volatility
+  feature: hl_spread
+  calibrate: false
+  optuna_toggle: false
+  reason: derived_formula
+- block: price_volatility
+  feature: rolling_std_20
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: price_volatility
+  feature: atr14
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+- block: trend_momentum
+  feature: ema_gap
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+  - ema_slow_period
+- block: trend_momentum
+  feature: ema_slope_5
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+  - return_lookback
+- block: trend_momentum
+  feature: ema200_gap
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - ema_ultra_period
+- block: trend_momentum
+  feature: rsi14
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+- block: trend_momentum
+  feature: macd_line
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - macd_fast_period
+  - macd_slow_period
+- block: trend_momentum
+  feature: macd_signal
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - macd_fast_period
+  - macd_slow_period
+  - macd_signal_period
+- block: trend_momentum
+  feature: macd_hist
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - macd_fast_period
+  - macd_slow_period
+  - macd_signal_period
+- block: trend_momentum
+  feature: adx14
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+- block: trend_momentum
+  feature: stoch_k14
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+- block: trend_momentum
+  feature: stoch_d14
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+  - stoch_d_period
+- block: volume_flow
+  feature: vol_chg
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: volume_flow
+  feature: vol_z
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: volume_flow
+  feature: delta_volume
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: volume_flow
+  feature: obv_slope_5
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: volume_flow
+  feature: mfi14
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - period_standard
+- block: volume_flow
+  feature: vwap_distance
+  calibrate: false
+  optuna_toggle: false
+  reason: session_vwap_derived
+- block: density_profile
+  feature: density_vpoc_distance_60
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_short
+  - density_bin_pct
+- block: density_profile
+  feature: density_bin_share_60
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_short
+  - density_bin_pct
+- block: density_profile
+  feature: density_cluster_share_60
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_short
+  - density_bin_pct
+- block: density_profile
+  feature: density_vpoc_share_60
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_short
+  - density_bin_pct
+- block: density_profile
+  feature: density_vpoc_distance_240
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_long
+  - density_bin_pct
+- block: density_profile
+  feature: density_bin_share_240
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_long
+  - density_bin_pct
+- block: density_profile
+  feature: density_cluster_share_240
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_long
+  - density_bin_pct
+- block: density_profile
+  feature: density_vpoc_share_240
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_long
+  - density_bin_pct
+- block: density_profile
+  feature: density_vpoc_drift_20
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - div_lookback
+- block: density_profile
+  feature: density_cluster_ratio_60_240
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - density_window_short
+  - density_window_long
+  - density_bin_pct
+- block: structure_ta
+  feature: support_distance
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: structure_ta
+  feature: resistance_distance
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: structure_ta
+  feature: level_strength
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+  - threshold_fine
+- block: structure_ta
+  feature: position_in_range
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: structure_ta
+  feature: trend_channel_pos
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: structure_ta
+  feature: fib_0382_distance
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: structure_ta
+  feature: fib_0618_distance
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: structure_ta
+  feature: tp_context_distance
+  calibrate: false
+  optuna_toggle: false
+  reason: derived_from_sr
+- block: structure_ta
+  feature: sl_context_distance
+  calibrate: false
+  optuna_toggle: false
+  reason: derived_from_sr
+- block: structure_ta
+  feature: rr_context_estimate
+  calibrate: false
+  optuna_toggle: false
+  reason: derived_from_tp_sl
+- block: structure_ta
+  feature: breakout_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+- block: structure_ta
+  feature: false_breakout_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+  - threshold_fine
+- block: structure_ta
+  feature: retest_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - rolling_window
+  - threshold_fine
+- block: structure_ta
+  feature: swing_high_break_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: structure_ta
+  feature: swing_low_break_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - return_lookback
+- block: structure_ta
+  feature: bos_up_flag
+  calibrate: false
+  optuna_toggle: false
+  reason: derived_from_swing_and_slope
+- block: structure_ta
+  feature: bos_down_flag
+  calibrate: false
+  optuna_toggle: false
+  reason: derived_from_swing_and_slope
+- block: structure_ta
+  feature: choch_flag
+  calibrate: false
+  optuna_toggle: false
+  reason: derived_sign_change
+- block: pattern
+  feature: doji_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - doji_threshold
+- block: pattern
+  feature: inside_bar_flag
+  calibrate: false
+  optuna_toggle: false
+  reason: rule_based
+- block: pattern
+  feature: pin_bar_bull_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - ratio_pattern
+- block: pattern
+  feature: pin_bar_bear_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - ratio_pattern
+- block: pattern
+  feature: hammer_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - ratio_pattern
+  - ratio_opposite_wick_cap
+- block: pattern
+  feature: shooting_star_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - ratio_pattern
+  - ratio_opposite_wick_cap
+- block: pattern
+  feature: engulf_bull_flag
+  calibrate: false
+  optuna_toggle: false
+  reason: rule_based
+- block: pattern
+  feature: engulf_bear_flag
+  calibrate: false
+  optuna_toggle: false
+  reason: rule_based
+- block: pattern
+  feature: rsi_bull_div_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - div_lookback
+- block: pattern
+  feature: rsi_bear_div_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - div_lookback
+- block: pattern
+  feature: macd_bull_div_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - div_lookback
+- block: pattern
+  feature: macd_bear_div_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - div_lookback
+- block: pattern
+  feature: obv_bull_div_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - div_lookback
+- block: pattern
+  feature: obv_bear_div_flag
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - div_lookback
+- block: pattern
+  feature: pattern_strength
+  calibrate: false
+  optuna_toggle: false
+  reason: aggregate_derived
+- block: pattern
+  feature: pattern_age_bars
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - pattern_age_cap
+hypothesis_rows:
+- hypothesis: ema_stack_bull
+  calibrate: true
+  optuna_toggle: true
+  params:
+  - min_abs_ema_gap
+  - period_standard
+  - ema_slow_period
+  - ema_ultra_period
+search_grid_rows:
+- name: horizon_bars
+  profile: horizon_bars
+- name: p_enter_long
+  profile: p_enter_long
+- name: p_enter_short
+  profile: p_enter_short
+- name: min_expected_move
+  profile: min_expected_move
+- name: notional_usd
+  profile: notional_usd
+constraints:
+- ema_fast < ema_slow < ema_ultra
+- ema_slow - ema_fast >= 5
+- ema_ultra - ema_slow >= 20
+- macd_fast < macd_slow
+- macd_signal < macd_slow
+- stoch_d_period <= stoch_k_period
+- density_window_long > density_window_short
+- window >= lookback + 2
+- p_short < p_long
+- time_direction = past_only

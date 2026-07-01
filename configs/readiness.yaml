@@ -1,0 +1,14 @@
+readiness:
+  project_ready: false
+  enforce_freeze: true
+  reason: P2017 final NO_GO after forward fail; calibration only via APTuna temporary
+    unlock
+  block_actions:
+  - train_baseline
+  - pipeline_train_eval
+  - search_gate_candidate
+  - prod_cycle
+  - stage_ladder
+  - stage_engine
+  blockers: []
+  updated_at_utc: '2026-06-02T05:49:25.779315+00:00'

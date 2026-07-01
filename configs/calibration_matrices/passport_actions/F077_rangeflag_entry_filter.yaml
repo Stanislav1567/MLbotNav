@@ -1,0 +1,37 @@
+version: 1
+status: active_passport_action_matrix
+created_utc: "2026-06-23T01:05:00Z"
+source_of_truth: {action_passport_registry: configs/calibration_action_passports.yaml, action_passport: docs/CALIBRATION_NODE_CURRENT/passports/features/CHART_PATTERNS_F069_F077_strict_passport.md, feature_formulas: src/mlbotnav/dataset.py, backtest_runtime: src/mlbotnav/backtest.py}
+passport_mode:
+  enabled: true
+  registry_path: configs/calibration_action_passports.yaml
+  registry_block_id: B022
+  registry_passport_id: F077
+  action_passport_id: F077
+  action_id: F077_RANGEFLAG_ALLOW
+  policy: allowlist
+  allowed_calibration_params: [F077_range_lookback, F077_max_range_pct, F077_min_touches_high, F077_min_touches_low, F077_range_pos_mode, F077_range_pos_level]
+optuna_switches:
+  enabled: true
+  block_switches: {price_volatility: false, trend_momentum: false, volume_flow: false, density_profile: false, structure_ta: false, pattern: true}
+  hypothesis_switches: {enabled: true, strict_block_purity: true}
+  context_blocks: {enabled: false, always_on: [], calibration_policy: passport_action_only, comparison_policy: none}
+grid_presets:
+  wide: {description: "full passport profile value range"}
+  medium: {description: "every second passport value with preserved max"}
+  narrow: {description: "compact passport value set with preserved min/max anchors"}
+parameter_profiles:
+  F077_range_lookback: {min: 20, max: 240, step: 10, count: 23, axis: range_lookback}
+  F077_max_range_pct: {min: 0.10, max: 5.00, step: 0.10, count: 50, axis: max_range_pct}
+  F077_min_touches_high: {min: 1, max: 5, step: 1, count: 5, axis: min_touches_high}
+  F077_min_touches_low: {min: 1, max: 5, step: 1, count: 5, axis: min_touches_low}
+  F077_range_pos_mode: {values: [1, 2, 3, 4], count: 4, axis: range_pos_mode}
+  F077_range_pos_level: {min: 10, max: 90, step: 5, count: 17, axis: range_pos_level}
+feature_rows:
+  - {block: pattern, feature: range_flag_1m, action_id: F077_RANGEFLAG_ALLOW, action_type: ENTRY_FILTER, calibrate: true, optuna_toggle: true, params: [F077_range_lookback, F077_max_range_pct, F077_min_touches_high, F077_min_touches_low, F077_range_pos_mode, F077_range_pos_level]}
+hypothesis_rows:
+  - {hypothesis: none, calibrate: true, optuna_toggle: true, params: []}
+search_grid_rows: []
+constraints: []
+backtest_subpassport: {exit_policy: tp_sl_timeout, timeout_exit_enabled: true, disable_timeout_exit: false, note: "Backtest exit controls are baseline runtime controls, not F077 knobs."}
+

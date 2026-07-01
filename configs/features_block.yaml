@@ -1,0 +1,510 @@
+block_name: FICHI
+version: 1
+generated_at_utc: '2026-05-23T04:08:01Z'
+source_of_truth:
+  feature_columns: src/mlbotnav/dataset.py
+  feature_groups: src/mlbotnav/dataset.py
+  trend_hypotheses: src/mlbotnav/adaptive_auto_train.py::_build_hypothesis_plan
+  technical_patterns: src/mlbotnav/technical_analysis.py
+hypotheses:
+  trend_filters_long_style_1m:
+  - trend_filter: none
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_gap_sign
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_gap_sign
+    min_abs_ema_gap: 0.02
+  - trend_filter: ema_cross_20_50
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_cross_20_200
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_stack_bull
+    min_abs_ema_gap: 0.0
+  - trend_filter: channel_breakout_50
+    min_abs_ema_gap: 0.0
+  - trend_filter: adx_trend_18
+    min_abs_ema_gap: 0.0
+  signal_modes:
+  - both
+  - long_only
+  - short_only
+  execution_modes:
+  - research
+  - exchange_like
+  order_types:
+  - market
+  - limit
+  trend_filters_short_style_1m:
+  - trend_filter: none
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_gap_sign
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_gap_sign
+    min_abs_ema_gap: 0.02
+  - trend_filter: ema_cross_20_50
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_cross_20_200
+    min_abs_ema_gap: 0.0
+  - trend_filter: channel_breakout_50
+    min_abs_ema_gap: 0.0
+  - trend_filter: adx_trend_18
+    min_abs_ema_gap: 0.0
+  - trend_filter: fib_retrace_0382_0618_trend_resume
+    min_abs_ema_gap: 0.0
+  - trend_filter: fib_extension_targets
+    min_abs_ema_gap: 0.0
+  - trend_filter: swing_lh_ll_short
+    min_abs_ema_gap: 0.0
+  - trend_filter: bos_continuation_confirm
+    min_abs_ema_gap: 0.0
+  - trend_filter: min_max_range_revert
+    min_abs_ema_gap: 0.0
+  - trend_filter: hvn_lvn_density_reaction
+    min_abs_ema_gap: 0.0
+  - trend_filter: volume_profile_poc_vah_val_retest
+    min_abs_ema_gap: 0.0
+  - trend_filter: value_area_rotation_vs_breakout
+    min_abs_ema_gap: 0.0
+  - trend_filter: wedge_breakout_plus_profile_acceptance
+    min_abs_ema_gap: 0.0
+  trend_filters_both_style_1m:
+  - trend_filter: none
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_gap_sign
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_gap_sign
+    min_abs_ema_gap: 0.02
+  - trend_filter: ema_cross_20_50
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_cross_20_200
+    min_abs_ema_gap: 0.0
+  - trend_filter: ema_stack_bull
+    min_abs_ema_gap: 0.0
+  - trend_filter: channel_breakout_50
+    min_abs_ema_gap: 0.0
+  - trend_filter: adx_trend_18
+    min_abs_ema_gap: 0.0
+features:
+  columns_count: 68
+  columns:
+  - ret_1
+  - ret_3
+  - ret_6
+  - ret_12
+  - ret_24
+  - hl_spread
+  - rolling_std_20
+  - atr14
+  - vol_chg
+  - vol_z
+  - delta_volume
+  - obv_slope_5
+  - mfi14
+  - ema_gap
+  - ema_slope_5
+  - ema200_gap
+  - rsi14
+  - macd_line
+  - macd_signal
+  - macd_hist
+  - adx14
+  - stoch_k14
+  - stoch_d14
+  - vwap_distance
+  - support_distance
+  - resistance_distance
+  - level_strength
+  - position_in_range
+  - trend_channel_pos
+  - fib_0382_distance
+  - fib_0618_distance
+  - tp_context_distance
+  - sl_context_distance
+  - rr_context_estimate
+  - breakout_flag
+  - false_breakout_flag
+  - retest_flag
+  - swing_high_break_flag
+  - swing_low_break_flag
+  - bos_up_flag
+  - bos_down_flag
+  - choch_flag
+  - doji_flag
+  - inside_bar_flag
+  - pin_bar_bull_flag
+  - pin_bar_bear_flag
+  - hammer_flag
+  - shooting_star_flag
+  - engulf_bull_flag
+  - engulf_bear_flag
+  - double_bottom_flag
+  - double_top_flag
+  - head_shoulders_flag
+  - inverse_head_shoulders_flag
+  - triangle_flag
+  - pennant_flag
+  - wedge_rising_flag
+  - wedge_falling_flag
+  - range_flag
+  - pattern_volume_confirm_flag
+  - pattern_level_confirm_flag
+  - pattern_structure_volume_entry_long
+  - pattern_structure_volume_entry_short
+  - pattern_sl_buffer_distance
+  - pattern_tp_ladder_score
+  - rsi_bull_div_flag
+  - rsi_bear_div_flag
+  - macd_bull_div_flag
+  - macd_bear_div_flag
+  - obv_bull_div_flag
+  - obv_bear_div_flag
+  - pattern_strength
+  - pattern_age_bars
+  - density_vpoc_distance_60
+  - density_bin_share_60
+  - density_cluster_share_60
+  - density_vpoc_share_60
+  - density_vpoc_distance_240
+  - density_bin_share_240
+  - density_cluster_share_240
+  - density_vpoc_share_240
+  - density_vpoc_drift_20
+  - density_cluster_ratio_60_240
+  groups:
+    price_volatility:
+    - ret_1
+    - ret_3
+    - ret_6
+    - ret_12
+    - ret_24
+    - hl_spread
+    - rolling_std_20
+    - atr14
+    trend_momentum:
+    - ema_gap
+    - ema_slope_5
+    - ema200_gap
+    - rsi14
+    - macd_line
+    - macd_signal
+    - macd_hist
+    - adx14
+    - stoch_k14
+    - stoch_d14
+    volume_flow:
+    - vol_chg
+    - vol_z
+    - delta_volume
+    - obv_slope_5
+    - mfi14
+    - vwap_distance
+    density_profile:
+    - density_vpoc_distance_60
+    - density_bin_share_60
+    - density_cluster_share_60
+    - density_vpoc_share_60
+    - density_vpoc_distance_240
+    - density_bin_share_240
+    - density_cluster_share_240
+    - density_vpoc_share_240
+    - density_vpoc_drift_20
+    - density_cluster_ratio_60_240
+    structure_ta:
+    - support_distance
+    - resistance_distance
+    - level_strength
+    - position_in_range
+    - trend_channel_pos
+    - fib_0382_distance
+    - fib_0618_distance
+    - tp_context_distance
+    - sl_context_distance
+    - rr_context_estimate
+    - breakout_flag
+    - false_breakout_flag
+    - retest_flag
+    - swing_high_break_flag
+    - swing_low_break_flag
+    - bos_up_flag
+    - bos_down_flag
+    - choch_flag
+    pattern:
+    - doji_flag
+    - inside_bar_flag
+    - pin_bar_bull_flag
+    - pin_bar_bear_flag
+    - hammer_flag
+    - shooting_star_flag
+    - engulf_bull_flag
+    - engulf_bear_flag
+    - double_bottom_flag
+    - double_top_flag
+    - head_shoulders_flag
+    - inverse_head_shoulders_flag
+    - triangle_flag
+    - pennant_flag
+    - wedge_rising_flag
+    - wedge_falling_flag
+    - range_flag
+    - pattern_volume_confirm_flag
+    - pattern_level_confirm_flag
+    - pattern_structure_volume_entry_long
+    - pattern_structure_volume_entry_short
+    - pattern_sl_buffer_distance
+    - pattern_tp_ladder_score
+    - rsi_bull_div_flag
+    - rsi_bear_div_flag
+    - macd_bull_div_flag
+    - macd_bear_div_flag
+    - obv_bull_div_flag
+    - obv_bear_div_flag
+    - pattern_strength
+    - pattern_age_bars
+technical_analysis:
+  candle_patterns:
+  - doji
+  - inside_bar
+  - engulf_bull
+  - engulf_bear
+  - hammer
+  - shooting_star
+  - pin_bar_bull
+  - pin_bar_bear
+  pattern_types:
+  - double_bottom
+  - double_top
+  - head_and_shoulders
+  - inverse_head_and_shoulders
+  - macd_bull_divergence
+  - macd_bear_divergence
+  - obv_bull_divergence
+  - obv_bear_divergence
+  - pennant
+  - range
+  - rsi_bear_divergence
+  - rsi_bull_divergence
+  - triangle
+  - wedge_falling
+  - wedge_rising
+extended_hypotheses_backlog:
+  fibonacci_blocks:
+  - name: fib_retrace_0382_0618_trend_resume
+    levels:
+    - 0.382
+    - 0.5
+    - 0.618
+    - 0.786
+    status: active
+  - name: fib_extension_targets
+    levels:
+    - 1.272
+    - 1.618
+    - 2.618
+    status: active
+  swing_bos_minmax:
+  - name: swing_hl_hh_long
+    status: active
+  - name: swing_lh_ll_short
+    status: active
+  - name: bos_continuation_confirm
+    status: active
+  - name: min_max_range_revert
+    status: active
+  - name: max_low_pullback_long
+    status: active
+  density_orderbook:
+  - name: hvn_lvn_density_reaction
+    status: active
+  - name: volume_profile_poc_vah_val_retest
+    status: active
+  - name: value_area_rotation_vs_breakout
+    status: active
+  - name: wedge_breakout_plus_profile_acceptance
+    status: active
+  - name: orderbook_imbalance_l1_l50
+    status: active
+  - name: spread_pressure_and_delta_absorption
+    status: active
+ru_labels:
+  section:
+    hypotheses: Гипотезы
+    features: Фичи
+    technical_analysis: Теханализ
+    backlog: Бэклог гипотез
+  status:
+    planned: Запланировано
+    in_code_density_only: Частично в коде
+  trend_filters:
+    none: Без фильтра
+    ema_gap_sign: Знак EMA-разрыва
+    ema_cross_20_50: Пересечение EMA 20/50
+    ema_cross_20_200: Пересечение EMA 20/200
+    ema_stack_bull: Бычий стек EMA
+    channel_breakout_50: Пробой канала 50
+    adx_trend_18: ADX-тренд 18
+  signal_modes:
+    both: Оба направления
+    long_only: Только лонг
+    short_only: Только шорт
+  execution_modes:
+    research: Исследовательский
+    exchange_like: Биржевой
+  order_types:
+    market: Рыночный
+    limit: Лимитный
+  feature_groups:
+    price_volatility: Цена и волатильность
+    trend_momentum: Тренд и импульс
+    volume_flow: Объём и поток
+    density_profile: Профиль плотности
+    structure_ta: Структура и ТА
+    pattern: Паттерны
+  candle_patterns:
+    doji: Доджи
+    inside_bar: Внутренний бар
+    engulf_bull: Бычье поглощение
+    engulf_bear: Медвежье поглощение
+    hammer: Молот
+    shooting_star: Падающая звезда
+    pin_bar_bull: Бычий пин-бар
+    pin_bar_bear: Медвежий пин-бар
+  figure_patterns:
+    double_top: Двойная вершина
+    double_bottom: Двойное дно
+    head_and_shoulders: Голова и плечи
+    inverse_head_and_shoulders: Перевёрнутая ГиП
+    triangle: Треугольник
+    pennant: Вымпел
+    wedge_falling: Нисходящий клин
+    wedge_rising: Восходящий клин
+    range: Диапазон
+  divergence_patterns:
+    rsi_bull_divergence: Бычья дивергенция RSI
+    rsi_bear_divergence: Медвежья дивергенция RSI
+    macd_bull_divergence: Бычья дивергенция MACD
+    macd_bear_divergence: Медвежья дивергенция MACD
+    obv_bull_divergence: Бычья дивергенция OBV
+    obv_bear_divergence: Медвежья дивергенция OBV
+  backlog_hypotheses:
+    fib_retrace_0382_0618_trend_resume: Фибо-откат и продолжение
+    fib_extension_targets: Фибо-цели расширения
+    swing_hl_hh_long: Свинг HL/HH лонг
+    swing_lh_ll_short: Свинг LH/LL шорт
+    bos_continuation_confirm: Подтверждение BOS-продолжения
+    min_max_range_revert: Возврат в min/max-диапазон
+    max_low_pullback_long: Лонг от отката к max-low
+    hvn_lvn_density_reaction: Реакция на HVN/LVN
+    volume_profile_poc_vah_val_retest: Ретест POC/VAH/VAL
+    value_area_rotation_vs_breakout: Ротация VA vs пробой
+    wedge_breakout_plus_profile_acceptance: Клин-пробой и акцепт профиля
+    orderbook_imbalance_l1_l50: Дисбаланс стакана L1-L50
+    spread_pressure_and_delta_absorption: Давление спреда и абсорбция дельты
+  feature_columns:
+    ret_1: Доходность за 1 бар
+    ret_3: Доходность за 3 бара
+    ret_6: Доходность за 6 баров
+    ret_12: Доходность за 12 баров
+    ret_24: Доходность за 24 бара
+    hl_spread: Диапазон high-low к open
+    rolling_std_20: Скользящая волатильность 20
+    atr14: ATR(14)
+    vol_chg: Изменение объёма
+    vol_z: Z-оценка объёма
+    delta_volume: Дельта объёма
+    obv_slope_5: Наклон OBV за 5 баров
+    mfi14: MFI(14)
+    ema_gap: Разрыв EMA20-EMA50
+    ema_slope_5: Наклон EMA20 за 5 баров
+    ema200_gap: Отклонение от EMA200
+    rsi14: RSI(14)
+    macd_line: Линия MACD
+    macd_signal: Сигнальная линия MACD
+    macd_hist: Гистограмма MACD
+    adx14: ADX(14)
+    stoch_k14: Стохастик K(14)
+    stoch_d14: Стохастик D(14)
+    vwap_distance: Дистанция до VWAP
+    support_distance: Дистанция до поддержки
+    resistance_distance: Дистанция до сопротивления
+    level_strength: Сила уровня
+    position_in_range: Позиция в диапазоне
+    trend_channel_pos: Позиция в тренд-канале
+    fib_0382_distance: Дистанция до Фибо 0.382
+    fib_0618_distance: Дистанция до Фибо 0.618
+    tp_context_distance: Контекстная дистанция TP
+    sl_context_distance: Контекстная дистанция SL
+    rr_context_estimate: Оценка риск/прибыль
+    breakout_flag: Флаг пробоя
+    false_breakout_flag: Флаг ложного пробоя
+    retest_flag: Флаг ретеста
+    swing_high_break_flag: Пробой swing high
+    swing_low_break_flag: Пробой swing low
+    bos_up_flag: BOS вверх
+    bos_down_flag: BOS вниз
+    choch_flag: CHOCH смена структуры
+    doji_flag: Флаг доджи
+    inside_bar_flag: Флаг внутреннего бара
+    pin_bar_bull_flag: Флаг бычьего пин-бара
+    pin_bar_bear_flag: Флаг медвежьего пин-бара
+    hammer_flag: Флаг молота
+    shooting_star_flag: Флаг падающей звезды
+    engulf_bull_flag: Флаг бычьего поглощения
+    engulf_bear_flag: Флаг медвежьего поглощения
+    double_bottom_flag: Флаг двойного дна
+    double_top_flag: Флаг двойной вершины
+    head_shoulders_flag: Флаг головы и плеч
+    inverse_head_shoulders_flag: Флаг перевернутой головы и плеч
+    triangle_flag: Флаг треугольника
+    pennant_flag: Флаг вымпела
+    wedge_rising_flag: Флаг восходящего клина
+    wedge_falling_flag: Флаг нисходящего клина
+    range_flag: Флаг диапазона
+    pattern_volume_confirm_flag: Подтверждение фигуры объемом
+    pattern_level_confirm_flag: Подтверждение фигуры уровнем
+    pattern_structure_volume_entry_long: Вход long по фигуре, уровню и объему
+    pattern_structure_volume_entry_short: Вход short по фигуре, уровню и объему
+    pattern_sl_buffer_distance: Дистанция SL с буфером паттерна
+    pattern_tp_ladder_score: Оценка TP-лесенки паттерна
+    rsi_bull_div_flag: Флаг бычьей дивергенции RSI
+    rsi_bear_div_flag: Флаг медвежьей дивергенции RSI
+    macd_bull_div_flag: Флаг бычьей дивергенции MACD
+    macd_bear_div_flag: Флаг медвежьей дивергенции MACD
+    obv_bull_div_flag: Флаг бычьей дивергенции OBV
+    obv_bear_div_flag: Флаг медвежьей дивергенции OBV
+    pattern_strength: Сила паттерна
+    pattern_age_bars: Возраст паттерна в барах
+    density_vpoc_distance_60: Дистанция до VPOC окно 60
+    density_bin_share_60: Доля объёма бина окно 60
+    density_cluster_share_60: Доля объёма кластера окно 60
+    density_vpoc_share_60: Доля объёма VPOC окно 60
+    density_vpoc_distance_240: Дистанция до VPOC окно 240
+    density_bin_share_240: Доля объёма бина окно 240
+    density_cluster_share_240: Доля объёма кластера окно 240
+    density_vpoc_share_240: Доля объёма VPOC окно 240
+    density_vpoc_drift_20: Смещение VPOC за 20 баров
+    density_cluster_ratio_60_240: Отношение плотности 60 к 240
+  technical_candle_patterns:
+    doji: Доджи
+    inside_bar: Внутренний бар
+    engulf_bull: Бычье поглощение
+    engulf_bear: Медвежье поглощение
+    hammer: Молот
+    shooting_star: Падающая звезда
+    pin_bar_bull: Бычий пин-бар
+    pin_bar_bear: Медвежий пин-бар
+  technical_pattern_types:
+    double_bottom: Двойное дно
+    double_top: Двойная вершина
+    head_and_shoulders: Голова и плечи
+    inverse_head_and_shoulders: Перевёрнутая ГиП
+    macd_bull_divergence: Бычья дивергенция MACD
+    macd_bear_divergence: Медвежья дивергенция MACD
+    obv_bull_divergence: Бычья дивергенция OBV
+    obv_bear_divergence: Медвежья дивергенция OBV
+    pennant: Вымпел
+    range: Диапазон
+    rsi_bear_divergence: Медвежья дивергенция RSI
+    rsi_bull_divergence: Бычья дивергенция RSI
+    triangle: Треугольник
+    wedge_falling: Нисходящий клин
+    wedge_rising: Восходящий клин

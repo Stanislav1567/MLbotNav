@@ -1,0 +1,90 @@
+version: 1
+status: active_passport_action_matrix
+created_utc: "2026-06-23T00:12:00Z"
+
+source_of_truth:
+  action_passport_registry: configs/calibration_action_passports.yaml
+  action_passport: docs/CALIBRATION_NODE_CURRENT/passports/features/DIVERGENCE_PATTERNS_F061_F066_strict_passport.md
+  feature_formulas: src/mlbotnav/dataset.py
+  backtest_runtime: src/mlbotnav/backtest.py
+
+passport_mode:
+  enabled: true
+  registry_path: configs/calibration_action_passports.yaml
+  registry_block_id: B020
+  registry_passport_id: F066
+  action_passport_id: F066
+  action_id: F066_OBVBEARDIV_ALLOW
+  policy: allowlist
+  allowed_calibration_params:
+    - F066_pivot_scope
+    - F066_div_type
+    - F066_price_delta_min_pct
+    - F066_obv_delta_min_norm
+    - F066_max_pivot_gap_bars
+    - F066_confirm_mode
+    - F066_reaction_confirm_pct
+
+optuna_switches:
+  enabled: true
+  block_switches:
+    price_volatility: false
+    trend_momentum: false
+    volume_flow: false
+    density_profile: false
+    structure_ta: false
+    pattern: true
+  hypothesis_switches:
+    enabled: true
+    strict_block_purity: true
+  context_blocks:
+    enabled: false
+    always_on: []
+    calibration_policy: passport_action_only
+    comparison_policy: none
+
+grid_presets:
+  wide: {description: "full passport profile value range"}
+  medium: {description: "every second passport value with preserved max"}
+  narrow: {description: "compact passport value set with preserved min/max anchors"}
+
+parameter_profiles:
+  F066_pivot_scope: {values: [1, 2], count: 2, axis: pivot_scope}
+  F066_div_type: {values: [1, 2], count: 2, axis: divergence_type}
+  F066_price_delta_min_pct: {min: 0.05, max: 3.00, step: 0.05, count: 60, axis: price_delta_min_pct}
+  F066_obv_delta_min_norm: {min: 0.5, max: 20.0, step: 0.5, count: 40, axis: obv_delta_min_norm}
+  F066_max_pivot_gap_bars: {min: 5, max: 120, step: 5, count: 24, axis: max_pivot_gap_bars}
+  F066_confirm_mode: {values: [1, 2], count: 2, axis: confirm_mode}
+  F066_reaction_confirm_pct: {min: 0.00, max: 1.00, step: 0.05, count: 21, axis: reaction_confirm_pct}
+
+feature_rows:
+  - block: pattern
+    feature: obv_bear_div_flag_1m
+    action_id: F066_OBVBEARDIV_ALLOW
+    action_type: ENTRY_FILTER
+    calibrate: true
+    optuna_toggle: true
+    params:
+      - F066_pivot_scope
+      - F066_div_type
+      - F066_price_delta_min_pct
+      - F066_obv_delta_min_norm
+      - F066_max_pivot_gap_bars
+      - F066_confirm_mode
+      - F066_reaction_confirm_pct
+
+hypothesis_rows:
+  - hypothesis: none
+    calibrate: true
+    optuna_toggle: true
+    params: []
+
+search_grid_rows: []
+constraints: []
+
+backtest_subpassport:
+  exit_policy: tp_sl_timeout
+  timeout_exit_enabled: true
+  disable_timeout_exit: false
+  note: "Backtest exit controls are baseline runtime controls, not F066 knobs."
+
