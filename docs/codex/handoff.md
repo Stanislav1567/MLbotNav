@@ -1,5 +1,33 @@
 # Handoff
 
+## Handoff 2026-07-01 Strategy Passport Roadmap
+
+Статус: `ACTIVE_STRATEGY_PASSPORT_ROADMAP_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Пользователь уточнил направление: не прыгать сразу в scorer/Optuna/ML и не делать кашу. Сначала надо собрать все паспорта, разложить их по блокам `B001/B002/...`, проверить MD/YAML/runtime, затем наложить стратегии на два эталона `19+7` локальными квадратами.
+
+Главный roadmap:
+`docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
+
+Активные рельсы обновлены:
+`docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_RAILS_RU.md`.
+
+Следующий исполнительный шаг:
+
+```text
+PASSPORT_BLOCK_INVENTORY_V0_NO_SCORER_NO_ML_NO_OPTUNA
+```
+
+После inventory:
+
+```text
+V2A_STRUCTURE_LAYER
+```
+
+V2A берет только структуру: `B014 LEVEL/RANGE/CHANNEL`, `B015 FIBONACCI_GRID`, `B017 BREAKOUT_RETEST`, `B018 MARKET_STRUCTURE BOS/CHOCH`.
+
+Граница: ручные входы `M01..M19` и 7 T15 не менять; scorer, target-lock, Optuna и ML не запускать.
+
 ## Handoff 2026-07-01 Git Remote Push MLbotNav
 
 Статус: `GIT_REMOTE_PUSH_DONE_MAIN_TRACKS_ORIGIN_MAIN`.

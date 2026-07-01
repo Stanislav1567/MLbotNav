@@ -1,5 +1,22 @@
 # Todo
 
+## Todo 2026-07-01 Strategy Passport Roadmap
+
+Статус: `NEXT_PASSPORT_BLOCK_INVENTORY_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать верхний roadmap | done | Использовать `FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md` | user direction |
+| Passport block inventory V0 | pending | Собрать таблицу `Bxxx -> Fxxx -> passport MD -> matrix YAML -> runtime action` | registry YAML |
+| V2A structure overlay | blocked | После inventory наложить `B014/B015/B017/B018` квадратами на `19+7` входов | inventory |
+| V2B flow overlay | blocked | После V2A наложить `B010/B013` | V2A user review |
+| V2C momentum overlay | blocked | После V2B наложить `B006/B007` | V2B user review |
+| V2D summary matrix | blocked | Свести hits/neutral/against по 26 входам | V2A-V2C |
+| Scorer / target-lock | blocked | Только после user visual review strategy overlay | user decision |
+| Optuna / ML/export/promotion | blocked | Только после отдельных approvals | user approval |
+
+Главный roadmap: `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
+
 ## Todo 2026-07-01 Git Remote Push MLbotNav
 
 Статус: `GIT_REMOTE_PUSH_DONE`.

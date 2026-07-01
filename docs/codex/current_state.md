@@ -1,5 +1,18 @@
 # Current State
 
+## Current State 2026-07-01 Strategy Passport Roadmap
+
+Текущий статус: `ACTIVE_STRATEGY_PASSPORT_ROADMAP_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Новый верхний рельс: сначала инвентаризация паспортов по блокам, потом strategy/passport overlay на два эталона `M01..M19` и 7 T15 входов. Стратегии должны проверяться локальными "квадратами", а не гореть весь день.
+
+Главный документ:
+`docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
+
+Следующий шаг: `PASSPORT_BLOCK_INVENTORY_V0_NO_SCORER_NO_ML_NO_OPTUNA`; после него `V2A_STRUCTURE_LAYER` по блокам `B014/B015/B017/B018`.
+
+Scorer, target-lock, Optuna и ML не запускать.
+
 ## Current State 2026-07-01 Git Remote Push MLbotNav
 
 Текущий статус: `GIT_REMOTE_PUSH_DONE_MAIN_TRACKS_ORIGIN_MAIN`.

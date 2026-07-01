@@ -1,5 +1,16 @@
 # Known Errors
 
+## Do not skip passport inventory before strategy overlay 2026-07-01
+
+Статус: `KNOWN_PROCESS_RISK_FIXED_BY_ROADMAP`.
+
+Риск: после V1 можно снова ошибочно прыгнуть сразу в один passport/scorer и потерять мысль пользователя. Пользователь зафиксировал другой порядок: сначала все паспорта по блокам, потом strategy/passport overlay квадратами на два эталона `19+7`.
+
+Правильная рельса:
+`docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
+
+Запрещено до inventory и V2 visual review: scorer, target-lock, Optuna, ML/export/promotion.
+
 ## Initial Git commit needs explicit author and remote 2026-07-01
 
 Статус: `resolved / git`.

@@ -1,5 +1,28 @@
 # Current Status: калибровочный узел
 
+## Fresh Target-Led Strategy Passport Roadmap 2026-07-01
+
+Статус: `ACTIVE_STRATEGY_PASSPORT_ROADMAP_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Пользователь зафиксировал новое направление, чтобы не делать дальше кашу:
+
+1. сначала собрать и разложить все паспорта по блокам `B001/B002/...`;
+2. проверить, где у каждого паспорта MD, реестр YAML, matrix YAML и runtime action;
+3. взять два эталонных скрина/ledger: `M01..M19` за `2026-05-14` и 7 входов T15 за `2026-05-15`;
+4. наложить паспорта/стратегии на эти входы не на весь день, а локальными "квадратами";
+5. посмотреть, какие стратегии реально объясняют входы: strict `Fibo`, `BOS/CHOCH`, `swing/retest`, `support/range/channel`, `volume/density`, `RSI/MACD`;
+6. только после visual review возвращаться к рабочему кластеру/паспорту/scorer.
+
+Главный roadmap:
+`docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
+
+Активные рельсы обновлены:
+`docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_RAILS_RU.md`.
+
+Следующий конкретный шаг: `PASSPORT_BLOCK_INVENTORY_V0_NO_SCORER_NO_ML_NO_OPTUNA`, затем `V2A_STRUCTURE_LAYER`.
+
+Граница: scorer, target-lock, Optuna, ML/export/promotion запрещены. Ручные входы `19+7` не менять без нового решения пользователя.
+
 ## Fresh Target-Led Strategy Passport Gap Audit 2026-07-01
 
 Статус: `STRATEGY_PASSPORT_GAP_AUDIT_V0_READY_NO_SCORER_NO_ML_NO_OPTUNA`.
