@@ -159,6 +159,11 @@ def _confirmed_before(pivots: list[Pivot], idx: int, *, lookback: int | None = N
     return [pivot for pivot in pivots if pivot.confirm_idx <= idx and pivot.idx >= start]
 
 
+def _causal_zigzag_before(raw_pivots: list[Pivot], idx: int, *, lookback: int, deviation_pct: float) -> list[Pivot]:
+    confirmed = _confirmed_before(raw_pivots, idx, lookback=lookback)
+    return _zigzag_pivots(confirmed, deviation_pct=deviation_pct)
+
+
 def _merge_levels(pivots: list[Pivot], *, merge_tolerance_pct: float = 0.15) -> list[dict[str, Any]]:
     levels: list[dict[str, Any]] = []
     for pivot in sorted(pivots, key=lambda item: item.price):
@@ -202,8 +207,8 @@ def _nearest_levels(df: pd.DataFrame, pivots_3: list[Pivot], idx: int) -> dict[s
     }
 
 
-def _fib_state(zigzag_10: list[Pivot], idx: int) -> dict[str, Any]:
-    confirmed = _confirmed_before(zigzag_10, idx, lookback=240)
+def _fib_state(raw_pivots_10: list[Pivot], idx: int) -> dict[str, Any]:
+    confirmed = _causal_zigzag_before(raw_pivots_10, idx, lookback=240, deviation_pct=0.30)
     if len(confirmed) < 2:
         return {"status": "no_confirmed_pivot_pair", "levels": {}}
     b = confirmed[-1]
@@ -276,8 +281,16 @@ def _channel_state(df: pd.DataFrame, idx: int, *, window: int = 120) -> dict[str
     }
 
 
-def _last_structure_event(df: pd.DataFrame, pivots: list[Pivot], idx: int, *, lookback: int, max_age: int) -> dict[str, Any]:
-    confirmed = _confirmed_before(pivots, idx, lookback=lookback)
+def _last_structure_event(
+    df: pd.DataFrame,
+    raw_pivots: list[Pivot],
+    idx: int,
+    *,
+    lookback: int,
+    max_age: int,
+    deviation_pct: float,
+) -> dict[str, Any]:
+    confirmed = _causal_zigzag_before(raw_pivots, idx, lookback=lookback, deviation_pct=deviation_pct)
     highs = [pivot for pivot in confirmed if pivot.kind == "H"]
     lows = [pivot for pivot in confirmed if pivot.kind == "L"]
     last_high = highs[-1] if highs else None
@@ -290,7 +303,7 @@ def _last_structure_event(df: pd.DataFrame, pivots: list[Pivot], idx: int, *, lo
     prev_events: list[dict[str, Any]] = []
     scan_start = max(0, idx - max_age)
     for j in range(scan_start, idx + 1):
-        local_confirmed = _confirmed_before(pivots, j, lookback=lookback)
+        local_confirmed = _causal_zigzag_before(raw_pivots, j, lookback=lookback, deviation_pct=deviation_pct)
         local_highs = [pivot for pivot in local_confirmed if pivot.kind == "H"]
         local_lows = [pivot for pivot in local_confirmed if pivot.kind == "L"]
         local_close = float(df.iloc[j]["close"])
@@ -354,19 +367,17 @@ def _analysis_for_target(
     target: dict[str, Any],
     *,
     pivots_3: list[Pivot],
-    pivots_internal: list[Pivot],
-    pivots_external: list[Pivot],
-    zigzag_10: list[Pivot],
+    pivots_10: list[Pivot],
 ) -> dict[str, Any]:
     signal_idx = _row_index_at_time(df, str(target["signal_time_utc"]))
     entry_idx = _row_index_at_time(df, str(target["entry_time_utc"]))
     row = df.iloc[signal_idx]
     levels = _nearest_levels(df, pivots_3, signal_idx)
-    fib = _fib_state(zigzag_10, signal_idx)
+    fib = _fib_state(pivots_10, signal_idx)
     channel = _channel_state(df, signal_idx)
     breakout = _breakout_retest_state(df, pivots_3, signal_idx)
-    internal = _last_structure_event(df, pivots_internal, signal_idx, lookback=120, max_age=120)
-    external = _last_structure_event(df, pivots_external, signal_idx, lookback=240, max_age=240)
+    internal = _last_structure_event(df, pivots_3, signal_idx, lookback=120, max_age=120, deviation_pct=0.15)
+    external = _last_structure_event(df, pivots_10, signal_idx, lookback=240, max_age=240, deviation_pct=0.30)
 
     fib_0382 = fib.get("levels", {}).get("0.382")
     fib_0618 = fib.get("levels", {}).get("0.618")
@@ -588,11 +599,12 @@ def _render_zoom_page(
         _draw_volume(ax_vol, win, alpha=0.66)
         ax_price.set_xlim(xmin, xmax)
         summary = item["V2A_visual_summary"]
-        support = ",".join(summary["supporting_blocks"]) or "none"
-        conflict = ",".join(summary["conflict_blocks"]) or "none"
+        support = "/".join(block.split("_", 1)[0] for block in summary["supporting_blocks"]) or "none"
+        conflict = "/".join(block.split("_", 1)[0] for block in summary["conflict_blocks"]) or "none"
         title = (
             f"{item['target_id']} {item['target_type']} | signal {_fmt_min(item['signal_time_utc'])} -> entry {_fmt_min(item['entry_time_utc'])} "
-            f"| p+5 {float(item['entry_price_plus_5bps']):.4f} | support={support} | conflict={conflict}"
+            f"| open {float(item['entry_open_price']):.4f} | p+5 {float(item['entry_price_plus_5bps']):.4f} "
+            f"| support={support} | conflict={conflict}"
         )
         ax_price.set_title(title, color="white", fontsize=8.2)
         ax_price.set_ylabel("Price", color="white")
@@ -613,6 +625,7 @@ def _write_csv(path: Path, records: list[dict[str, Any]]) -> None:
         "target_type",
         "signal_time_utc",
         "entry_time_utc",
+        "entry_open_price",
         "entry_price_plus_5bps",
         "signal_close",
         "range_pos_240",
@@ -649,6 +662,7 @@ def _write_csv(path: Path, records: list[dict[str, Any]]) -> None:
                     "target_type": item["target_type"],
                     "signal_time_utc": item["signal_time_utc"],
                     "entry_time_utc": item["entry_time_utc"],
+                    "entry_open_price": item["entry_open_price"],
                     "entry_price_plus_5bps": item["entry_price_plus_5bps"],
                     "signal_close": item["signal_close"],
                     "range_pos_240": item["range_pos_240"],
@@ -694,6 +708,7 @@ def _write_report(path: Path, payload: dict[str, Any]) -> None:
         "",
         "- Все расчеты заканчиваются на закрытой signal-свече.",
         "- Pivot считается доступным только после `PIVOT_RIGHT` закрытых свечей.",
+        "- Zigzag для Fibo/BOS пересобирается только из подтвержденных pivot на момент signal/event, без full-day zigzag.",
         "- Entry open и цена `+5 bps` показаны только как execution/control, не как feature выбора.",
         "- EMA, scorer, TP/SL, MFE/MAE, Optuna и ML здесь не используются.",
         "",
@@ -728,19 +743,14 @@ def run(day: str, out_dir: Path) -> dict[str, Any]:
     df = _add_closed_bar_features(_load_ohlcv(_source_csv(root, day)))
     targets = _load_targets(root, day)
     pivots_3 = _raw_pivots(df, left=3, right=3)
-    pivots_10_raw = _raw_pivots(df, left=10, right=10)
-    zigzag_10 = _zigzag_pivots(pivots_10_raw, deviation_pct=0.30)
-    pivots_internal = _zigzag_pivots(pivots_3, deviation_pct=0.15)
-    pivots_external = zigzag_10
+    pivots_10 = _raw_pivots(df, left=10, right=10)
 
     records = [
         _analysis_for_target(
             df,
             target,
             pivots_3=pivots_3,
-            pivots_internal=pivots_internal,
-            pivots_external=pivots_external,
-            zigzag_10=zigzag_10,
+            pivots_10=pivots_10,
         )
         for target in targets
     ]

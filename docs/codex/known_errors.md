@@ -1,5 +1,15 @@
 # Known Errors
 
+## V2A full-day zigzag lookahead risk fixed 2026-07-01
+
+Статус: `fixed / visual_overlay / no_ml`.
+
+Симптом: первый вариант `V2A_STRUCTURE_LAYER` строил `_zigzag_pivots()` по полному дню, а затем фильтровал pivots по `confirm_idx <= signal`. Это сохраняло риск, что Fibo/BOS будут косвенно зависеть от будущих pivot-замен в full-day zigzag.
+
+Решение: `src/mlbotnav/visual_entry_strategy_passport_overlay_v2a.py` теперь пересобирает zigzag prefix-causal из подтвержденных pivot для каждого `signal/event`. Fibo и BOS/CHOCH больше не используют заранее собранный full-day zigzag.
+
+Проверка: `M01..M19` сохранены, `entry_time = signal_time + 1m`, `entry_open_price` добавлен в CSV/zoom, scorer/target-lock/Optuna/ML не запускались.
+
 ## V2A structure overlay is visual only 2026-07-01
 
 Статус: `known_boundary / visual_only / no_ml`.

@@ -28,6 +28,8 @@ reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_
 
 Граница: это visual evidence, не `ALLOW`-scorer и не готовый сигнал. Scorer, target-lock, Optuna и ML не запускались. Entry price и `+5 bps` показаны только для execution/control.
 
+Follow-up аудит с агентом выявил и исправил риск lookahead: первый вариант строил Fibo/BOS через full-day zigzag до фильтра по signal. Текущий скрипт пересобирает zigzag prefix-causal из подтвержденных pivot на момент `signal/event`; старые переменные `zigzag_10/pivots_internal/pivots_external` удалены. CSV/zoom теперь показывают `entry_open_price` и `entry + 5 bps`.
+
 Следующий шаг: показать PNG пользователю. Если пользователь скажет `норм`, следующий V2A-шаг — наложить тот же слой на `2026-05-15` по 7 входам T15. Если скажет `шумно/фиксить`, править читаемость/слои 14 мая, не меняя ручные входы.
 
 ## Handoff 2026-07-01 Existing Passport Reconciliation

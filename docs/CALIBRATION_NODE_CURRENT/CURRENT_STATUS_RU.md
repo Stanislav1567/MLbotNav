@@ -39,6 +39,8 @@ src/mlbotnav/visual_entry_strategy_passport_overlay_v2a.py
 
 Граница no-lookahead: расчеты заканчиваются на закрытой signal-свече; pivot доступен только после `PIVOT_RIGHT`; entry open и `entry + 5 bps` только execution/control, не feature выбора. Scorer, target-lock, Optuna, ML/export/promotion не запускались.
 
+Проверка с агентом после первого рендера выявила риск: Fibo/BOS могли зависеть от full-day zigzag, собранного до фильтра по `signal`. Исправлено: Fibo/BOS теперь пересобирают zigzag prefix-causal из подтвержденных pivot на момент `signal/event`; `entry_open_price` добавлен в CSV/zoom, заголовки zoom сокращены до `B014/B015/B017/B018`. После фикса 14 мая перерендерен.
+
 Следующий шаг: пользователь смотрит PNG и говорит `норм / фиксить / шумно`; после этого либо править визуальный слой 14 мая, либо тем же V2A наложить `2026-05-15` на 7 входов.
 
 ## Fresh Target-Led Existing Passport Reconciliation 2026-07-01
