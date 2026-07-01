@@ -1,5 +1,38 @@
 # Commands: калибровочный узел
 
+## Fresh Target-Led Existing Passport Reconciliation 2026-07-01
+
+Статус: `NEXT_V2A_STRUCTURE_LAYER_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Текущий шаг не запускает scorer, Optuna или ML. Паспорта уже собраны; нужно сверять существующий manifest и готовить визуальный overlay.
+
+Прочитать рабочие рельсы:
+
+```powershell
+Get-Content -Encoding UTF8 docs\CALIBRATION_NODE_CURRENT\FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md
+Get-Content -Encoding UTF8 docs\CALIBRATION_NODE_CURRENT\PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md
+Get-Content -Encoding UTF8 docs\CALIBRATION_NODE_CURRENT\FRESH_TARGET_LED_RAILS_RU.md
+```
+
+Проверить реестр:
+
+```powershell
+Get-Content -Encoding UTF8 configs\calibration_action_passports.yaml
+```
+
+Следующий разрешенный рабочий слой:
+
+```text
+V2A_STRUCTURE_LAYER
+B014 LEVEL/RANGE/CHANNEL
+B015 FIBONACCI_GRID
+B017 BREAKOUT_RETEST
+B018 MARKET_STRUCTURE BOS/CHOCH
+B016 muted/context-only
+```
+
+Запрещено: scorer, target-lock, Optuna, ML/export/promotion.
+
 ## Fresh Target-Led Indicator/Hypothesis Review V1 19+7
 
 Статус: `INDICATOR_HYPOTHESIS_REVIEW_V1_M01_M19_T15V1_READY_NO_SCORER_NO_ML_NO_OPTUNA`.

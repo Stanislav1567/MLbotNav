@@ -1,5 +1,26 @@
 # Commands
 
+## Existing Passport Reconciliation And Overlay 2026-07-01
+
+Статус: `NEXT_V2A_STRUCTURE_LAYER_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Текущий подпункт не запускает scorer, Optuna или ML. Паспорта уже собраны; разрешено только сверять реестр и готовить visual overlay.
+
+Проверить manifest-сверку:
+
+```powershell
+Get-Content -Encoding UTF8 docs\CALIBRATION_NODE_CURRENT\PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md
+Get-Content -Encoding UTF8 docs\CALIBRATION_NODE_CURRENT\FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md
+```
+
+Проверить активный реестр:
+
+```powershell
+Get-Content -Encoding UTF8 configs\calibration_action_passports.yaml
+```
+
+Граница: следующий рабочий запуск должен быть только `V2A_STRUCTURE_LAYER` visual overlay по `B014/B015/B017/B018` на эталоны `M01..M19` и 7 T15. `B016` только muted/context-only. Scorer, target-lock, Optuna, ML/export/promotion запрещены.
+
 ## Git Remote Push MLbotNav 2026-07-01
 
 Статус: `GIT_REMOTE_PUSH_DONE_MAIN_TRACKS_ORIGIN_MAIN`.

@@ -1,13 +1,18 @@
 # Handoff
 
-## Handoff 2026-07-01 Strategy Passport Roadmap
+## Handoff 2026-07-01 Existing Passport Reconciliation
 
-Статус: `ACTIVE_STRATEGY_PASSPORT_ROADMAP_NO_SCORER_NO_ML_NO_OPTUNA`.
+Статус: `ACTIVE_EXISTING_PASSPORT_RECONCILIATION_AND_OVERLAY_NO_SCORER_NO_ML_NO_OPTUNA`.
 
-Пользователь уточнил направление: не прыгать сразу в scorer/Optuna/ML и не делать кашу. Сначала надо собрать все паспорта, разложить их по блокам `B001/B002/...`, проверить MD/YAML/runtime, затем наложить стратегии на два эталона `19+7` локальными квадратами.
+Пользователь уточнил направление: паспорта уже собраны по полочкам, их не нужно создавать заново. Сейчас надо сверить существующие связки `Bxxx -> Fxxx -> passport MD -> matrix YAML -> runtime action`, затем наложить стратегии на два эталона `19+7` full-day с локальными strategy squares внутри дня.
+
+Подключенный агент `Lorentz` провел read-only аудит: `26` блоков `B001..B026`, `82` активных не отключенных `Fxxx` связки, `82` активных matrix YAML; у всех активных связок найдены `passport_path` и `active_matrix_path`. `B001_RET_N_TOURNAMENT` отключен как diagnostic и в overlay не берется.
 
 Главный roadmap:
 `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
+
+Manifest-сверка:
+`docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md`.
 
 Активные рельсы обновлены:
 `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_RAILS_RU.md`.
@@ -15,16 +20,16 @@
 Следующий исполнительный шаг:
 
 ```text
-PASSPORT_BLOCK_INVENTORY_V0_NO_SCORER_NO_ML_NO_OPTUNA
-```
-
-После inventory:
-
-```text
 V2A_STRUCTURE_LAYER
 ```
 
-V2A берет только структуру: `B014 LEVEL/RANGE/CHANNEL`, `B015 FIBONACCI_GRID`, `B017 BREAKOUT_RETEST`, `B018 MARKET_STRUCTURE BOS/CHOCH`.
+Порядок слоев:
+
+```text
+V2A0 registry reconciliation done -> V2A structure -> V2B flow/density -> V2C momentum -> V2D pattern -> V2E summary matrix
+```
+
+V2A берет структуру: `B014 LEVEL/RANGE/CHANNEL`, `B015 FIBONACCI_GRID`, `B017 BREAKOUT_RETEST`, `B018 MARKET_STRUCTURE BOS/CHOCH`; `B016 ENTRY_QUALITY_CONTEXT` только muted/context-only.
 
 Граница: ручные входы `M01..M19` и 7 T15 не менять; scorer, target-lock, Optuna и ML не запускать.
 

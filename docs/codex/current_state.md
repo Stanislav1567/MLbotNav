@@ -1,15 +1,20 @@
 # Current State
 
-## Current State 2026-07-01 Strategy Passport Roadmap
+## Current State 2026-07-01 Existing Passport Reconciliation
 
-Текущий статус: `ACTIVE_STRATEGY_PASSPORT_ROADMAP_NO_SCORER_NO_ML_NO_OPTUNA`.
+Текущий статус: `ACTIVE_EXISTING_PASSPORT_RECONCILIATION_AND_OVERLAY_NO_SCORER_NO_ML_NO_OPTUNA`.
 
-Новый верхний рельс: сначала инвентаризация паспортов по блокам, потом strategy/passport overlay на два эталона `M01..M19` и 7 T15 входов. Стратегии должны проверяться локальными "квадратами", а не гореть весь день.
+Новый верхний рельс уточнен пользователем: паспорта уже собраны, сейчас нужна сверка существующих связок и strategy/passport overlay на два эталона `M01..M19` и 7 T15 входов. Full-day график остается картой дня, но каждая стратегия проверяется локальным участком внутри дня.
+
+Агент `Lorentz` подтвердил read-only аудит: `26` блоков `B001..B026`, `82` активных не отключенных `Fxxx`, `82` активных matrix YAML, все активные `passport_path` и `active_matrix_path` существуют. `B001_RET_N_TOURNAMENT` отключен как diagnostic.
 
 Главный документ:
 `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
 
-Следующий шаг: `PASSPORT_BLOCK_INVENTORY_V0_NO_SCORER_NO_ML_NO_OPTUNA`; после него `V2A_STRUCTURE_LAYER` по блокам `B014/B015/B017/B018`.
+Manifest-сверка:
+`docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md`.
+
+Следующий шаг: `V2A_STRUCTURE_LAYER` по блокам `B014/B015/B017/B018`; `B016` только muted/context-only. После user review идти в `V2B_FLOW_DENSITY_LAYER`, затем `V2C_MOMENTUM_LAYER`, `V2D_PATTERN_LAYER`, `V2E_SUMMARY_MATRIX`.
 
 Scorer, target-lock, Optuna и ML не запускать.
 

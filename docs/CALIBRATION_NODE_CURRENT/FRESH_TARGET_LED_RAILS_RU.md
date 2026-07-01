@@ -15,10 +15,19 @@ docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md
 Новая ближайшая линия работы:
 
 ```text
-инвентаризация паспортов по блокам
+сверка уже существующих паспортных связок
+-> registry reconciliation Bxxx -> Fxxx -> passport MD -> matrix YAML -> runtime action
 -> strategy/passport overlay на эталоны M01..M19 и T15 7 входов
--> проверка стратегий квадратами
+-> проверка стратегий локальными участками внутри full-day
 -> только потом паспорт-контракт/scorer/lock
+```
+
+Паспорта не создаем заново: они уже собраны. Текущий подпункт `V2A0_REGISTRY_RECONCILIATION_NO_SCORER_NO_ML_NO_OPTUNA` сверяет существующий manifest и фиксирует роли блоков для overlay.
+
+Сверка:
+
+```text
+docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md
 ```
 
 Это уточнение supersedes старый быстрый переход к одному паспорту после V1. Scorer, target-lock, Optuna и ML остаются запрещены.

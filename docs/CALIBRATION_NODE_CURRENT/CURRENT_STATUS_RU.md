@@ -1,25 +1,38 @@
 # Current Status: калибровочный узел
 
-## Fresh Target-Led Strategy Passport Roadmap 2026-07-01
+## Fresh Target-Led Existing Passport Reconciliation 2026-07-01
 
-Статус: `ACTIVE_STRATEGY_PASSPORT_ROADMAP_NO_SCORER_NO_ML_NO_OPTUNA`.
+Статус: `ACTIVE_EXISTING_PASSPORT_RECONCILIATION_AND_OVERLAY_NO_SCORER_NO_ML_NO_OPTUNA`.
 
-Пользователь зафиксировал новое направление, чтобы не делать дальше кашу:
+Пользователь уточнил: паспорта уже собраны по полочкам, их не нужно создавать заново. Текущий этап — навести порядок в связках и наложить существующие паспорта/стратегии на два эталона.
 
-1. сначала собрать и разложить все паспорта по блокам `B001/B002/...`;
-2. проверить, где у каждого паспорта MD, реестр YAML, matrix YAML и runtime action;
-3. взять два эталонных скрина/ledger: `M01..M19` за `2026-05-14` и 7 входов T15 за `2026-05-15`;
-4. наложить паспорта/стратегии на эти входы не на весь день, а локальными "квадратами";
-5. посмотреть, какие стратегии реально объясняют входы: strict `Fibo`, `BOS/CHOCH`, `swing/retest`, `support/range/channel`, `volume/density`, `RSI/MACD`;
-6. только после visual review возвращаться к рабочему кластеру/паспорту/scorer.
+Подключенный агент `Lorentz` провел read-only аудит:
+
+1. `configs/calibration_action_passports.yaml` содержит `26` блоков `B001..B026`;
+2. активных не отключенных `Fxxx` связок: `82`;
+3. активных matrix YAML: `82`;
+4. у всех активных связок найдены `passport_path` и `active_matrix_path`;
+5. `B001_RET_N_TOURNAMENT` является `diagnostic_only_disabled_for_baseline`, в overlay его не брать.
+
+Новый порядок:
+
+1. `V2A0_REGISTRY_RECONCILIATION`: сверить `Bxxx -> Fxxx -> passport MD -> matrix YAML -> runtime action`;
+2. `V2A_STRUCTURE_LAYER`: наложить `B014/B015/B017/B018`, а `B016` только muted/context;
+3. `V2B_FLOW_DENSITY_LAYER`: `B010/B013/B026`, позже `B011/B012`;
+4. `V2C_MOMENTUM_LAYER`: `B006/B007`; `B005` EMA остается reference/deferred;
+5. `V2D_PATTERN_LAYER`: `B019-B024` после no-lookahead проверки pattern windows; `B025` не брать active из-за SL/TP риска;
+6. `V2E_SUMMARY_MATRIX`: свести `19+7` входов против слоев `structure/flow/momentum/pattern`.
 
 Главный roadmap:
 `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
 
+Manifest-сверка:
+`docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md`.
+
 Активные рельсы обновлены:
 `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_RAILS_RU.md`.
 
-Следующий конкретный шаг: `PASSPORT_BLOCK_INVENTORY_V0_NO_SCORER_NO_ML_NO_OPTUNA`, затем `V2A_STRUCTURE_LAYER`.
+Следующий конкретный шаг: `V2A_STRUCTURE_LAYER` по двум эталонам `M01..M19` за `2026-05-14` и 7 входам T15 за `2026-05-15`.
 
 Граница: scorer, target-lock, Optuna, ML/export/promotion запрещены. Ручные входы `19+7` не менять без нового решения пользователя.
 

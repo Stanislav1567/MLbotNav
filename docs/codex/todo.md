@@ -1,21 +1,25 @@
 # Todo
 
-## Todo 2026-07-01 Strategy Passport Roadmap
+## Todo 2026-07-01 Existing Passport Reconciliation And Overlay
 
-Статус: `NEXT_PASSPORT_BLOCK_INVENTORY_V0`.
+Статус: `NEXT_V2A_STRUCTURE_LAYER`.
 
 | Task | Status | Next Action | Depends On |
 |---|---|---|---|
 | Зафиксировать верхний roadmap | done | Использовать `FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md` | user direction |
-| Passport block inventory V0 | pending | Собрать таблицу `Bxxx -> Fxxx -> passport MD -> matrix YAML -> runtime action` | registry YAML |
-| V2A structure overlay | blocked | После inventory наложить `B014/B015/B017/B018` квадратами на `19+7` входов | inventory |
-| V2B flow overlay | blocked | После V2A наложить `B010/B013` | V2A user review |
-| V2C momentum overlay | blocked | После V2B наложить `B006/B007` | V2B user review |
-| V2D summary matrix | blocked | Свести hits/neutral/against по 26 входам | V2A-V2C |
+| Подключить агента для read-only аудита | done | `Lorentz`: `26` блоков, `82` активных связки, `82` matrix, пути найдены | user request |
+| V2A0 registry reconciliation | done | Использовать `PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md` | registry YAML |
+| V2A structure overlay | current_next | Наложить `B014/B015/B017/B018` локальными участками на `19+7` входов; `B016` muted/context-only | V2A0 |
+| V2B flow/density overlay | blocked | После user review V2A наложить `B010/B013/B026`, позже `B011/B012` | V2A user review |
+| V2C momentum overlay | blocked | После V2B наложить `B006/B007`; `B005` EMA reference/deferred | V2B user review |
+| V2D pattern overlay | blocked | После no-lookahead проверки pattern windows наложить `B019-B024`; `B025` unsafe/context-only | V2C |
+| V2E summary matrix | blocked | Свести support/conflict/silent по 26 входам | V2A-V2D |
 | Scorer / target-lock | blocked | Только после user visual review strategy overlay | user decision |
 | Optuna / ML/export/promotion | blocked | Только после отдельных approvals | user approval |
 
 Главный roadmap: `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
+
+Manifest-сверка: `docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md`.
 
 ## Todo 2026-07-01 Git Remote Push MLbotNav
 

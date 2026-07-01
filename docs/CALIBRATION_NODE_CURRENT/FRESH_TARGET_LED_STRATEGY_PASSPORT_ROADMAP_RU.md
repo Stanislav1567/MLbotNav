@@ -2,23 +2,45 @@
 
 Дата фиксации: `2026-07-01`.
 
-Статус: `ACTIVE_STRATEGY_PASSPORT_ROADMAP_NO_SCORER_NO_ML_NO_OPTUNA`.
+Статус: `ACTIVE_EXISTING_PASSPORT_RECONCILIATION_AND_OVERLAY_NO_SCORER_NO_ML_NO_OPTUNA`.
 
 ## Главная фиксация
 
-Мы не продолжаем старую кашу из runner-цепочек, старых V7/V8/V9/V10/V11, старых Optuna-переборов и старой хронологии.
+Паспорта уже собраны по полочкам. Сейчас задача не создавать их заново, а сверить существующие связки и наложить активные паспортные стратегии на два ручных эталона.
 
 Текущий путь:
 
 ```text
-инвентаризация паспортов по блокам
--> проверка, какие паспорта реально есть в MD/YAML/runtime
+сверка существующего registry manifest
+-> контроль связок Bxxx -> Fxxx -> passport MD -> matrix YAML -> runtime action
 -> два эталона входов 19 + 7
--> strategy/passport overlay квадратами
--> визуальный разбор, какие стратегии объясняют входы
+-> full-day strategy/passport overlay
+-> локальные strategy squares внутри дня
+-> визуальный разбор, какие паспорта объясняют входы
+-> summary matrix по входам и блокам
 -> только потом выбор рабочего кластера/паспорта
 -> scorer/target-lock только после user review
 -> Optuna/ML только после отдельных разрешений
+```
+
+Старые V7/V8/V9/V10/V11, старые Optuna-переборы и старая хронология не являются очередью задач.
+
+## Агентский аудит
+
+Подключенный агент: `Lorentz`.
+
+Результат аудита только чтением:
+
+1. В `configs/calibration_action_passports.yaml` есть `26` блоков `B001..B026`.
+2. Активных не отключенных `Fxxx`-паспортов: `82`.
+3. Активных matrix YAML в `configs/calibration_matrices/passport_actions`: `82`.
+4. У всех активных связок `passport_path` и `active_matrix_path` файл найден.
+5. `B001_RET_N_TOURNAMENT` есть в реестре, но имеет статус `diagnostic_only_disabled_for_baseline`; в overlay его не брать.
+
+Manifest-сверка:
+
+```text
+docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md
 ```
 
 ## Текущие эталоны
@@ -49,7 +71,7 @@ SOLUSDT 1m 2026-05-15
 reports/final_review/visual_entry_v3/fresh_target_led/indicator_hypothesis_review_v0/priority_zoom_review_v0/user_verdict_v1/draft_ledger_v1/T15_DRAFT_LEDGER_CLUSTER_DISCUSSION_V1_20260701.json
 ```
 
-Эти 26 входов являются текущей ручной базой для strategy/passport overlay. Их не двигаем и не заменяем без нового решения пользователя.
+Эти `26` входов являются текущей ручной базой для strategy/passport overlay. Их не двигаем и не заменяем без нового решения пользователя.
 
 ## Что уже выяснено
 
@@ -61,7 +83,7 @@ reports/final_review/visual_entry_v3/fresh_target_led/indicator_hypothesis_revie
 2. `BOS/Swing` на V1 являются rolling-подсказками, а не `F045-F052_ALLOW`.
 3. `RSI/MACD/Volume` видны линиями, но не как паспортные `ALLOW 1/0`.
 4. Нет таблицы `target_id -> какие паспорта поддержали вход`.
-5. Нет квадратов стратегии: где конкретная стратегия должна работать, а где весь день не трогать.
+5. Нет локальных strategy squares: где конкретная стратегия должна работать, а где весь день не трогать.
 
 Аудит пропуска:
 
@@ -69,70 +91,53 @@ reports/final_review/visual_entry_v3/fresh_target_led/indicator_hypothesis_revie
 reports/final_review/visual_entry_v3/fresh_target_led/indicator_hypothesis_review_v1/INDICATOR_HYPOTHESIS_REVIEW_V1_STRATEGY_PASSPORT_GAP_AUDIT_20260701_RU.md
 ```
 
-## Пункт 1. Разложить паспорта по полочкам
+## Пункт 1. V2A0 Registry Reconciliation
 
-Источник реестра:
+Название шага:
+
+```text
+V2A0_REGISTRY_RECONCILIATION_NO_SCORER_NO_ML_NO_OPTUNA
+```
+
+Смысл: сверить уже существующие паспорта, а не создавать новые.
+
+Источники:
 
 ```text
 configs/calibration_action_passports.yaml
-```
-
-Источник паспортов:
-
-```text
 docs/CALIBRATION_NODE_CURRENT/passports/features/*.md
-```
-
-Источник исполняемых матриц:
-
-```text
 configs/calibration_matrices/passport_actions/*.yaml
 ```
 
-Текущие найденные количества:
+Что фиксируем:
 
-| слой | count | смысл |
-|---|---:|---|
-| feature passport MD | 27 | человекочитаемые паспорта |
-| action matrix YAML | 82 | исполняемые action-матрицы |
+1. `Bxxx` block id.
+2. `Fxxx` passport id.
+3. `action_id`.
+4. `passport_path`.
+5. `active_matrix_path`.
+6. `runtime action column` или способ расчета `ALLOW`.
+7. статус для overlay: `active`, `muted/context`, `deferred`, `unsafe_for_entry`.
 
-Задача инвентаризации:
-
-1. составить таблицу `Bxxx -> Fxxx -> passport MD -> matrix YAML -> runtime action column`;
-2. отдельно отметить, какие паспорта полностью готовы;
-3. отдельно отметить, какие есть в матрицах, но требуют проверки MD/реестра/runtime;
-4. не применять паспорт в overlay, если он не найден в реестре или неясно, как считать `ALLOW`.
+Паспорт нельзя применять в overlay, если неясно, как он считается без будущих данных.
 
 ## Блоки паспортов по реестру
 
-| block | block_key | name_ru | что это для нас сейчас |
-|---|---|---|---|
-| `B001` | `price_volatility` | Цена и волатильность | архив/контекст, не первый слой V2 |
-| `B002` | `price_volatility` | Диапазон свечи High-Low | контекст свечи |
-| `B003` | `price_volatility` | Скользящая волатильность 20 | контекст волатильности |
-| `B004` | `price_volatility` | ATR14 волатильность | контекст волатильности |
-| `B005` | `trend_momentum` | EMA тренд и наклон | пока reference/deferred, не active condition |
-| `B006` | `trend_momentum` | RSI14 impulse | momentum layer |
-| `B007` | `trend_momentum` | MACD импульс | momentum layer |
-| `B008` | `trend_momentum` | ADX14 сила тренда | позже, не первый проход |
-| `B009` | `trend_momentum` | Stochastic 14 K/D | позже, не первый проход |
-| `B010` | `volume_flow` | Объем и поток | flow layer |
-| `B011` | `volume_flow` | OBV slope 5 | flow/context, позже |
-| `B012` | `volume_flow` | MFI14 | flow/context, позже |
-| `B013` | `density_profile` | DENSITY_A VPOC core | density/VPOC layer |
-| `B014` | `structure_ta` | LEVEL_A уровни поддержки/сопротивления | structure layer |
-| `B015` | `structure_ta` | FIBONACCI_GRID anchor grid | strict Fibo layer |
-| `B016` | `structure_ta` | ENTRY_QUALITY_CONTEXT | context-only, не как входной сигнал |
-| `B017` | `structure_ta` | BREAKOUT_RETEST пробой/ретест | retest/swing layer |
-| `B018` | `structure_ta` | MARKET_STRUCTURE BOS/CHOCH | BOS/CHOCH layer |
-| `B019` | `pattern` | CANDLE_PATTERNS свечные паттерны | позже, отдельный pattern layer |
-| `B020` | `pattern` | DIVERGENCE_PATTERNS дивергенции | позже, отдельный pattern layer |
-| `B021` | `pattern` | PATTERN_QUALITY качество паттерна | позже |
-| `B022` | `pattern` | CHART_PATTERNS графические паттерны | позже |
-| `B023` | `pattern` | PATTERN_CONFIRMATION | позже |
-| `B024` | `pattern` | PATTERN_COMPOSITE_ENTRY | позже |
-| `B025` | `pattern` | PATTERN_TRADE_CONTEXT | позже, осторожно из-за TP/SL контекста |
-| `B026` | `volume_flow` | VWAP distance | flow/context, позже |
+| block | group | active F/action count | overlay role |
+|---|---|---:|---|
+| `B001-B004` | price/volatility | `8` | контекст волатильности, не первый active layer |
+| `B005` | EMA | `3` | reference/deferred, не active condition |
+| `B006-B009` | momentum | `6` | momentum layer после структуры и flow |
+| `B010-B013`, `B026` | volume/density/VWAP | `16` | flow/density layer |
+| `B014-B018` | structure/Fibo/retest/BOS | `18` | первый active strategy layer; `B016` muted/context-only |
+| `B019-B024` | candle/divergence/chart patterns | `29` | pattern layer позже, после no-lookahead проверки events |
+| `B025` | pattern trade context | `2` | unsafe/context-only из-за SL/TP риска |
+
+Детальная таблица:
+
+```text
+docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md
+```
 
 ## Пункт 2. Strategy/passport overlay на два эталона
 
@@ -142,46 +147,58 @@ configs/calibration_matrices/passport_actions/*.yaml
 INDICATOR_HYPOTHESIS_REVIEW_V2_STRATEGY_PASSPORT_OVERLAY_NO_SCORER_NO_ML_NO_OPTUNA
 ```
 
-Цель V2: не найти новую стратегию по доходности, а посмотреть, какие уже созданные паспорта объясняют ручные входы.
+Цель V2: не найти новую стратегию по доходности, а посмотреть, какие уже созданные паспорта объясняют ручные входы `19+7`.
 
 V2 должен дать:
 
-1. PNG для глаз по `2026-05-14` и `2026-05-15`;
-2. zoom/sheet по входам;
+1. full-day PNG по `2026-05-14` и `2026-05-15`;
+2. локальные zoom/sheet по входам;
 3. CSV/JSON matrix `target_id -> passport hits`;
 4. RU-аудит: какие блоки реально помогают, какие шумят, какие пока не готовы.
 
 ## Что значит "квадрат стратегии"
 
-Стратегия не должна отрабатывать весь день сплошным фоном.
+Full-day график остается картой дня. Стратегия не должна гореть весь день сплошным фоном.
 
-Квадрат стратегии = локальный рабочий участок вокруг ручного входа:
+Квадрат стратегии = локальный рабочий участок внутри full-day:
 
 ```text
 left_context до signal
 -> signal close
 -> entry next open
--> визуальная зона проверки справа только для глаз
+-> правая зона только для визуальной проверки
 ```
 
 Правила квадрата:
 
 1. условия считаются только слева, до закрытой signal-свечи включительно;
 2. entry-свеча не используется для выбора;
-3. правый участок нужен только для визуального review, не как feature;
+3. правый участок нужен только для visual review, не как feature;
 4. каждый паспорт использует свое паспортное окно:
    - `B013` VPOC: 60/240;
    - `B014` levels/range/channel: 120/240;
-   - `B015` Fibo: last confirmed alternating pivot pair, lookback до 240;
-   - `B017` breakout/retest: event memory и retest window;
+   - `B015` Fibo: `last_confirmed_alternating_pivot_pair`, а не zoom min/max;
+   - `B017` breakout/retest: breakout event memory + retest window;
    - `B018` BOS/CHOCH: internal/external structure scope;
-5. на full-day графике показываем только метки квадратов, а подробности смотрим в zoom/sheet.
+   - `B019-B024` pattern: отдельное pattern event window;
+5. на full-day графике показываем карту участков, а подробности смотрим в zoom/sheet.
+
+Если паспорт светится по всему дню, это не подтверждение стратегии, а шумовой флаг.
 
 ## Порядок V2, чтобы не сделать кашу
 
+### V2A0. Registry Reconciliation
+
+```text
+B001..B026
+F001..F083 active/non-disabled = 82
+```
+
+Выход: manifest-таблица и список overlay roles.
+
 ### V2A. Structure Layer
 
-Сначала делаем только структурные блоки:
+Первый активный visual overlay:
 
 ```text
 B014 LEVEL/RANGE/CHANNEL
@@ -190,21 +207,31 @@ B017 BREAKOUT_RETEST
 B018 MARKET_STRUCTURE BOS/CHOCH
 ```
 
+`B016 ENTRY_QUALITY_CONTEXT` можно показывать только muted/context-only, потому что там есть TP/SL/RR-риск.
+
 Что показать:
 
 1. support/resistance/range/channel;
 2. strict Fibo anchors и уровни `0.382/0.618`;
-3. retest/swing break event;
+3. breakout/retest/swing event;
 4. BOS/CHOCH;
-5. по каждому ручному входу: поддержало / против / молчит.
+5. по каждому ручному входу: `support / conflict / silent`.
 
-### V2B. Flow Layer
+### V2B. Flow And Density Layer
 
 После V2A:
 
 ```text
 B010 VOLUME
 B013 DENSITY/VPOC
+B026 VWAP
+```
+
+Позже при необходимости:
+
+```text
+B011 OBV
+B012 MFI
 ```
 
 Что показать:
@@ -213,7 +240,8 @@ B013 DENSITY/VPOC
 2. volume z-score;
 3. VPOC 60/240;
 4. distance/share/drift/cluster ratio;
-5. где вход стоит около ликвидной зоны, а где нет.
+5. VWAP distance;
+6. где вход стоит около ликвидной зоны, а где нет.
 
 ### V2C. Momentum Layer
 
@@ -224,23 +252,36 @@ B006 RSI
 B007 MACD
 ```
 
-Что показать:
+`B005 EMA` пока reference/deferred и не является active condition.
 
-1. RSI как паспортный allow, не просто линию;
-2. MACD line/signal/hist как passport allow;
-3. где momentum помогает, а где вводит в шум.
+`B008 ADX` и `B009 Stochastic` не первый слой; можно добавить позже, если структура/flow не дают достаточного объяснения.
 
-### V2D. Summary Matrix
+### V2D. Pattern Layer
 
-После V2A/V2B/V2C:
+После no-lookahead проверки pattern events:
+
+```text
+B019 Candle patterns
+B020 Divergence patterns
+B021 Pattern quality
+B022 Chart patterns
+B023 Pattern confirmation
+B024 Pattern composite entry
+```
+
+`B025 Pattern trade context` не брать как active entry layer без отдельного решения из-за SL/TP-context риска.
+
+### V2E. Summary Matrix
+
+После V2A/V2B/V2C/V2D:
 
 ```text
 target_id
 -> entry type
--> structure hits
--> flow hits
--> momentum hits
--> conflict flags
+-> structure support/conflict/silent
+-> flow support/conflict/silent
+-> momentum support/conflict/silent
+-> pattern support/conflict/silent
 -> preliminary cluster note
 ```
 
@@ -265,7 +306,7 @@ target_id
 
 Плохой результат V2:
 
-1. стратегия горит весь день, а не квадратами;
+1. стратегия горит весь день, а не локальными участками;
 2. стратегия объясняет хорошие входы, но так же объясняет весь шум;
 3. strict Fibo/BOS/retest не совпадают с ручными входами;
 4. overlay потерял ручные входы или сдвинул их без решения пользователя;
@@ -277,16 +318,16 @@ target_id
 
 1. видно, какие паспорта реально поддерживают `M01..M19` и 7 T15;
 2. видно, какие паспорта не работают на этих входах;
-3. видно, какие стратегии должны работать только квадратами;
+3. видно, какие стратегии должны работать только локальными squares;
 4. появился список 2-4 похожих входов под первый рабочий паспорт;
 5. стало понятно, что можно отдавать в паспорт-контракт, а что нет.
 
 ## Следующий конкретный шаг
 
-Сначала сделать паспортную инвентаризацию:
+Сначала закрыть:
 
 ```text
-PASSPORT_BLOCK_INVENTORY_V0_NO_SCORER_NO_ML_NO_OPTUNA
+V2A0_REGISTRY_RECONCILIATION_NO_SCORER_NO_ML_NO_OPTUNA
 ```
 
 Потом собрать:
@@ -295,4 +336,4 @@ PASSPORT_BLOCK_INVENTORY_V0_NO_SCORER_NO_ML_NO_OPTUNA
 V2A_STRUCTURE_LAYER
 ```
 
-Только после просмотра V2A пользователем двигаться к V2B/V2C.
+Только после просмотра V2A пользователем двигаться к V2B/V2C/V2D.

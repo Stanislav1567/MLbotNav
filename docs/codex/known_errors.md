@@ -1,15 +1,35 @@
 # Known Errors
 
+## Do not recreate existing passports before overlay 2026-07-01
+
+Статус: `KNOWN_PROCESS_RISK_FIXED_BY_RECONCILIATION`.
+
+Симптом: после замечания пользователя можно ошибочно продолжить фразу “собрать паспорта по полочкам” как задачу заново создать/перенести паспорта.
+
+Правильная трактовка: паспорта уже собраны. Текущий шаг — сверить существующие связки `Bxxx -> Fxxx -> passport MD -> matrix YAML -> runtime action` и наложить активные паспорта на два эталона `19+7`.
+
+Зафиксировано:
+
+1. `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`;
+2. `docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md`.
+
+Агентский read-only аудит: `26` блоков, `82` активных не отключенных связки, `82` matrix YAML, все активные пути найдены. `B001_RET_N_TOURNAMENT` отключен как diagnostic и в overlay не берется.
+
+Запрещено: создавать новые паспорта вместо сверки, запускать scorer/target-lock/Optuna/ML, смешивать все `B001-B026` в один общий сигнал.
+
 ## Do not skip passport inventory before strategy overlay 2026-07-01
 
-Статус: `KNOWN_PROCESS_RISK_FIXED_BY_ROADMAP`.
+Статус: `SUPERSEDED_BY_EXISTING_PASSPORT_RECONCILIATION`.
 
-Риск: после V1 можно снова ошибочно прыгнуть сразу в один passport/scorer и потерять мысль пользователя. Пользователь зафиксировал другой порядок: сначала все паспорта по блокам, потом strategy/passport overlay квадратами на два эталона `19+7`.
+Риск: после V1 можно снова ошибочно прыгнуть сразу в один passport/scorer и потерять мысль пользователя. Пользователь уточнил порядок: не создавать паспорта заново, а сверить уже существующие блоки и потом делать strategy/passport overlay локальными участками на два эталона `19+7`.
 
 Правильная рельса:
 `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md`.
 
-Запрещено до inventory и V2 visual review: scorer, target-lock, Optuna, ML/export/promotion.
+Manifest-сверка:
+`docs/CALIBRATION_NODE_CURRENT/PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md`.
+
+Запрещено до V2 visual review: scorer, target-lock, Optuna, ML/export/promotion.
 
 ## Initial Git commit needs explicit author and remote 2026-07-01
 
