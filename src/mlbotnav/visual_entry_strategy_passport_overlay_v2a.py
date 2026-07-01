@@ -496,6 +496,80 @@ def _draw_fib(ax: Any, item: dict[str, Any], *, xmin: Any, xmax: Any) -> None:
         ax.text(xmax, float(price), f"F{key}", color=color, fontsize=6.5, ha="right", va="center")
 
 
+def _fib_anchor_tuple(item: dict[str, Any]) -> tuple[pd.Timestamp, float, str, pd.Timestamp, float, str] | None:
+    fib = item["B015_fibonacci_grid"]
+    if fib.get("status") != "ok":
+        return None
+    anchor_a = fib.get("anchor_a") or {}
+    anchor_b = fib.get("anchor_b") or {}
+    if not anchor_a or not anchor_b:
+        return None
+    return (
+        pd.Timestamp(anchor_a["time_utc"]).tz_convert("UTC"),
+        float(anchor_a["price"]),
+        str(anchor_a["kind"]),
+        pd.Timestamp(anchor_b["time_utc"]).tz_convert("UTC"),
+        float(anchor_b["price"]),
+        str(anchor_b["kind"]),
+    )
+
+
+def _draw_fib_anchor_line(ax: Any, item: dict[str, Any]) -> None:
+    anchors = _fib_anchor_tuple(item)
+    if anchors is None:
+        return
+    time_a, price_a, kind_a, time_b, price_b, kind_b = anchors
+    ax.plot(
+        [time_a.tz_convert(None), time_b.tz_convert(None)],
+        [price_a, price_b],
+        color="#ffd54f",
+        linewidth=1.45,
+        marker="o",
+        markersize=4.2,
+        alpha=0.92,
+        zorder=7,
+    )
+    ax.annotate(
+        f"A {kind_a} {time_a.strftime('%H:%M')} {price_a:.4f}",
+        xy=(time_a.tz_convert(None), price_a),
+        xytext=(4, 10),
+        textcoords="offset points",
+        color="#ffd54f",
+        fontsize=7,
+        zorder=8,
+    )
+    ax.annotate(
+        f"B {kind_b} {time_b.strftime('%H:%M')} {price_b:.4f}",
+        xy=(time_b.tz_convert(None), price_b),
+        xytext=(4, -14),
+        textcoords="offset points",
+        color="#ffd54f",
+        fontsize=7,
+        zorder=8,
+    )
+
+
+def _draw_fib_full_grid(ax: Any, item: dict[str, Any], *, xmin: Any, xmax: Any) -> None:
+    fib = item["B015_fibonacci_grid"]
+    if fib.get("status") != "ok":
+        return
+    colors = {
+        "0.000": "#ffd54f",
+        "0.382": "#ce93d8",
+        "0.500": "#b0bec5",
+        "0.618": "#f48fb1",
+        "1.000": "#ffd54f",
+    }
+    for key, color in colors.items():
+        price = fib.get("levels", {}).get(key)
+        if price is None:
+            continue
+        linestyle = "-" if key in {"0.000", "1.000"} else "--"
+        alpha = 0.72 if key in {"0.000", "1.000"} else 0.58
+        ax.hlines(float(price), xmin, xmax, color=color, linestyle=linestyle, alpha=alpha, linewidth=0.85)
+        ax.text(xmax, float(price), f"F{key}", color=color, fontsize=6.5, ha="right", va="center")
+
+
 def _draw_channel(ax: Any, item: dict[str, Any], win: pd.DataFrame) -> None:
     channel = item["B014_level_range_channel"].get("channel", {})
     if channel.get("status") != "ok":
@@ -619,6 +693,63 @@ def _render_zoom_page(
     plt.close(fig)
 
 
+def _render_fib_anchor_page(
+    df: pd.DataFrame,
+    records: list[dict[str, Any]],
+    *,
+    page: int,
+    day: str,
+    out_path: Path,
+) -> None:
+    cols = 2
+    rows = int(np.ceil(len(records) / cols))
+    fig = plt.figure(figsize=(24, max(5.4 * rows, 8.0)), facecolor="#101418")
+    grid = fig.add_gridspec(rows, cols, hspace=0.25, wspace=0.10)
+    for n, item in enumerate(records):
+        row = n // cols
+        col = n % cols
+        ax_price = fig.add_subplot(grid[row, col])
+        _style_axis(ax_price)
+        signal = pd.Timestamp(item["signal_time_utc"]).tz_convert("UTC")
+        anchors = _fib_anchor_tuple(item)
+        if anchors is None:
+            start = signal - pd.Timedelta(minutes=60)
+        else:
+            time_a, _, _, time_b, _, _ = anchors
+            start = min(time_a, time_b, signal) - pd.Timedelta(minutes=8)
+        end = signal + pd.Timedelta(minutes=38)
+        win = df[(df["open_time_utc"] >= start) & (df["open_time_utc"] <= end)].reset_index(drop=True)
+        _draw_candles(ax_price, win, TIMEFRAME, linewidth=0.48)
+        xmin = start.tz_convert(None).to_pydatetime()
+        xmax = end.tz_convert(None).to_pydatetime()
+        ax_price.axvspan(start.tz_convert(None), signal.tz_convert(None), color="#1565c0", alpha=0.040, zorder=0)
+        ax_price.axvspan(signal.tz_convert(None), end.tz_convert(None), color="#00e676", alpha=0.034, zorder=0)
+        _draw_fib_full_grid(ax_price, item, xmin=xmin, xmax=xmax)
+        _draw_fib_anchor_line(ax_price, item)
+        _draw_target_marker(ax_price, item, show_price=True)
+        ax_price.set_xlim(xmin, xmax)
+        fib = item["B015_fibonacci_grid"]
+        if fib.get("status") == "ok":
+            title = (
+                f"{item['target_id']} FIB {fib.get('direction')} | "
+                f"A->{(fib.get('anchor_a') or {}).get('kind')} {(fib.get('anchor_a') or {}).get('time_utc', '')[11:16]} "
+                f"-> B->{(fib.get('anchor_b') or {}).get('kind')} {(fib.get('anchor_b') or {}).get('time_utc', '')[11:16]} | "
+                f"signal {_fmt_min(item['signal_time_utc'])} -> entry {_fmt_min(item['entry_time_utc'])}"
+            )
+        else:
+            title = f"{item['target_id']} FIB unavailable | signal {_fmt_min(item['signal_time_utc'])}"
+        ax_price.set_title(title, color="white", fontsize=8.6)
+        ax_price.set_ylabel("Price", color="white")
+        ax_price.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+    fig.suptitle(
+        f"{SYMBOL} {TIMEFRAME} {day} | V2A Fibo anchors page {page:02d} | A -> B visible | visual only",
+        color="white",
+        fontsize=15,
+    )
+    fig.savefig(out_path, dpi=145, facecolor=fig.get_facecolor(), bbox_inches="tight")
+    plt.close(fig)
+
+
 def _write_csv(path: Path, records: list[dict[str, Any]]) -> None:
     columns = [
         "target_id",
@@ -704,6 +835,8 @@ def _write_report(path: Path, payload: dict[str, Any]) -> None:
         "3. `B017 BREAKOUT_RETEST`: память последнего пробоя и ретест рядом с signal.",
         "4. `B018 MARKET_STRUCTURE`: internal/external BOS и CHOCH-like по подтвержденным swing-точкам.",
         "",
+        "Для Fibo дополнительно создан отдельный anchor-лист: на нем видны pivot `A`, pivot `B`, линия натяжки `A -> B`, direction и уровни сетки.",
+        "",
         "## Граница no-lookahead",
         "",
         "- Все расчеты заканчиваются на закрытой signal-свече.",
@@ -759,6 +892,8 @@ def run(day: str, out_dir: Path) -> dict[str, Any]:
     full_day_path = out_dir / f"V2A_STRUCTURE_FULL_DAY_{day_tag}.png"
     zoom_page_01_path = out_dir / f"V2A_STRUCTURE_ZOOM_PAGE_01_{day_tag}.png"
     zoom_page_02_path = out_dir / f"V2A_STRUCTURE_ZOOM_PAGE_02_{day_tag}.png"
+    fib_anchor_page_01_path = out_dir / f"V2A_FIBO_ANCHORS_PAGE_01_{day_tag}.png"
+    fib_anchor_page_02_path = out_dir / f"V2A_FIBO_ANCHORS_PAGE_02_{day_tag}.png"
     json_path = out_dir / f"V2A_STRUCTURE_OVERLAY_{day_tag}.json"
     csv_path = out_dir / f"V2A_STRUCTURE_OVERLAY_{day_tag}.csv"
     report_path = out_dir / f"V2A_STRUCTURE_OVERLAY_{day_tag}_RU.md"
@@ -766,10 +901,13 @@ def run(day: str, out_dir: Path) -> dict[str, Any]:
     _render_full_day(df, records, day=day, out_path=full_day_path)
     _render_zoom_page(df, records[:10], pivots_3=pivots_3, page=1, day=day, out_path=zoom_page_01_path)
     _render_zoom_page(df, records[10:], pivots_3=pivots_3, page=2, day=day, out_path=zoom_page_02_path)
+    _render_fib_anchor_page(df, records[:10], page=1, day=day, out_path=fib_anchor_page_01_path)
+    _render_fib_anchor_page(df, records[10:], page=2, day=day, out_path=fib_anchor_page_02_path)
 
     artifacts = {
         "full_day_png": _rel(root, full_day_path),
         "zoom_png": [_rel(root, zoom_page_01_path), _rel(root, zoom_page_02_path)],
+        "fib_anchor_png": [_rel(root, fib_anchor_page_01_path), _rel(root, fib_anchor_page_02_path)],
         "json": _rel(root, json_path),
         "csv": _rel(root, csv_path),
         "report_ru": _rel(root, report_path),

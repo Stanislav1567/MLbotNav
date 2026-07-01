@@ -41,6 +41,13 @@ src/mlbotnav/visual_entry_strategy_passport_overlay_v2a.py
 
 Проверка с агентом после первого рендера выявила риск: Fibo/BOS могли зависеть от full-day zigzag, собранного до фильтра по `signal`. Исправлено: Fibo/BOS теперь пересобирают zigzag prefix-causal из подтвержденных pivot на момент `signal/event`; `entry_open_price` добавлен в CSV/zoom, заголовки zoom сокращены до `B014/B015/B017/B018`. После фикса 14 мая перерендерен.
 
+После пользовательского замечания “Fibo непонятно откуда и до куда натянута” добавлены отдельные Fibo-anchor страницы:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_FIBO_ANCHORS_PAGE_01_20260514.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_FIBO_ANCHORS_PAGE_02_20260514.png`.
+
+На них видны pivot `A`, pivot `B`, линия `A -> B`, direction, signal, entry и уровни сетки. Предварительный вывод: Fibo полезен как контекст, но не должен быть главным сигналом без правила свежести/валидности ноги, потому что часть натяжек далеко от текущего входа.
+
 Следующий шаг: пользователь смотрит PNG и говорит `норм / фиксить / шумно`; после этого либо править визуальный слой 14 мая, либо тем же V2A наложить `2026-05-15` на 7 входов.
 
 ## Fresh Target-Led Existing Passport Reconciliation 2026-07-01

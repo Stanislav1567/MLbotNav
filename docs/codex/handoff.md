@@ -30,6 +30,15 @@ reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_
 
 Follow-up аудит с агентом выявил и исправил риск lookahead: первый вариант строил Fibo/BOS через full-day zigzag до фильтра по signal. Текущий скрипт пересобирает zigzag prefix-causal из подтвержденных pivot на момент `signal/event`; старые переменные `zigzag_10/pivots_internal/pivots_external` удалены. CSV/zoom теперь показывают `entry_open_price` и `entry + 5 bps`.
 
+Пользователь указал, что Fibo непонятно как натянута. Добавлены отдельные страницы:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_FIBO_ANCHORS_PAGE_01_20260514.png
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_FIBO_ANCHORS_PAGE_02_20260514.png
+```
+
+На них видны `A -> B` anchors, direction и уровни. Рабочий вывод: Fibo пока только context/evidence. Перед использованием как passport signal нужно отдельное правило свежести ноги и допустимого расстояния от signal.
+
 Следующий шаг: показать PNG пользователю. Если пользователь скажет `норм`, следующий V2A-шаг — наложить тот же слой на `2026-05-15` по 7 входам T15. Если скажет `шумно/фиксить`, править читаемость/слои 14 мая, не меняя ручные входы.
 
 ## Handoff 2026-07-01 Existing Passport Reconciliation

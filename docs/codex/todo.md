@@ -10,6 +10,7 @@
 | Наложить `B014/B015/B017/B018` на `2026-05-14 M01..M19` | done | Показать full-day и zoom PNG пользователю | manual ledger |
 | Проверить no-lookahead границу | done | Entry price только execution/control | rails |
 | Исправить агентский causal-audit по Fibo/BOS | done | Full-day zigzag заменен на prefix-causal zigzag per signal/event | agent audit |
+| Сделать Fibo понятным откуда-куда | done | Добавлены `V2A_FIBO_ANCHORS_PAGE_01/02_20260514.png` с `A -> B` | user feedback |
 | Проверить кодировку и хвосты python | done | Новые RU-файлы читаются нормально, хвостов после рендера нет | verification |
 | Получить user review по 14 мая | current_next | `норм / фиксить / шумно` | PNG |
 | Наложить V2A на `2026-05-15` 7 T15 | blocked | Только после review 14 мая | user decision |

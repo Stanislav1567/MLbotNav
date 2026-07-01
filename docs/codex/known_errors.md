@@ -1,5 +1,15 @@
 # Known Errors
 
+## Fibo levels without anchor line are not enough 2026-07-01
+
+Статус: `fixed_visual_artifact / context_note`.
+
+Симптом: обычный zoom показывал горизонтальные Fibo-уровни, но не показывал, от какого pivot `A` до какого pivot `B` натянута сетка. В части входов один или оба anchor были за пределами локального entry-zoom, поэтому визуально Fibo выглядела непонятной.
+
+Решение: добавлены отдельные Fibo-anchor страницы `V2A_FIBO_ANCHORS_PAGE_01_20260514.png` и `V2A_FIBO_ANCHORS_PAGE_02_20260514.png`, где видны `A -> B`, direction и уровни.
+
+Процессный вывод: Fibo пока считать context/evidence. Перед превращением в active passport signal нужно правило свежести ноги, допустимого возраста anchor и расстояния от signal.
+
 ## V2A full-day zigzag lookahead risk fixed 2026-07-01
 
 Статус: `fixed / visual_overlay / no_ml`.
