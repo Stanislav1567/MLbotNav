@@ -1,15 +1,30 @@
 # Todo
 
+## Todo 2026-07-01 V2A Structure Overlay 14 May
+
+Статус: `V2A_STRUCTURE_LAYER_20260514_READY_WAIT_USER_REVIEW`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать renderer V2A | done | Использовать `src/mlbotnav/visual_entry_strategy_passport_overlay_v2a.py` | roadmap |
+| Наложить `B014/B015/B017/B018` на `2026-05-14 M01..M19` | done | Показать full-day и zoom PNG пользователю | manual ledger |
+| Проверить no-lookahead границу | done | Entry price только execution/control | rails |
+| Проверить кодировку и хвосты python | done | Новые RU-файлы читаются нормально, хвостов после рендера нет | verification |
+| Получить user review по 14 мая | current_next | `норм / фиксить / шумно` | PNG |
+| Наложить V2A на `2026-05-15` 7 T15 | blocked | Только после review 14 мая | user decision |
+| V2B flow/density | blocked | После V2A user review по двум дням | V2A |
+| Scorer / target-lock / Optuna / ML | blocked | Только после отдельных решений | rails |
+
 ## Todo 2026-07-01 Existing Passport Reconciliation And Overlay
 
-Статус: `NEXT_V2A_STRUCTURE_LAYER`.
+Статус: `V2A_STRUCTURE_LAYER_20260514_READY_WAIT_USER_REVIEW`.
 
 | Task | Status | Next Action | Depends On |
 |---|---|---|---|
 | Зафиксировать верхний roadmap | done | Использовать `FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md` | user direction |
 | Подключить агента для read-only аудита | done | `Lorentz`: `26` блоков, `82` активных связки, `82` matrix, пути найдены | user request |
 | V2A0 registry reconciliation | done | Использовать `PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md` | registry YAML |
-| V2A structure overlay | current_next | Наложить `B014/B015/B017/B018` локальными участками на `19+7` входов; `B016` muted/context-only | V2A0 |
+| V2A structure overlay | in_progress | `2026-05-14 M01..M19` собран; после user review сделать `2026-05-15` 7 T15 | V2A0 |
 | V2B flow/density overlay | blocked | После user review V2A наложить `B010/B013/B026`, позже `B011/B012` | V2A user review |
 | V2C momentum overlay | blocked | После V2B наложить `B006/B007`; `B005` EMA reference/deferred | V2B user review |
 | V2D pattern overlay | blocked | После no-lookahead проверки pattern windows наложить `B019-B024`; `B025` unsafe/context-only | V2C |

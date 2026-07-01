@@ -1,8 +1,33 @@
 # Commands: калибровочный узел
 
+## Fresh Target-Led V2A Structure Overlay 14 May 2026-07-01
+
+Статус: `V2A_STRUCTURE_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Проверить и собрать 14 мая:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_strategy_passport_overlay_v2a.py
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_strategy_passport_overlay_v2a --day 2026-05-14
+```
+
+Артефакты:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_FULL_DAY_20260514.png
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_ZOOM_PAGE_01_20260514.png
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_ZOOM_PAGE_02_20260514.png
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514.json
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514.csv
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514_RU.md
+```
+
+Граница: visual overlay only. No scorer, no target-lock, no ML/export/promotion, no Optuna.
+
 ## Fresh Target-Led Existing Passport Reconciliation 2026-07-01
 
-Статус: `NEXT_V2A_STRUCTURE_LAYER_NO_SCORER_NO_ML_NO_OPTUNA`.
+Статус: `V2A_STRUCTURE_LAYER_20260514_READY_WAIT_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
 
 Текущий шаг не запускает scorer, Optuna или ML. Паспорта уже собраны; нужно сверять существующий manifest и готовить визуальный overlay.
 

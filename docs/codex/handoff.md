@@ -1,5 +1,35 @@
 # Handoff
 
+## Handoff 2026-07-01 V2A Structure Overlay 14 May
+
+Статус: `V2A_STRUCTURE_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Последний пользовательский запрос: наложить стратегии/паспорта на графики и сначала показать `2026-05-14`.
+
+Сделано: добавлен `src/mlbotnav/visual_entry_strategy_passport_overlay_v2a.py` и собран визуальный overlay по ручному эталону `SOLUSDT 1m 2026-05-14 M01..M19`.
+
+Наложены блоки `B014/B015/B017/B018`:
+
+1. support/resistance/range/channel;
+2. Fibo по последней подтвержденной чередующейся pivot-ноге;
+3. breakout/retest event memory;
+4. internal/external BOS/CHOCH-like.
+
+Артефакты:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_FULL_DAY_20260514.png
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_ZOOM_PAGE_01_20260514.png
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_ZOOM_PAGE_02_20260514.png
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514.json
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514.csv
+reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514_RU.md
+```
+
+Граница: это visual evidence, не `ALLOW`-scorer и не готовый сигнал. Scorer, target-lock, Optuna и ML не запускались. Entry price и `+5 bps` показаны только для execution/control.
+
+Следующий шаг: показать PNG пользователю. Если пользователь скажет `норм`, следующий V2A-шаг — наложить тот же слой на `2026-05-15` по 7 входам T15. Если скажет `шумно/фиксить`, править читаемость/слои 14 мая, не меняя ручные входы.
+
 ## Handoff 2026-07-01 Existing Passport Reconciliation
 
 Статус: `ACTIVE_EXISTING_PASSPORT_RECONCILIATION_AND_OVERLAY_NO_SCORER_NO_ML_NO_OPTUNA`.

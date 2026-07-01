@@ -1,5 +1,28 @@
 # Current State
 
+## Current State 2026-07-01 V2A Structure Overlay 14 May
+
+Текущий статус: `V2A_STRUCTURE_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Собран первый passport/strategy overlay для `SOLUSDT 1m 2026-05-14` по ручным входам `M01..M19`.
+
+Скрипт:
+`src/mlbotnav/visual_entry_strategy_passport_overlay_v2a.py`.
+
+PNG:
+`reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_FULL_DAY_20260514.png`;
+`reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_ZOOM_PAGE_01_20260514.png`;
+`reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_ZOOM_PAGE_02_20260514.png`.
+
+JSON/CSV/RU:
+`reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514.json`;
+`reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514.csv`;
+`reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514_RU.md`.
+
+Наложенные блоки: `B014 LEVEL/RANGE/CHANNEL`, `B015 FIBONACCI_GRID`, `B017 BREAKOUT_RETEST`, `B018 MARKET_STRUCTURE`. `B016` не active, только muted/context-only позже.
+
+Следующий шаг: пользователь смотрит 14 мая и дает `норм/фиксить`. После подтверждения идти на `2026-05-15` с тем же V2A. Scorer, target-lock, Optuna и ML не запускать.
+
 ## Current State 2026-07-01 Existing Passport Reconciliation
 
 Текущий статус: `ACTIVE_EXISTING_PASSPORT_RECONCILIATION_AND_OVERLAY_NO_SCORER_NO_ML_NO_OPTUNA`.

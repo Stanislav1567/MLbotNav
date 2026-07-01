@@ -1,5 +1,46 @@
 # Current Status: калибровочный узел
 
+## Fresh Target-Led V2A Structure Overlay 14 May 2026-07-01
+
+Статус: `V2A_STRUCTURE_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Пункт рельсов: `V2A_STRUCTURE_LAYER`.
+
+По запросу пользователя “накладывай на графики и показывай мне это 14 день сначала” создан первый strategy/passport overlay для эталона:
+
+```text
+SOLUSDT 1m 2026-05-14
+ручные входы: M01..M19
+```
+
+Наложены только структурные паспортные блоки:
+
+1. `B014 LEVEL/RANGE/CHANNEL`: support/resistance, range position, channel context;
+2. `B015 FIBONACCI_GRID`: Fibo по `last_confirmed_alternating_pivot_pair`, не по zoom min/max;
+3. `B017 BREAKOUT_RETEST`: breakout/retest event memory;
+4. `B018 MARKET_STRUCTURE`: internal/external BOS/CHOCH-like.
+
+`B016 ENTRY_QUALITY_CONTEXT` не включен как active signal, только остается muted/context-only для будущего слоя.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_FULL_DAY_20260514.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_ZOOM_PAGE_01_20260514.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_ZOOM_PAGE_02_20260514.png`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514.json`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514.csv`;
+6. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_OVERLAY_20260514_RU.md`.
+
+Скрипт:
+
+```text
+src/mlbotnav/visual_entry_strategy_passport_overlay_v2a.py
+```
+
+Граница no-lookahead: расчеты заканчиваются на закрытой signal-свече; pivot доступен только после `PIVOT_RIGHT`; entry open и `entry + 5 bps` только execution/control, не feature выбора. Scorer, target-lock, Optuna, ML/export/promotion не запускались.
+
+Следующий шаг: пользователь смотрит PNG и говорит `норм / фиксить / шумно`; после этого либо править визуальный слой 14 мая, либо тем же V2A наложить `2026-05-15` на 7 входов.
+
 ## Fresh Target-Led Existing Passport Reconciliation 2026-07-01
 
 Статус: `ACTIVE_EXISTING_PASSPORT_RECONCILIATION_AND_OVERLAY_NO_SCORER_NO_ML_NO_OPTUNA`.

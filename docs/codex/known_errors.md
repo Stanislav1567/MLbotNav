@@ -1,5 +1,17 @@
 # Known Errors
 
+## V2A structure overlay is visual only 2026-07-01
+
+Статус: `known_boundary / visual_only / no_ml`.
+
+Симптом: новый V2A overlay показывает паспортные блоки `B014/B015/B017/B018` рядом с ручными входами, поэтому его можно ошибочно принять за готовый `ALLOW`-scorer или торговый сигнал.
+
+Правильная трактовка: это только visual review. `support/conflict/silent` в CSV означает визуальную поддержку блока, а не разрешение сделки. Entry price и `entry + 5 bps` являются execution/control only.
+
+Запрещено по этому артефакту: запускать scorer, target-lock, Optuna, ML/export/promotion или считать, что паспорт уже выбран.
+
+Если пользователь скажет, что картинка шумная, править визуальный слой и разнести `Fibo/BOS/retest` по отдельным страницам, а не менять ручные входы `M01..M19`.
+
 ## Do not recreate existing passports before overlay 2026-07-01
 
 Статус: `KNOWN_PROCESS_RISK_FIXED_BY_RECONCILIATION`.
