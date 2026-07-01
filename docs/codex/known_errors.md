@@ -2,13 +2,13 @@
 
 ## Initial Git commit needs explicit author and remote 2026-07-01
 
-Статус: `known_setup_boundary / git`.
+Статус: `resolved / git`.
 
 Симптом: локальный репозиторий создан, но `git config user.name` и `git config user.email` не заданы, remote отсутствует.
 
 Риск: коммит может получить неправильного автора, а push невозможен без URL пустого репозитория.
 
-Решение: перед `git commit` задать локальные `user.name`/`user.email`; перед `git push` добавить `origin` на пустой удаленный репозиторий. Не коммитить тяжелые артефакты и секреты; они уже закрыты `.gitignore`.
+Решение: выполнено. Автор задан как `Stanislav1567 <Stanislav1567@users.noreply.github.com>`, `origin` добавлен на `https://github.com/Stanislav1567/MLbotNav.git`, initial commit `e178c49` отправлен в `origin/main`. Не коммитить тяжелые артефакты и секреты; они закрыты `.gitignore`.
 
 ## Indicator Hypothesis Review V1 lacks passport strategy overlay 2026-07-01
 

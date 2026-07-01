@@ -1,8 +1,18 @@
 # Handoff
 
+## Handoff 2026-07-01 Git Remote Push MLbotNav
+
+Статус: `GIT_REMOTE_PUSH_DONE_MAIN_TRACKS_ORIGIN_MAIN`.
+
+Локальный репозиторий `C:\Users\007\Desktop\MLbotNav` подключен к `origin = https://github.com/Stanislav1567/MLbotNav.git`. Автор локального репозитория: `Stanislav1567 <Stanislav1567@users.noreply.github.com>`.
+
+Первый коммит `e178c49 Initial commit` успешно отправлен в `origin/main`. Ветка `main` отслеживает `origin/main`. Проверено: `git status --short --branch` показывает чистое состояние `main...origin/main`.
+
+Исключения Git сохранены: `.env`, `.venv`, `.vscode`, `data/`, `models/`, `reports/`, `logs/`, `packs/`, `tmp/`, `_codex_offload_*`, `_locked_tmp_*`, backup-файлы. `.gitattributes` добавлен для стабильных окончаний строк.
+
 ## Handoff 2026-07-01 Git Init MLbotNav
 
-Статус: `GIT_INIT_DONE_WAIT_REMOTE_AND_AUTHOR_FOR_INITIAL_COMMIT`.
+Статус: `SUPERSEDED_BY_GIT_REMOTE_PUSH_DONE`.
 
 В `C:\Users\007\Desktop\MLbotNav` выполнен `git init`, ветка переименована в `main`. `.gitignore` расширен, чтобы не добавлять в историю `.env`, `.venv`, `.vscode`, `data/`, `models/`, `reports/`, `logs/`, `packs/`, `tmp/`, `_codex_offload_*`, `_locked_tmp_*`, `*.bak-*`. `.env.example` очищен от локального пользовательского пути и оставлен с placeholder.
 

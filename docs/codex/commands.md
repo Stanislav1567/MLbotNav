@@ -1,8 +1,22 @@
 # Commands
 
+## Git Remote Push MLbotNav 2026-07-01
+
+Статус: `GIT_REMOTE_PUSH_DONE_MAIN_TRACKS_ORIGIN_MAIN`.
+
+Проверка состояния:
+
+```powershell
+git status --short --branch
+git remote -v
+git log --oneline --decorate -3
+```
+
+Ожидаемо сейчас: `main...origin/main`, remote `origin=https://github.com/Stanislav1567/MLbotNav.git`, первый коммит `e178c49 Initial commit`.
+
 ## Git Init MLbotNav 2026-07-01
 
-Статус: `GIT_INIT_DONE_WAIT_REMOTE_AND_AUTHOR_FOR_INITIAL_COMMIT`.
+Статус: `SUPERSEDED_BY_GIT_REMOTE_PUSH_DONE`.
 
 Уже выполнено:
 

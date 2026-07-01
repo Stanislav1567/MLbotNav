@@ -1,17 +1,29 @@
 # Todo
 
+## Todo 2026-07-01 Git Remote Push MLbotNav
+
+Статус: `GIT_REMOTE_PUSH_DONE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Настроить автора коммита | done | `Stanislav1567 <Stanislav1567@users.noreply.github.com>` | user GitHub repo |
+| Добавить remote | done | `origin=https://github.com/Stanislav1567/MLbotNav.git` | GitHub URL |
+| Initial commit | done | `e178c49 Initial commit` | staged source |
+| Push main | done | `main` tracks `origin/main` | origin |
+| Дальше работать через обычные commits | current_next | Перед изменениями смотреть `git status`, после проверок коммитить осмысленно | Git hygiene |
+
 ## Todo 2026-07-01 Git Init MLbotNav
 
-Статус: `WAIT_USER_GIT_REMOTE_AND_AUTHOR`.
+Статус: `SUPERSEDED_BY_GIT_REMOTE_PUSH_DONE`.
 
 | Task | Status | Next Action | Depends On |
 |---|---|---|---|
 | Создать локальный Git-репозиторий | done | Ветка `main` | user approval |
 | Защитить тяжелые/секретные файлы через `.gitignore` | done | Не добавлять `.env`, data/models/reports/logs/packs/tmp/offload/bak | artifact policy |
 | Очистить `.env.example` от локального пути | done | Использовать placeholder `C:\path\to\external\project\.env` | privacy |
-| Настроить автора коммита | pending_user | Нужны `user.name` и `user.email` или разрешение использовать локальные значения | Git |
-| Добавить remote | pending_user | Нужен URL пустого репозитория, например `https://github.com/USER/REPO.git` | GitHub |
-| Initial commit + push | blocked | Выполнить после автора и remote | pending inputs |
+| Настроить автора коммита | done | `Stanislav1567 <Stanislav1567@users.noreply.github.com>` | Git |
+| Добавить remote | done | `https://github.com/Stanislav1567/MLbotNav.git` | GitHub |
+| Initial commit + push | done | `e178c49` отправлен в `origin/main` | remote |
 
 ## Todo 2026-07-01 Strategy Passport Overlay V2
 

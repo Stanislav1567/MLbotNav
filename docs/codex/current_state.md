@@ -1,8 +1,16 @@
 # Current State
 
+## Current State 2026-07-01 Git Remote Push MLbotNav
+
+Текущий статус: `GIT_REMOTE_PUSH_DONE_MAIN_TRACKS_ORIGIN_MAIN`.
+
+Git для проекта полностью включен: локальная ветка `main` отслеживает `origin/main`, remote `origin` указывает на `https://github.com/Stanislav1567/MLbotNav.git`.
+
+Последний коммит: `e178c49 Initial commit`, уже на GitHub. Рабочая копия после push была чистой.
+
 ## Current State 2026-07-01 Git Init MLbotNav
 
-Текущий статус: `GIT_INIT_DONE_WAIT_REMOTE_AND_AUTHOR_FOR_INITIAL_COMMIT`.
+Текущий статус: `SUPERSEDED_BY_GIT_REMOTE_PUSH_DONE`.
 
 Локальный Git-репозиторий создан, активная ветка `main`. Первый коммит пока не сделан, потому что в Git не настроены `user.name`/`user.email`, а remote URL еще не задан.
 

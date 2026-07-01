@@ -1,5 +1,13 @@
 # Session Log
 
+## 2026-07-01 Git Remote Push MLbotNav
+
+Сделано: настроен локальный Git author `Stanislav1567 <Stanislav1567@users.noreply.github.com>`, добавлен remote `origin=https://github.com/Stanislav1567/MLbotNav.git`, создан initial commit `e178c49` и выполнен `git push -u origin main`.
+
+Проверки: `git status --short --branch` после push показал чистое состояние `main...origin/main`; `git remote -v` показывает fetch/push на GitHub URL.
+
+Ограничение: `gh` CLI не установлен, push выполнен обычным Git через доступный Git Credential Manager.
+
 ## 2026-07-01 Git Init MLbotNav
 
 Сделано: создан локальный Git-репозиторий в `C:\Users\007\Desktop\MLbotNav`, ветка переименована в `main`. Расширен `.gitignore`, чтобы исключить секреты, окружение, данные, модели, отчеты, логи, packs, tmp, offload/locked tmp и backup-файлы. `.env.example` очищен от локального пользовательского пути.
