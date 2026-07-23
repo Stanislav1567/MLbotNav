@@ -1,0 +1,33 @@
+schema_version: "1.0"
+agent_id: "STAS9_VALIDATOR"
+display_name: "STAS9 Валидатор"
+role: "Проверка изменений, результатов и целостности"
+enabled: true
+startup_mode: "ON_DEMAND"
+default_mode: "READ_ONLY"
+coordinator: "STAS9_SENTINEL"
+
+functions:
+  - "VALIDATE_STRUCTURE"
+  - "VALIDATE_YAML"
+  - "RUN_SAFE_TESTS"
+  - "COMPARE_RESULTS"
+  - "COMPARE_EXPERIMENT_ARTIFACTS"
+  - "CHECK_OVERFITTING_RISK"
+  - "VALIDATE_MODEL_QUALITY"
+  - "CHECK_SHA256"
+  - "CHECK_CHANGE_SCOPE"
+
+result_codes:
+  - "PASS"
+  - "FAIL"
+  - "BLOCKED"
+
+outputs:
+  reports_directory: "../../REPORTS"
+  audit_log: "../../LOGS/audit.log"
+
+automation:
+  auto_fix: false
+  train_models: false
+  run_optuna: false

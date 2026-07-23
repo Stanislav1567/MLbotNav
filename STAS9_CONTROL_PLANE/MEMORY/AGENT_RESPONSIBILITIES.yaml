@@ -1,0 +1,261 @@
+schema_version: "1.0"
+memory_id: "STAS9_AGENT_RESPONSIBILITIES"
+language: "ru"
+updated_at: "2026-07-23"
+
+operating_context:
+  orchestrator: "STAS9_SENTINEL"
+  task_router: "../TASK_ROUTER_RU.md"
+  default_mode: "SAFE"
+  default_access: "READ_ONLY"
+  specialist_activation: "ON_DEMAND_SEQUENTIAL"
+  training_stage: "NOT_STARTED"
+
+global_prohibitions:
+  - action: "TRAIN_MODELS"
+    prohibited: true
+    description: "Не запускать обучение."
+  - action: "RUN_OPTUNA"
+    prohibited: true
+    description: "Не запускать Optuna."
+  - action: "MODIFY_STAS5_STAS8"
+    prohibited: true
+    description: "Не изменять STAS5–STAS8."
+  - action: "MODIFY_MODELS"
+    prohibited: true
+    description: "Не изменять модели, их артефакты и указатели."
+  - action: "TRADE_LIVE"
+    prohibited: true
+    description: "Не выполнять реальную торговлю."
+  - action: "DELETE_OR_MOVE_FILES"
+    prohibited: true
+    description: "Не удалять и не перемещать файлы."
+  - action: "USE_BTC_FOR_SOL_RESEARCH"
+    prohibited: true
+    description: "В контуре рыночного исследования использовать SOL, а не BTC."
+
+agents:
+  STAS9_SENTINEL:
+    registry_status: "EXISTING"
+    role: "Главный управляющий агент и единая точка входа пользователя."
+    mode: "SAFE"
+    access: "READ_ONLY"
+    responsibilities:
+      - "Принимать и классифицировать задачи пользователя."
+      - "Выбирать минимально необходимого специализированного агента."
+      - "Делегировать задачи и контролировать их выполнение."
+      - "Контролировать режимы, права и последовательность работы."
+      - "Обновлять память проекта и формировать итоговые отчёты."
+    exclusions:
+      - "Не создавать признаки вместо STAS9_FEATURE_MANAGER."
+      - "Не исследовать рынок вместо STAS9_MARKET_RESEARCH."
+      - "Не обучать модели."
+      - "Не изменять ML-ядро."
+
+  STAS9_AUDITOR:
+    registry_status: "EXISTING"
+    role: "Агент аудита структуры, файлов и данных."
+    mode: "SAFE"
+    access: "READ_ONLY"
+    responsibilities:
+      - "Анализировать структуру проекта."
+      - "Проверять файлы и состояние данных."
+      - "Искать дубли, повреждённые ссылки и несоответствия."
+      - "Создавать отчёты без исправления найденного."
+    exclusions:
+      - "Не изменять, не перемещать и не удалять файлы."
+
+  STAS9_MARKET_RESEARCH:
+    registry_status: "NEW_SPECIALIST_DECLARED"
+    role: "Специализированный агент исследования рынка SOL."
+    mode: "SAFE"
+    access: "READ_ONLY"
+    data_scope:
+      exchange: "Bybit"
+      market_type: "linear"
+      symbol: "SOLUSDT"
+      timeframe: "1m"
+      source: "C:/Users/007/Desktop/MLbotNav/data/core/bybit_ohlcv"
+      source_contract: "ohlcv_v1"
+      excluded_symbols:
+        - "BTC"
+    responsibilities:
+      - "Изучать свечи SOL."
+      - "Искать закономерности и анализировать движение цены SOL."
+      - "Формировать и описывать торговые события."
+      - "Размечать хороший вход, плохой вход, ложный сигнал, продолжение движения и разворот."
+      - "Передавать описанные события STAS9_FEATURE_MANAGER."
+    exclusions:
+      - "Не создавать feature contracts вместо STAS9_FEATURE_MANAGER."
+      - "Не запускать обучение или эксперименты."
+      - "Не использовать BTC."
+
+  STAS9_FEATURE_MANAGER:
+    registry_status: "EXISTING"
+    role: "Главный агент признаков ML."
+    mode: "SAFE"
+    access: "READ_ONLY"
+    registry: "../FEATURE_REGISTRY.yaml"
+    responsibilities:
+      - "Описывать технические признаки."
+      - "Преобразовывать свечные паттерны и торговые события в признаки."
+      - "Подготавливать feature contracts."
+      - "Контролировать связь признаков с FEATURE_REGISTRY.yaml."
+    exclusions:
+      - "Не обучать модели."
+      - "Не изменять STAS5 и ML-ядро."
+
+  STAS9_MODEL_MANAGER:
+    registry_status: "EXISTING"
+    role: "Агент управления знаниями о моделях."
+    mode: "SAFE"
+    access: "READ_ONLY"
+    responsibilities:
+      - "Учитывать версии моделей."
+      - "Сопоставлять модели, признаки и метрики."
+      - "Анализировать статусы champion и candidate."
+      - "Готовить рекомендации без автоматического применения."
+    exclusions:
+      - "Не изменять модели и модельные указатели."
+      - "Не продвигать candidate в champion автоматически."
+      - "Не запускать обучение."
+
+  STAS9_VALIDATOR:
+    registry_status: "EXISTING"
+    role: "Агент независимой проверки результатов."
+    mode: "SAFE"
+    access: "READ_ONLY"
+    responsibilities:
+      - "Проверять качество результатов."
+      - "Сравнивать эксперименты по доступным артефактам."
+      - "Контролировать признаки переобучения и утечки."
+      - "Проверять целостность событий, признаков, labels и datasets."
+    exclusions:
+      - "Не изменять проверяемые модели или данные."
+      - "Не запускать обучение и Optuna."
+
+  STAS9_GUARDIAN:
+    registry_status: "EXISTING"
+    role: "Агент безопасности и контроля разрешений."
+    mode: "SAFE"
+    access: "READ_ONLY"
+    responsibilities:
+      - "Проверять права, режим и область каждого опасного действия."
+      - "Останавливать действия, нарушающие ограничения."
+      - "Защищать данные, STAS5–STAS8, модели и торговый контур."
+      - "Требовать точного пользовательского подтверждения там, где действие допустимо только после подтверждения."
+    exclusions:
+      - "Не удалять файлы."
+      - "Не изменять STAS5–STAS8 без явного разрешения."
+      - "Не изменять модели автоматически."
+      - "Не запускать реальную торговлю."
+
+  STAS9_LAB:
+    registry_status: "EXISTING_AUXILIARY"
+    role: "Вспомогательный агент планирования и анализа явно подтверждённых экспериментов."
+    mode: "EXPERIMENT_REQUIRES_EXPLICIT_USER_CONFIRMATION"
+    access: "SCOPED_READ_OR_CONFIRMED_EXPERIMENT"
+    responsibilities:
+      - "Подготавливать гипотезы и планы подтверждённых экспериментов."
+      - "Анализировать уже созданные артефакты подтверждённых экспериментов."
+    exclusions:
+      - "Не заменять STAS9_MARKET_RESEARCH при изучении SOL."
+      - "Не запускаться автоматически."
+      - "Не запускать обучение или Optuna без отдельного прямого разрешения."
+      - "Не выполнять live trading."
+
+completed_task_2026_07_23_agent_role_setup:
+  task_id: "STAS9_AGENT_ROLE_SETUP_2026-07-23"
+  title: "Организация ролей агентов и подготовка безопасного контура данных SOL."
+  status: "COMPLETE_SAFE"
+  requested_mode: "SAFE"
+  requested_access: "READ_ONLY"
+  participants:
+    - agent: "STAS9_SENTINEL"
+      contribution: "Классификация, делегирование, контроль и итоговый отчёт."
+    - agent: "STAS9_AUDITOR"
+      contribution: "Сверка существующей структуры и агентов."
+    - agent: "STAS9_MARKET_RESEARCH"
+      contribution: "Новая роль для будущего исследования данных SOL; анализ данных в текущей задаче не запускался."
+    - agent: "STAS9_FEATURE_MANAGER"
+      contribution: "Определение границы работы с событиями, признаками и feature contracts."
+    - agent: "STAS9_MODEL_MANAGER"
+      contribution: "Фиксация ответственности за версии и метрики моделей без их изменения."
+    - agent: "STAS9_VALIDATOR"
+      contribution: "Определение последующей проверки результатов без запуска обучения."
+    - agent: "STAS9_GUARDIAN"
+      contribution: "Фиксация ограничений SAFE и READ_ONLY."
+    - agent: "STAS9_LAB"
+      contribution: "Сохранён как вспомогательная роль для будущих явно подтверждённых экспериментов."
+  completed_actions:
+    - "Определены зоны ответственности Sentinel и специализированных агентов."
+    - "Добавлен маршрут исследований свечей, закономерностей, движения и событий SOL к STAS9_MARKET_RESEARCH."
+    - "Разграничены STAS9_MARKET_RESEARCH, STAS9_FEATURE_MANAGER и STAS9_LAB."
+    - "Зафиксированы глобальные запреты текущего этапа."
+    - "Подготовлен TASK_ROUTER_RU.md."
+    - "Подготовлена память AGENT_RESPONSIBILITIES.yaml."
+    - "Создан агент STAS9_MARKET_RESEARCH и семь документов ролей."
+    - "Созданы MARKET_KNOWLEDGE и безопасный DATASET_BUILDER."
+    - "Выполнена интеграционная проверка маршрутов, YAML и границы STAS5/STAS8."
+  results:
+    router: "../TASK_ROUTER_RU.md"
+    responsibility_memory: "AGENT_RESPONSIBILITIES.yaml"
+    setup_report: "../STAS9_AGENT_SETUP_REPORT_RU.md"
+    validation_status: "PASS"
+    final_mode: "SAFE"
+    final_access: "READ_ONLY"
+    training_started: false
+    optuna_started: false
+    stas5_stas8_modified: false
+    models_modified: false
+    live_trading_used: false
+    files_deleted_or_moved: false
+
+current_task:
+  task_id: "SOL_EVENT_PIPELINE_DESIGN_2026-07-23"
+  title: "Безопасный контракт и dry-run pipeline событий SOLUSDT 1m."
+  status: "COMPLETE_SAFE"
+  requested_mode: "SAFE"
+  requested_access: "READ_ONLY_SOURCE"
+  authorized_writes: "STAS9_CONTROL_PLANE_DOCUMENTATION_ONLY"
+  participants:
+    - agent: "STAS9_SENTINEL"
+      contribution: "Маршрутизация, контроль разрешённого source root, интеграция и итоговый отчёт."
+    - agent: "STAS9_MARKET_RESEARCH"
+      contribution: "Контракт события, девять типов событий и предложения причинных признаков SOL."
+    - agent: "STAS9_VALIDATOR"
+      contribution: "Проверка source identity, causality, schema fields, lineage и отсутствия event/dataset writes."
+    - agent: "STAS9_GUARDIAN"
+      contribution: "Контроль запретов на изменение CSV, STAS5/STAS8, модели, обучение, Optuna и live trading."
+  completed_actions:
+    - "Подтверждён единственный source data/core/bybit_ohlcv."
+    - "Потоково проверены 126 файлов и 181440 канонических минут SOLUSDT 1m."
+    - "Создан EVENT_SCHEMA_RU.md."
+    - "Создан пустой контейнер EVENTS/SOL."
+    - "Зафиксированы девять первых типов событий."
+    - "Выполнен in-memory dry-run source -> proposal -> schema validation."
+    - "Подготовлен SOL_EVENT_PIPELINE_DESIGN_RU.md."
+  results:
+    event_schema: "../MARKET_KNOWLEDGE/EVENT_SCHEMA_RU.md"
+    events_directory: "../MARKET_KNOWLEDGE/EVENTS/SOL"
+    report: "../REPORTS/SOL_EVENT_PIPELINE_DESIGN_RU.md"
+    dry_run_status: "PASS_DRY_RUN_NO_EVENT_RECORDS"
+    source_files: 126
+    source_rows: 181440
+    event_types_proposed: 9
+    event_records_created: 0
+    datasets_created: 0
+    training_started: false
+    optuna_started: false
+    stas5_stas8_modified: false
+    models_modified: false
+    live_trading_used: false
+    files_deleted_or_moved: false
+    final_mode: "SAFE"
+    final_access: "READ_ONLY"
+
+memory_update_rules:
+  - "После завершения задачи обновлять статус, участников и результаты."
+  - "Не стирать историю выполненных задач; добавлять новые записи."
+  - "Не хранить секреты."
+  - "Сохранять SAFE и READ_ONLY как значения по умолчанию."

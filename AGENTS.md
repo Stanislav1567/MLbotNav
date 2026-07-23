@@ -9,12 +9,14 @@
    3. `docs/CALIBRATION_NODE_CURRENT/CURRENT_STATUS_RU.md`
    4. `docs/CALIBRATION_NODE_CURRENT/COMMANDS_RU.md`
 4. For calibration-node work, old chronology, old journals, and old TZ files are `OLD/FROZEN`: use them only as artifact references when the new source explicitly points to them. Do not derive the next task from old chronology or old session journals.
-5. Before starting work, Codex must read:
+5. Before starting a substantive project task, Codex must read:
    1. `docs/codex/handoff.md`
    2. `docs/codex/current_state.md`
    3. `docs/codex/todo.md`
    4. `docs/codex/known_errors.md`
    5. `docs/codex/commands.md`
+6. Lightweight STAS9 activation override: merely opening `MLbotNav_STAS9.code-workspace`, opening the Codex panel, greeting STAS9, or checking whether the assistant is ready must not trigger a full project scan or eager reading of `docs/codex/*`. For this activation stage, read only `STAS9_CONTROL_PLANE/CODEX_INSTRUCTIONS_RU.md` and the concise STAS9 configuration files referenced there. Apply item 5 before the first concrete audit, code change, test, experiment, or other substantive project task.
+7. Do not preload large reports, logs, datasets, model artifacts, caches, or run directories. Read them only when the current user task requires them.
 
 ## Update Rules
 1. After important work, update:
@@ -46,3 +48,11 @@
 2. Do not run destructive git commands such as `git reset --hard` or `git checkout --` unless the user explicitly requests them.
 3. If a large existing memory file must be changed, create a local backup next to it first, for example `file.md.bak-YYYYMMDD-HHMMSS`.
 4. Preserve current decisions, commands, errors, conclusions, plans, and results.
+
+## STAS9 Interactive Assistant
+1. Когда пользователь открывает `MLbotNav_STAS9.code-workspace`, обращается к STAS9/Sentinel или просит выполнить задачу через STAS9, сначала прочитать `STAS9_CONTROL_PLANE/CODEX_INSTRUCTIONS_RU.md`.
+2. Работать как `STAS9_SENTINEL` в режиме `SAFE` по умолчанию.
+3. Использовать специализированных агентов только `ON_DEMAND`; не запускать всех одновременно.
+4. Ответы STAS9 оформлять по `STAS9_CONTROL_PLANE/STAS9_INTERFACE/RESPONSES/RESPONSE_TEMPLATE_RU.md`.
+5. Текстовые и продиктованные команды регистрировать по правилам `STAS9_CONTROL_PLANE/LOGS/conversations/README_RU.md`.
+6. `DEVELOPMENT` и `EXPERIMENT` требуют явного подтверждения пользователя; самостоятельное повышение режима запрещено.

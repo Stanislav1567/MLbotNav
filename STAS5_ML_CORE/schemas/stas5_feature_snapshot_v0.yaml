@@ -1,0 +1,49 @@
+schema_id: stas5_feature_snapshot_v0
+status: draft_no_ml_no_optuna
+join_key:
+  - day
+  - candidate_id
+time_contract:
+  decision_time_column: entry_time
+  rule: feature_available_at <= decision_time
+allowed_feature_groups:
+  - stas2_background
+  - stas2_long_short_percent_context
+  - session_context
+  - causal_wave_context
+  - combo_rsi_macd_stoch_atr
+  - divergence_convergence
+  - volatility_atr
+  - volume_flow
+  - structure_flags
+  - pattern_flags
+  - density_profile
+  - local_low_high_distance
+  - nearby_entry_cluster_context
+  - previous_candles_context
+first_baseline_forbidden_feature_patterns:
+  - yellow_x
+  - would_cut
+  - strategy_cut
+  - strategy_vote
+always_forbidden_feature_patterns:
+  - future_return
+  - hit_
+  - time_to_
+  - mfe
+  - mae
+  - post_entry
+  - ideal_review_tp_pct
+  - max_feasible_review_tp_pct
+  - tp_after_entry
+  - wave_end
+  - macro_wave_full_move_pct
+  - entry_candle_high
+  - entry_candle_low
+  - entry_candle_close
+  - entry_candle_volume
+guards:
+  feature_allowlist_required: true
+  denylist_scan_required: true
+  row_count_parity_required: true
+  train_validation_split_by_day_required: true

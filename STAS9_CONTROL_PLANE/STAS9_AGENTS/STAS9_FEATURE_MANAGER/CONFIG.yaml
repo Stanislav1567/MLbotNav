@@ -1,0 +1,34 @@
+schema_version: "1.0"
+agent_id: "STAS9_FEATURE_MANAGER"
+display_name: "STAS9 Менеджер признаков"
+role: "Проектирование и контроль признаков, паттернов и feature contracts"
+enabled: true
+startup_mode: "ON_DEMAND"
+default_mode: "READ_ONLY"
+coordinator: "STAS9_SENTINEL"
+
+functions:
+  - "ANALYZE_FEATURE_REGISTRY"
+  - "DESIGN_TECHNICAL_FEATURES"
+  - "DESIGN_CANDLE_PATTERN_FEATURES"
+  - "MAP_MARKET_EVENTS_TO_FEATURES"
+  - "PREPARE_FEATURE_CONTRACTS"
+  - "CHECK_FEATURE_COUNTS"
+  - "CHECK_FEATURE_CONTRACTS"
+  - "CHECK_X_VERSION_COMPATIBILITY"
+  - "CHECK_MODEL_FEATURE_DEPENDENCIES"
+  - "FIND_FORBIDDEN_FEATURES"
+
+inputs:
+  feature_registry: "../../FEATURE_REGISTRY.yaml"
+  model_registry: "../../MODEL_REGISTRY.yaml"
+
+outputs:
+  reports_directory: "../../REPORTS"
+  activity_log: "../../LOGS/agent_activity.log"
+
+automation:
+  rebuild_features: false
+  modify_allowlists: false
+  modify_datasets: false
+  train_models: false

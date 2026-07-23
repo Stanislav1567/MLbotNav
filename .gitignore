@@ -15,6 +15,18 @@ packs/
 tmp/
 _codex_offload_*/
 _locked_tmp_*/
+
+# Generated STAS review runs: large PNG/CSV/XLSX artifacts, not source code.
+STAS1_GOOD_LOW_REVIEW/runs/
+STAS2_MARKET_PHASE_REVIEW/runs/
+STAS3_PERCENT_LADDER_REVIEW/runs/
+STAS5_ML_CORE/artifacts/
+STAS5_ML_CORE/runs/
+
+# Generated STAS4 hypothesis-review outputs. Keep top-level Markdown source notes visible.
+STAS4_FEATURE_HYPOTHESIS_REVIEW/*/
+STAS4_FEATURE_HYPOTHESIS_REVIEW/*.png
+
 *.bak
 *.bak_*
 *.bak-*

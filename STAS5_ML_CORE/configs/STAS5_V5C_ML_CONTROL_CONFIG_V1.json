@@ -1,0 +1,1210 @@
+{
+  "config_id": "STAS5_V5C_ML_CONTROL_CONFIG_V1",
+  "schema_version": 1,
+  "source_of_truth": true,
+  "status": "ACTIVE_CONTROL_CONFIG_YAML_SOURCE_OF_TRUTH_R4BB_X463_TRAINED_READY_FOR_FORWARD",
+  "created_local_date": "2026-07-20",
+  "project": "STAS5 V5C Market Passport / Human-style ML",
+  "symbol": "SOLUSDT",
+  "timeframe": "1m",
+  "control_policy": {
+    "manual_edit_file": "STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml",
+    "json_snapshot_file": "STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.json",
+    "ru_readme_file": "STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1_RU.md",
+    "json_is_source_of_truth": false,
+    "ru_readme_is_source_of_truth": false,
+    "code_wiring_enabled": false,
+    "training_launch_enabled_from_config": false,
+    "forward_launch_enabled_from_config": false,
+    "note_ru": "YAML является главным управляемым конфигом. JSON/RU.md оставлены как справка и снимок. RiskGate ML уже подключен к V5C Train/Forward кодом, но раннеры не запускают training/forward из YAML автоматически."
+  },
+  "active_profile": {
+    "id": "r4bb_bollinger_layer_v1_x463_trained",
+    "description_ru": "Bollinger Layer V1 подключен как причинные bb20_* признаки: base X439 + BB24 = X463. ENTRY/RiskGate datasets и guards PASS по 2026-01-27..2026-03-20; R2/R3/R4 Bollinger gallery собрана. Новый train/forward не запускать до визуального OK пользователя.",
+    "production_readiness": "R4BB_X463_TRAINED_POST_GUARDS_PASS_READY_FOR_FORWARD"
+  },
+  "bollinger_layer_v1": {
+    "status": "IMPLEMENTED_X463_TRAINED_POST_GUARDS_PASS_READY_FOR_FORWARD",
+    "date_added_local": "2026-07-22",
+    "enabled": true,
+    "include_features": true,
+    "feature_contract": "X439_PLUS_BB24_V1",
+    "base_feature_count": 439,
+    "added_feature_count": 24,
+    "expected_feature_count_when_enabled": 463,
+    "visual_overlay": true,
+    "visual_gallery_root": "STAS5_ML_CORE/artifacts/v5c/review/_ALL_ROUNDS_VISUAL_REVIEW_BOLLINGER20_2SIGMA",
+    "gate_preview": {
+      "enabled": true,
+      "mode": "preview_only",
+      "changes_model_decision": false,
+      "rule_ru": "Показывает, где Bollinger-контекст считал бы long опасным: хай, нисходящий канал, падающий нож, слабый ход цены. Это audit/preview, не финальный продакшн-блокер без отдельного OK."
+    },
+    "training_policy": {
+      "manual_labels_are_primary_teacher": true,
+      "protect_manual_good": true,
+      "no_relabel_by_bollinger": true,
+      "risk_bad_also_entry_bad": true,
+      "rule_ru": "Bollinger добавляет причинные bb_* признаки в ENTRY/RiskGate датасеты. Хорошие и плохие точки задаются ручной разметкой, а не автоматическим пересчетом по полосам."
+    },
+    "no_future_policy": {
+      "source": "closed_1m_ohlcv_before_entry_time_utc",
+      "bb_source_time_utc_lte_entry_time_utc_guard": true,
+      "forbidden_as_x": [
+        "bb_preview_block",
+        "bb_preview_reason",
+        "bb_preview_block_score",
+        "bb_preview_blocked_manual_good",
+        "bb_preview_blocked_manual_bad",
+        "entry_y",
+        "risk_bad_y",
+        "manual_review",
+        "future_outcome",
+        "mfe",
+        "mae"
+      ]
+    },
+    "feature_columns": [
+      "bb20_mid_rel_pct",
+      "bb20_upper_rel_pct",
+      "bb20_lower_rel_pct",
+      "bb20_width_pct",
+      "bb20_position_0_1",
+      "bb20_zscore",
+      "bb20_upper_gap_pct",
+      "bb20_lower_gap_pct",
+      "bb20_mid_slope_15m_pct",
+      "bb20_mid_slope_60m_pct",
+      "bb20_close_ret_5m_pct",
+      "bb20_close_ret_15m_pct",
+      "bb20_close_ret_30m_pct",
+      "bb20_close_ret_60m_pct",
+      "bb20_range_20m_pct",
+      "bb20_range_60m_pct",
+      "bb20_atr20_pct",
+      "bb20_upper_touch_count_60m",
+      "bb20_lower_touch_count_60m",
+      "bb20_down_channel_score",
+      "bb20_falling_knife_score",
+      "bb20_rebound_from_low_score",
+      "bb20_post_knife_stabilization_score",
+      "bb20_dead_move_score"
+    ],
+    "next_actions": [
+      "Собрать ENTRY/RiskGate датасеты 2026-01-27..2026-03-20 с -EnableBollingerLayer.",
+      "Собрать R2/R3/R4 review gallery с -BollingerPreview и визуально сверить полосы с ручной разметкой.",
+      "После PASS guard пользователь вручную запускает training/forward, если визуально все принято."
+    ]
+  },
+  "safety_pulse_preview": {
+    "status": "PASS_V5C_SAFETY_PULSE_PREVIEW_READY_NO_TRAINING",
+    "mode": "preview_only_no_training_no_forward_mutation",
+    "policy": "DOWN_CHANNEL_NO_LONG_V1",
+    "source_forward_run_id": "stas5_v5c_r4_forward_20260321_20260327_wide_v1",
+    "start_day": "2026-03-21",
+    "end_day": "2026-03-27",
+    "counts_before_safety": {
+      "ENTER": 70,
+      "WATCH": 176,
+      "SKIP": 318
+    },
+    "counts_original_final_with_riskgate_ml": {
+      "ENTER": 34,
+      "WATCH": 37,
+      "SKIP": 493
+    },
+    "counts_preview_final": {
+      "ENTER": 40,
+      "WATCH": 136,
+      "SKIP": 388
+    },
+    "focus_days": {
+      "2026-03-26": {
+        "ENTER": 4,
+        "WATCH": 16,
+        "SKIP": 68,
+        "down_channel_blocks": 26
+      },
+      "2026-03-27": {
+        "ENTER": 7,
+        "WATCH": 18,
+        "SKIP": 51,
+        "down_channel_blocks": 11
+      }
+    },
+    "rule_ru": "ENTRY_BASELINE до RiskGate ищет возможности; DOWN_CHANNEL_NO_LONG_V1 отдельным preview-блокером запрещает long в нисходящем канале со слабым отскоком и без хода под 1-1.5%. Старые taxonomy/ML mass-demote в этой policy не применяются.",
+    "out_dir": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4_forward_20260321_20260327_wide_v1/safety_pulse_preview/down_channel_no_long_v1",
+    "preview_predictions_csv": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4_forward_20260321_20260327_wide_v1/safety_pulse_preview/down_channel_no_long_v1/STAS5_V5C_DOWN_CHANNEL_NO_LONG_V1_20260321_20260327_PREDICTIONS_V1.csv",
+    "audit_ru": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4_forward_20260321_20260327_wide_v1/safety_pulse_preview/down_channel_no_long_v1/STAS5_V5C_BALANCED_SAFETY_PULSE_AUDIT_RU.md",
+    "next_action": "USER_VISUAL_REVIEW_PNG_BEFORE_PROMOTION_OR_RETRAIN"
+  },
+  "active_context": {
+    "train": {
+      "run_id": "stas5_v5c_r4bb_train_20260127_20260320",
+      "start_day": "2026-01-27",
+      "end_day": "2026-03-20",
+      "days": 53,
+      "rows": 3285,
+      "entry_y_good": 517,
+      "entry_y_bad": 2768,
+      "feature_count": 463,
+      "feature_contract": "X439_PLUS_BB24_V1",
+      "base_feature_count": 439,
+      "bollinger_feature_count": 24,
+      "status": "PASS_V5_TWO_BLOCK_ML_TRAINED_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "post_train_guard_status": "PASS_V5_TWO_BLOCK_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "riskgate_ml_status": "PASS_V5C_RISKGATE_ML_TRAINED_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "riskgate_ml_post_train_guard_status": "PASS_V5C_RISKGATE_ML_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "selected_entry_model": "entry_baseline",
+      "manifest_path": "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json",
+      "batch_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_ML_READY_463F_TARGETS_V1.csv",
+      "batch_guard_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_GUARD_V1.json",
+      "riskgate_dataset_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X463_RISK_BAD_Y_V1.csv",
+      "riskgate_manifest_path": "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5C_RISKGATE_ML_TRAIN_MANIFEST_V1.json"
+    },
+    "forward_review": {
+      "run_id": "stas5_v5c_r3_forward_20260314_20260320_wide_v1",
+      "start_day": "2026-03-14",
+      "end_day": "2026-03-20",
+      "days": 7,
+      "rows": 569,
+      "policy": "wide_review",
+      "status": "PASS_V5C_CONTINUOUS_TWO_BLOCK_FORWARD_20260314_20260320_BLIND_NO_FUTURE",
+      "manifest_path": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r3_forward_20260314_20260320_wide_v1/STAS5_V5C_FORWARD_MANIFEST_V1.json",
+      "predictions_path": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r3_forward_20260314_20260320_wide_v1/STAS5_V5C_FORWARD_PREDICTIONS_20260314_20260320_V1.csv",
+      "decision_counts": {
+        "ENTER": 62,
+        "WATCH": 162,
+        "SKIP": 345
+      }
+    },
+    "next_train_candidate": {
+      "run_id": "stas5_v5c_r4bb_train_20260127_20260320",
+      "start_day": "2026-01-27",
+      "end_day": "2026-03-20",
+      "days": 53,
+      "rows": 3285,
+      "entry_y_good": 517,
+      "entry_y_bad": 2768,
+      "feature_count": 463,
+      "feature_contract": "X439_PLUS_BB24_V1",
+      "base_feature_count": 439,
+      "bollinger_feature_count": 24,
+      "entry_dataset_guard_status": "PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING",
+      "riskgate_dataset_guard_status": "PASS_V5C_RISKGATE_TRAIN_DATASET_GUARD_READY_NO_TRAINING",
+      "training_guard_status": "PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING",
+      "training_status": "COMPLETED_PROMOTED_TO_ACTIVE_CONTEXT_TRAIN",
+      "post_train_guard_status": "PASS_V5_TWO_BLOCK_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "riskgate_ml_status": "PASS_V5C_RISKGATE_ML_TRAINED_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "riskgate_ml_post_train_guard_status": "PASS_V5C_RISKGATE_ML_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "entry_batch_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_ML_READY_463F_TARGETS_V1.csv",
+      "entry_batch_guard_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_GUARD_V1.json",
+      "riskgate_dataset_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X463_RISK_BAD_Y_V1.csv",
+      "riskgate_guard_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_GUARD_V1.json",
+      "riskgate_ml_training_guard_status": "PASS_V5C_RISKGATE_ML_TRAINING_GUARD_READY_FOR_TRAINING",
+      "riskgate_ml_code_wiring_status": "READY_IN_MODE_TRAIN_AND_FORWARD"
+    },
+    "next_dataset_stage": {
+      "status": "REVIEW_SUPERVISED_DATASETS_X463_READY_TRAINING_GUARDS_PASS_NO_TRAINING",
+      "rule_ru": "Сначала смотрим R2/R3/R4 Bollinger gallery и guards, потом пользователь сам запускает training. Ни training, ни forward из этого config автоматически не запускаются.",
+      "base_train_32d": {
+        "start_day": "2026-01-27",
+        "end_day": "2026-02-27",
+        "days": 32,
+        "rows": 2596,
+        "entry_y_good": 290,
+        "entry_y_bad": 2306,
+        "feature_count": 439,
+        "source_role": "stable_base_train",
+        "batch_csv": "STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_ML_READY_439F_TARGETS_V1.csv",
+        "allowlist_json": "STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_FEATURE_ALLOWLIST_439F_V1.json",
+        "guard_json": "STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_GUARD_V1.json"
+      },
+      "approved_review_pack_r2_r3_r4": {
+        "pack_id": "STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1",
+        "start_day": "2026-02-28",
+        "end_day": "2026-03-20",
+        "rounds": [
+          "R2",
+          "R3",
+          "R4"
+        ],
+        "days": 21,
+        "entry_rows": 689,
+        "entry_good": 227,
+        "entry_bad": 462,
+        "risk_bad": 400,
+        "guard_status": "PASS_V5C_REVIEW_PACK_GUARD_READY_NO_TRAINING",
+        "pack_dir": "STAS5_ML_CORE/artifacts/v5c/review/_APPROVED_REVIEW_PACKS/STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1",
+        "entry_csv": "STAS5_ML_CORE/artifacts/v5c/review/_APPROVED_REVIEW_PACKS/STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1/entry/STAS5_V5C_R2_R3_R4_ENTRY_REVIEW_APPROVED_ALL_V1.csv",
+        "riskgate_csv": "STAS5_ML_CORE/artifacts/v5c/review/_APPROVED_REVIEW_PACKS/STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1/riskgate/STAS5_V5C_R2_R3_R4_RISKGATE_REVIEW_APPROVED_ALL_V1.csv",
+        "manifest_json": "STAS5_ML_CORE/artifacts/v5c/review/_APPROVED_REVIEW_PACKS/STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1/STAS5_V5C_R2_R3_R4_REVIEW_PACK_MANIFEST_V1.json",
+        "guard_json": "STAS5_ML_CORE/artifacts/v5c/review/_APPROVED_REVIEW_PACKS/STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1/STAS5_V5C_R2_R3_R4_REVIEW_PACK_GUARD_V1.json",
+        "visual_png_is_ml_source": false,
+        "loose_review_folders_allowed_as_ml_source": false,
+        "all_rounds_visual_gallery_allowed_as_ml_source": false
+      },
+      "expected_entry_train_dataset": {
+        "target": "entry_y",
+        "days": 53,
+        "rows": 3285,
+        "entry_y_good": 517,
+        "entry_y_bad": 2768,
+        "feature_count_when_bollinger_enabled": 463,
+        "feature_contract_when_bollinger_enabled": "X439_PLUS_BB24_V1",
+        "formula_ru": "base 2596 rows + approved review-pack 689 rows; GOOD 290+227; BAD 2306+462.",
+        "risk_bad_policy_ru": "Любой risk_bad_y=1 одновременно остается entry_y=0, чтобы ENTRY тоже училась не повторять опасный вход."
+      },
+      "expected_riskgate_train_dataset_v1": {
+        "target": "risk_bad_y",
+        "positive_risk_bad_y_1": 400,
+        "negative_policy": "explicit_safe_only",
+        "explicit_safe_review_entry_good_min_v1": 227,
+        "base_good_proxy_audit_pool": 290,
+        "base_good_proxy_is_training_negative_without_extra_approval": false,
+        "unlabeled_no_risk_is_safe": false,
+        "rule_ru": "RiskGate учится отдельно: риск плохо -> risk_bad_y=1; безопасные отрицательные примеры берем только из явно подтвержденных safe/GOOD, а не из всей неразмеченной тишины."
+      },
+      "launch_state": {
+        "x439_source_builder": "PASS_BUILT_FROM_BASE32_AND_APPROVED_REVIEW_PACK",
+        "bollinger_layer_v1_builder": "PASS_BUILT_X439_PLUS_BB24",
+        "entry_dataset_builder": "PASS_BUILT_X463",
+        "riskgate_dataset_builder": "PASS_BUILT_X463",
+        "entry_dataset_guard": "PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING",
+        "riskgate_dataset_guard": "PASS_V5C_RISKGATE_TRAIN_DATASET_GUARD_READY_NO_TRAINING",
+        "riskgate_ml_training_guard": "PASS_V5C_RISKGATE_ML_TRAINING_GUARD_READY_FOR_TRAINING",
+        "training_guard": "PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING",
+        "training": "NOT_STARTED_USER_MUST_RUN_TRAIN_COMMAND",
+        "riskgate_ml_training": "NOT_STARTED_USER_MUST_RUN_TRAIN_COMMAND",
+        "forward": "NOT_STARTED_UNTIL_TRAIN_AND_RISKGATE_POST_TRAIN_GUARDS_PASS"
+      }
+    }
+  },
+  "feature_contract": {
+    "x_feature_count": 463,
+    "x_allowlist_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_FEATURE_ALLOWLIST_463F_V1.json",
+    "active_contract": "X439_PLUS_BB24_V1",
+    "groups": {
+      "old_causal_features": 274,
+      "cs_causal_market_structure": 81,
+      "fcs_full_causal_structure": 84,
+      "bollinger_layer_v1": 24
+    },
+    "no_future": true,
+    "target_manual_columns_are_live_x": false,
+    "source_time_guards": {
+      "cs_max_source_time_utc_lte_entry_time_utc": true,
+      "fcs_max_source_time_utc_lte_entry_time_utc": true,
+      "bb_source_time_utc_lte_entry_time_utc": true
+    },
+    "forbidden_x_columns_or_patterns": [
+      "entry_y",
+      "phase_y",
+      "state_y",
+      "reason_y",
+      "entry_label",
+      "rank_label",
+      "manual_phase",
+      "manual_support",
+      "manual_resistance",
+      "future",
+      "postfact",
+      "hit_",
+      "TP",
+      "Stas3",
+      "exit",
+      "ML_KEEP_SCORE",
+      "ML_DECISION",
+      "full_group_future",
+      "any_feature_after_entry_time_utc"
+    ]
+  },
+  "dataset_contract": {
+    "status": "PASS_REVIEW_SUPERVISED_DATASETS_READY_NO_TRAINING",
+    "x439_source": {
+      "name": "X439_SOURCE",
+      "feature_count": 439,
+      "build_first": true,
+      "source_priority_ru": "Берем causal X439 из проверенных batch/day/forward candidate rows, а review CSV используем только как teacher labels.",
+      "join_keys_priority": [
+        "day+candidate_id",
+        "day+record_id"
+      ],
+      "forbidden_sources": [
+        "visual_review_png",
+        "_ALL_ROUNDS_VISUAL_REVIEW",
+        "loose_draft_review_folders",
+        "user_text_as_feature",
+        "future_outcome_as_feature"
+      ]
+    },
+    "entry_train_dataset": {
+      "block_id": "ENTRY_TRAIN_DATASET",
+      "enabled_for_next_stage": true,
+      "target": "entry_y",
+      "x_input": "X439_SOURCE",
+      "base_source": "base_train_32d",
+      "review_source": "approved_review_pack_r2_r3_r4.entry_csv",
+      "expected_rows": 3285,
+      "expected_good": 517,
+      "expected_bad": 2768,
+      "risk_bad_is_entry_bad": true,
+      "output_status": "PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING",
+      "output_csv": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_ML_READY_439F_TARGETS_V1.csv",
+      "output_guard": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_GUARD_V1.json"
+    },
+    "riskgate_train_dataset": {
+      "block_id": "RISKGATE_TRAIN_DATASET",
+      "enabled_for_next_stage": true,
+      "target": "risk_bad_y",
+      "x_input": "X439_SOURCE",
+      "positive_source": "approved_review_pack_r2_r3_r4.riskgate_csv",
+      "positive_expected": 400,
+      "negative_policy": "explicit_safe_only",
+      "negative_min_v1_source": "approved_review_pack_entry_good",
+      "negative_min_v1_expected": 227,
+      "base_good_proxy_audit_pool": 290,
+      "use_unlabeled_as_safe": false,
+      "output_status": "PASS_V5C_RISKGATE_TRAIN_DATASET_GUARD_READY_NO_TRAINING",
+      "output_csv": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X439_RISK_BAD_Y_V1.csv",
+      "output_guard": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_GUARD_V1.json"
+    },
+    "guards_required": [
+      "approved_review_pack_guard_pass",
+      "x439_allowlist_439_match_base",
+      "all_review_label_ids_join_to_x439",
+      "missing_joined_label_ids_zero",
+      "duplicate_day_candidate_id_zero",
+      "duplicate_day_record_id_zero",
+      "target_manual_review_columns_not_in_x",
+      "cs_fcs_source_time_lte_entry_time",
+      "no_future_postfact_hit_tp_exit_old_ml_leakage",
+      "risk_bad_y_1_is_always_entry_y_0",
+      "riskgate_negative_examples_are_explicit_not_unlabeled",
+      "training_and_forward_not_started"
+    ]
+  },
+  "dataset_blocks": {
+    "X439_SOURCE_BUILDER": {
+      "enabled": true,
+      "mode": "built_no_training",
+      "responsibility_ru": "Собрать единый causal X439 слой по base 32d + reviewed 21d, не используя review/target/manual/future как features.",
+      "output_status": "PASS_BUILT_FROM_BASE32_AND_APPROVED_REVIEW_PACK"
+    },
+    "ENTRY_TRAIN_DATASET_BUILDER": {
+      "enabled": true,
+      "mode": "built_no_training",
+      "responsibility_ru": "Собрать ENTRY train view: X439 + entry_y. Хорошо/вход/крестик хорошо/ромбик хорошо -> entry_y=1; плохо и риск плохо -> entry_y=0.",
+      "target": "entry_y",
+      "output_status": "PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING"
+    },
+    "RISKGATE_TRAIN_DATASET_BUILDER": {
+      "enabled": true,
+      "mode": "built_no_training",
+      "responsibility_ru": "Собрать RiskGate train view: X439 + risk_bad_y. Только риск плохо -> risk_bad_y=1; отрицательные safe-примеры брать только явно, не из всей неразмеченной массы.",
+      "target": "risk_bad_y",
+      "output_status": "PASS_V5C_RISKGATE_TRAIN_DATASET_GUARD_READY_NO_TRAINING"
+    }
+  },
+  "ml_blocks": {
+    "ENTRY_BASELINE_ML": {
+      "enabled": true,
+      "selected_for_entry": true,
+      "mode": "active_entry_alpha",
+      "type": "binary_entry_ranker",
+      "responsibility_ru": "Главный текущий альфа-блок: X439 -> entry_y.",
+      "train_input": [
+        "X439"
+      ],
+      "target": "entry_y",
+      "forward_input": [
+        "X439"
+      ],
+      "model_artifact": "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5_ENTRY_BASELINE_MODEL.joblib",
+      "output_columns": [
+        "ENTRY_BASELINE_LIVE_SCORE",
+        "ENTRY_ML_LIVE_SCORE",
+        "ENTRY_ML_LIVE_DECISION"
+      ],
+      "selection_status": "SELECTED_BY_R4BB_TRAIN_MANIFEST",
+      "selection_reason": "baseline_kept_because_two_block_did_not_pass_quality_gate"
+    },
+    "MARKET_PHASE_STATE_ML": {
+      "enabled": true,
+      "selected_for_entry": false,
+      "mode": "support_only",
+      "type": "multiclass_phase_state_predictor",
+      "responsibility_ru": "Понимает phase/state рынка по X439; настоящие phase_y/state_y являются только target.",
+      "model_kind": "extra_trees_balanced",
+      "train_input": [
+        "X439"
+      ],
+      "targets": [
+        "phase_y",
+        "state_y"
+      ],
+      "forward_input": [
+        "X439"
+      ],
+      "allowed_usage_for_entry_ru": "На train только OOF predictions; на forward только live predictions; настоящие phase_y/state_y в ENTRY X запрещены.",
+      "model_artifact": "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib",
+      "selection_status": "TRAINED_AVAILABLE_SUPPORTING_ONLY"
+    },
+    "ENTRY_ML_TWO_BLOCK": {
+      "enabled": false,
+      "selected_for_entry": false,
+      "mode": "frozen_not_selected",
+      "type": "binary_entry_ranker_with_phase_state_predictions",
+      "responsibility_ru": "Замороженный проверочный two-block ENTRY: X439 + OOF/live phase/state predictions -> entry_y. Сейчас не тратим на него время, потому что baseline стабильно сильнее по quality gate.",
+      "frozen_on": "2026-07-20",
+      "freeze_reason_ru": "Блок обучается технически нормально, но не проходит отбор как главный: R3 quality gate оставил ENTRY_BASELINE_ML. Текущий фокус - baseline + RISKGATE_ML.",
+      "train_input": [
+        "X439",
+        "OOF_MARKET_PHASE_STATE_ML_predictions"
+      ],
+      "target": "entry_y",
+      "forward_input": [
+        "X439",
+        "live_MARKET_PHASE_STATE_ML_predictions"
+      ],
+      "model_artifact": "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5_ENTRY_ML_MODEL.joblib",
+      "selection_status": "FROZEN_NOT_SELECTED_BY_R4BB_QUALITY_GATE",
+      "quality_gate_metrics": {
+        "baseline_pr_auc": 0.26494760406055773,
+        "two_block_pr_auc": 0.2724875781048052,
+        "baseline_walk_pr_auc": 0.3282497366534343,
+        "two_block_walk_pr_auc": 0.3217379528860768,
+        "baseline_top_1pct_precision": 0.393939,
+        "two_block_top_1pct_precision": 0.333333
+      }
+    },
+    "RISK_GATE_RULE_V0": {
+      "enabled": true,
+      "selected_for_entry": false,
+      "mode": "audit_only",
+      "type": "deterministic_safety_overlay",
+      "responsibility_ru": "Ремень безопасности поверх ENTRY: active dump / falling knife / support breakdown / short regime.",
+      "implementation_status": "IMPLEMENTED_AUDIT_ONLY",
+      "train_required": false,
+      "can_enforce_without_guard": false,
+      "taxonomy_version": "RISK_GATE_TAXONOMY_V1",
+      "taxonomy_modes": [
+        "PRE_DUMP_RISK",
+        "ACTIVE_DUMP",
+        "FALLING_KNIFE",
+        "STRONG_SHORT_PRESSURE",
+        "SHORT_CONTINUATION",
+        "PULLBACK_THEN_SHORT",
+        "SUPPORT_BREAKDOWN",
+        "CHANNEL_BREAKDOWN",
+        "POST_PUMP_DUMP",
+        "LIQUIDATION_CASCADE"
+      ],
+      "input": [
+        "ENTRY_ALPHA_SCORE",
+        "ENTRY_ALPHA_DECISION",
+        "selected_causal_risk_columns_from_X439"
+      ],
+      "allowed_risk_sources": [
+        "cs_short_pressure_now",
+        "cs_dump_acceleration_score",
+        "cs_pre_dump_risk_score",
+        "cs_price_breaking_recent_support",
+        "cs_falling_knife_active",
+        "cs_sell_pressure_exhaustion_score",
+        "cs_consecutive_red_candles",
+        "fcs_knife_active",
+        "fcs_knife_risk_score",
+        "fcs_knife_drop_pct_so_far",
+        "fcs_knife_acceleration_score",
+        "fcs_knife_red_streak",
+        "fcs_knife_exhaustion_score",
+        "fcs_bounce_from_knife_low_pct",
+        "fcs_grounding_confirmed_score",
+        "fcs_retest_after_knife_score",
+        "fcs_regime_score_short_pressure",
+        "fcs_regime_score_pre_dump_risk",
+        "fcs_regime_score_active_dump",
+        "fcs_pre_dump_after_pump_score",
+        "fcs_post_pump_exhaustion_score",
+        "fcs_failed_breakout_score",
+        "fcs_resistance_reject_after_pump",
+        "fcs_support_broken_recently",
+        "fcs_channel_breakdown_recent",
+        "fcs_channel_slope_pct_per_min",
+        "fcs_channel_position_0_1",
+        "stas5_v2_short_wave_*",
+        "stas5_v2_risk_knife_pre_entry",
+        "stas5_v2_risk_weak_bounce_inside_drop",
+        "stas5_v2_risk_drawdown_proxy_score",
+        "stas5_v2_risk_too_high_in_drop",
+        "stas5_v2_risk_after_spike",
+        "stas5_v2_gate_long_allowed_final",
+        "stas5_v2_gate_bullish_evidence_score"
+      ],
+      "planned_output_columns": [
+        "ENTRY_ALPHA_SCORE",
+        "ENTRY_ALPHA_DECISION",
+        "ENTRY_ALPHA_MODEL_SELECTED",
+        "RISK_GATE_MODE",
+        "RISK_GATE_TAXONOMY_VERSION",
+        "RISK_GATE_STATUS",
+        "RISK_GATE_REASON",
+        "RISK_GATE_SCORE",
+        "RISK_GATE_PRIMARY_REGIME",
+        "RISK_GATE_PRIMARY_REGIME_RU",
+        "RISK_GATE_PRIMARY_REGIME_SHORT",
+        "RISK_GATE_TAGS",
+        "RISK_GATE_TAGS_RU",
+        "RISK_GATE_ACTIVE_MODE_COUNT",
+        "RISK_GATE_RAW_PRIMARY_REGIME",
+        "RISK_GATE_RAW_TAGS",
+        "DUMP_RISK_SCORE",
+        "SHORT_REGIME_SCORE",
+        "KNIFE_RISK_SCORE",
+        "RISK_MODE_PRE_DUMP_RISK_SCORE",
+        "RISK_MODE_PRE_DUMP_RISK_FLAG",
+        "RISK_MODE_ACTIVE_DUMP_SCORE",
+        "RISK_MODE_ACTIVE_DUMP_FLAG",
+        "RISK_MODE_FALLING_KNIFE_SCORE",
+        "RISK_MODE_FALLING_KNIFE_FLAG",
+        "RISK_MODE_STRONG_SHORT_PRESSURE_SCORE",
+        "RISK_MODE_STRONG_SHORT_PRESSURE_FLAG",
+        "RISK_MODE_SHORT_CONTINUATION_SCORE",
+        "RISK_MODE_SHORT_CONTINUATION_FLAG",
+        "RISK_MODE_PULLBACK_THEN_SHORT_SCORE",
+        "RISK_MODE_PULLBACK_THEN_SHORT_FLAG",
+        "RISK_MODE_SUPPORT_BREAKDOWN_SCORE",
+        "RISK_MODE_SUPPORT_BREAKDOWN_FLAG",
+        "RISK_MODE_CHANNEL_BREAKDOWN_SCORE",
+        "RISK_MODE_CHANNEL_BREAKDOWN_FLAG",
+        "RISK_MODE_POST_PUMP_DUMP_SCORE",
+        "RISK_MODE_POST_PUMP_DUMP_FLAG",
+        "RISK_MODE_LIQUIDATION_CASCADE_SCORE",
+        "RISK_MODE_LIQUIDATION_CASCADE_FLAG",
+        "LIQUIDATION_DEPTH_PROXY_PCT",
+        "RISK_SOURCE_MAX_TIME_UTC",
+        "RISK_NO_FUTURE_OK",
+        "ENTRY_FINAL_DECISION_AUDIT_ONLY",
+        "ENTRY_FINAL_REASON_AUDIT_ONLY"
+      ],
+      "audit_only_rule_ru": "Сначала только WOULD_BLOCK/WOULD_DEMOTE рядом с текущими predictions; ENTRY не затирать.",
+      "enforce_rule_ru": "Enforce только после отдельного RiskGate guard PASS и ручного review."
+    },
+    "RISKGATE_ML": {
+      "enabled": true,
+      "selected_for_entry": false,
+      "selected_for_safety": true,
+      "mode": "train_wired_safety_after_entry",
+      "type": "binary_safety_classifier",
+      "responsibility_ru": "Обучаемый RiskGate: X439 -> risk_bad_y; после ENTRY блокирует или понижает опасные long-входы.",
+      "train_input": [
+        "X439"
+      ],
+      "target": "risk_bad_y",
+      "target_policy_ru": "risk_bad_y=1 берется только из пользовательского `риск плохо`; risk_bad_y=0 в V1 берется только из явных reviewed ENTRY GOOD, не из всей неразмеченной массы.",
+      "dataset_path": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X463_RISK_BAD_Y_V1.csv",
+      "dataset_guard_status": "PASS_V5C_RISKGATE_TRAIN_DATASET_GUARD_READY_NO_TRAINING",
+      "training_guard_status": "PASS_V5C_RISKGATE_ML_TRAINING_GUARD_READY_FOR_TRAINING",
+      "training_status": "PASS_V5C_RISKGATE_ML_TRAINED_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "model_artifact": "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5C_RISKGATE_ML_MODEL.joblib",
+      "manifest_path": "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5C_RISKGATE_ML_TRAIN_MANIFEST_V1.json",
+      "post_train_guard_status": "PASS_V5C_RISKGATE_ML_POST_TRAIN_GUARD_READY_FOR_FORWARD",
+      "forward_input": [
+        "X439"
+      ],
+      "forward_output_columns": [
+        "ENTRY_ML_LIVE_DECISION_BEFORE_RISKGATE",
+        "RISKGATE_ML_LIVE_SCORE",
+        "RISKGATE_ML_LIVE_DECISION",
+        "RISKGATE_ML_ACTION",
+        "ENTRY_ML_LIVE_DECISION"
+      ],
+      "final_decision_rule_ru": "ENTRY ищет возможность; RISKGATE_ML проверяет опасность. BLOCK_RISK переводит ENTER/WATCH в SKIP, WARN_RISK понижает ENTER в WATCH, PASS_RISK оставляет ENTRY как есть.",
+      "no_future_rule_ru": "RiskGate ML не получает entry_y/risk_bad_y/review/manual/future; только causal X439, где cs/fcs source_time <= entry_time_utc.",
+      "post_train_required_before_forward": "PASS_V5C_RISKGATE_ML_POST_TRAIN_GUARD_READY_FOR_FORWARD"
+    },
+    "DUMP_AVOID_ML": {
+      "enabled": false,
+      "selected_for_entry": false,
+      "mode": "disabled_planned",
+      "type": "binary_safety_classifier",
+      "responsibility_ru": "Будущая ML для опасного active-dump/pre-knife long.",
+      "train_input": [
+        "X439_risk_subset_only"
+      ],
+      "target": "safety_y_bad_dump",
+      "target_sources_allowed_ru": "MAE/MFE/hit/order_of_hit/future outcomes разрешены только как y/audit, не live X.",
+      "selection_status": "NOT_IMPLEMENTED_NOT_TRAINED"
+    },
+    "REBOUND_ALLOW_ML": {
+      "enabled": false,
+      "selected_for_entry": false,
+      "mode": "disabled_planned",
+      "type": "binary_rebound_safety_classifier",
+      "responsibility_ru": "Будущий анти-переблокировщик: отличать хороший flush/retest rebound от ножа.",
+      "train_input": [
+        "X439_risk_recovery_subset_only"
+      ],
+      "target": "safety_y_good_rebound",
+      "selection_status": "NOT_IMPLEMENTED_NOT_TRAINED"
+    },
+    "STAS8_MOVE_CAPACITY_GRID_V1": {
+      "enabled": false,
+      "selected_for_entry": false,
+      "selected_for_safety": false,
+      "mode": "audit_preview_only_not_selected",
+      "type": "live_wave_context_plus_offline_teacher_grid_then_optional_ml",
+      "planned_on_local_date": "2026-07-22",
+      "tz_document": "STAS5_ML_CORE/10_STAS8_MOVE_CAPACITY_GRID_TZ_RU.md",
+      "responsibility_ru": "Будущий слой long-режима: сначала подтвердить, что рынок уже ходит волнами вверх-вниз и можно искать long; затем оценить, есть ли емкость движения 1.1-1.2%.",
+      "current_status": "PASS_AUDIT_PREVIEW_R5_READY_NOT_TRAINED_NOT_SELECTED",
+      "train_required_now": false,
+      "forward_required_now": false,
+      "latest_audit_preview": {
+        "status": "PASS_V5C_STAS8_MOVE_CAPACITY_AUDIT_V1_READY_NO_TRAINING_NO_DECISION_CHANGE",
+        "created_local_date": "2026-07-22",
+        "source_forward_run_id": "stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1",
+        "source_forward_range": "2026-03-21..2026-03-27",
+        "source_forward_rows": 564,
+        "source_forward_feature_count": 463,
+        "source_forward_riskgate_applied": false,
+        "source_predictions_unchanged": true,
+        "training_started_by_stas8": false,
+        "forward_rerun_started_by_stas8": false,
+        "audit_dir": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1",
+        "audit_csv": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1/STAS5_V5C_STAS8_MOVE_CAPACITY_AUDIT_20260321_20260327_V1.csv",
+        "teacher_grid_csv": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1/STAS5_V5C_STAS8_MOVE_CAPACITY_GRID_LONG_20260321_20260327_V1.csv",
+        "manifest_json": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1/STAS5_V5C_STAS8_MOVE_CAPACITY_AUDIT_MANIFEST_20260321_20260327_V1.json",
+        "guard_json": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1/STAS5_V5C_STAS8_MOVE_CAPACITY_GUARD_20260321_20260327_V1.json",
+        "png_count": 7,
+        "counts_before_stas8": {
+          "ENTER": 61,
+          "WATCH": 166,
+          "SKIP": 337
+        },
+        "counts_after_stas8_preview": {
+          "ENTER": 1,
+          "WATCH": 20,
+          "SKIP": 543
+        },
+        "note_ru": "Audit-preview PASS, но это не финальный боевой фильтр: текущие rule-пороги STAS8 слишком жесткие и требуют визуальной настройки до обучения/включения."
+      },
+      "train_scope_rule": {
+        "base_train_range": "2026-01-27..2026-02-27",
+        "approved_review_train_rounds": [
+          "R2_2026-02-28_2026-03-06",
+          "R3_2026-03-07_2026-03-13",
+          "R4_2026-03-14_2026-03-20"
+        ],
+        "train_range_after_review_pack": "2026-01-27..2026-03-20",
+        "blind_forward_audit_range": "2026-03-21..2026-03-27",
+        "rule_ru": "R2/R3/R4 можно использовать для обучения после approved review; R5 сначала только blind-forward/audit-preview, в обучение попадает только после ручного review."
+      },
+      "place_in_future_pipeline": [
+        "before_ENTRY_BASELINE_ML_as_live_search_gate",
+        "after_ENTRY_BASELINE_ML",
+        "before_RISKGATE_ML",
+        "before_future_EXIT_TP_layer"
+      ],
+      "conceptual_split_ru": {
+        "volatility_ru": "Цена вообще способна двигаться: есть диапазон, свечи и амплитуда.",
+        "live_wave_context_ru": "До входа уже видны волны вверх-вниз, откаты, retest/base/reclaim и смена фазы в сторону long-search.",
+        "edge_ru": "После конкретной long-точки есть шанс взять рабочий ход 1.1-1.2%, но это оценивается в live только по causal признакам.",
+        "risk_ru": "Если волатильность есть, но это active dump / falling knife / short pressure, long запрещает RiskGate."
+      },
+      "live_context_layer": {
+        "id": "STAS8_LIVE_MOVE_CONTEXT_V1",
+        "purpose_ru": "Решает, можно ли вообще искать long-входы до расчета ENTRY.",
+        "decisions": [
+          "ALLOW_ENTRY_SEARCH",
+          "WAIT_NO_MOVE",
+          "WAIT_WARMUP",
+          "BLOCK_DOWN_CHANNEL",
+          "BLOCK_WEAK_BOUNCE",
+          "BLOCK_HIGH_VOL_DANGER"
+        ],
+        "live_regime_states": [
+          "LONG_SEARCH_OFF_NO_MOVE",
+          "LONG_SEARCH_OFF_DOWN_ONLY",
+          "LONG_SEARCH_OFF_WEAK_BOUNCE",
+          "LONG_SEARCH_WARMUP",
+          "LONG_SEARCH_ON_WAVES",
+          "LONG_SEARCH_ON_PULLBACK",
+          "LONG_SEARCH_ON_REBOUND"
+        ],
+        "allow_search_conditions_ru": [
+          "Есть живой диапазон: range_60m примерно >= 0.8-1.0% или range_120m примерно >= 1.2-1.5%.",
+          "Есть двусторонняя волна, а не одна свеча: ход вниз и живой отскок вверх либо несколько alternating swings.",
+          "Отскок от recent low примерно >= 0.35-0.60%, есть grounding/retest/base_after_flush/reclaim.",
+          "Long pressure уже не хуже short pressure критически.",
+          "Точка не находится на позднем пампе/верхнем крае без pullback.",
+          "Нет active_dump/falling_knife/support_breakdown hard-zone."
+        ],
+        "pause_conditions_ru": [
+          "Диапазон начал расширяться, но есть только один импульс без обратной ноги.",
+          "После ножа появился первый отскок, но еще нет retest/grounding/base.",
+          "Short pressure высокий, но появились первые признаки exhaustion.",
+          "Цена улетела вверх, но еще не дала нормальный pullback для long-входа.",
+          "Сигналы конфликтуют: волатильность есть, но channel slope/pressure еще против long."
+        ],
+        "block_down_only_conditions_ru": [
+          "ret60/ret120/ret240 отрицательные в нескольких окнах.",
+          "Нисходящий канал, breakdown, серия lower lows/lower highs.",
+          "short_pressure >= 0.55 и заметно выше long_pressure.",
+          "Bounce слабый и нет grounding/retest/exhaustion/base_after_flush."
+        ],
+        "block_no_volatility_conditions_ru": [
+          "range_60m примерно < 0.45-0.60% и range_120m примерно < 0.75-1.0%.",
+          "Нет swing-turns, нет нормального up-leg/down-leg.",
+          "ATR/channel width сжаты."
+        ],
+        "live_signals": [
+          "stas8_live_move_exists",
+          "stas8_live_wave_up_down_seen",
+          "stas8_live_phase_shift",
+          "stas8_live_reversal_confirmed",
+          "stas8_live_context_ok",
+          "stas8_live_no_long_risk",
+          "stas8_live_action",
+          "stas8_live_reason_tags"
+        ]
+      },
+      "teacher_grid_layer": {
+        "id": "STAS8_TEACHER_MOVE_GRID_V1",
+        "purpose_ru": "Offline/audit teacher: после LA-точки измерить, был ли реальный ход вверх и какая была просадка. Это не live X.",
+        "dense_grid_rule_ru": "Для анализа хранить подробную лестницу процентов, но не превращать ее в десятки live-признаков.",
+        "dense_grid_pct": {
+          "start": 0.4,
+          "step_until_5": 0.1,
+          "end_first_part": 5.0,
+          "step_after_5": 0.2,
+          "end": 10.0
+        },
+        "decision_thresholds_pct": {
+          "watch_soft": 1.1,
+          "enter_main": 1.2,
+          "strong": 1.5,
+          "very_strong": 2.0,
+          "extreme_spike_min": 5.0,
+          "extreme_spike_max": 10.0
+        }
+      },
+      "percent_grid_pct": {
+        "noise": 0.2,
+        "audit_start": 0.4,
+        "small_move": 0.5,
+        "live_impulse": 0.7,
+        "working_target": 1.0,
+        "watch_soft_target": 1.1,
+        "enter_main_target": 1.2,
+        "strong_target": 1.5,
+        "strong_move": 2.0,
+        "extreme_spike_min": 5.0,
+        "extreme_spike_max": 10.0
+      },
+      "horizon_grid_min": [
+        30,
+        60,
+        120,
+        240
+      ],
+      "planned_offline_teacher_columns": [
+        "future_max_up_30m_pct",
+        "future_max_up_60m_pct",
+        "future_max_up_120m_pct",
+        "future_max_up_240m_pct",
+        "future_max_down_30m_pct",
+        "future_max_down_60m_pct",
+        "future_max_down_120m_pct",
+        "future_max_down_240m_pct",
+        "future_range_30m_pct",
+        "future_range_60m_pct",
+        "future_range_120m_pct",
+        "future_range_240m_pct",
+        "hit_0p5_y",
+        "hit_0p7_y",
+        "hit_1p0_y",
+        "hit_1p1_y",
+        "hit_1p2_y",
+        "hit_1p5_y",
+        "hit_2p0_y",
+        "time_to_1p0_min",
+        "time_to_1p1_min",
+        "time_to_1p2_min",
+        "time_to_1p5_min",
+        "mae_before_1p0_pct",
+        "mae_before_1p1_pct",
+        "mae_before_1p2_pct",
+        "first_post_entry_event",
+        "move_capacity_y",
+        "move_edge_y",
+        "move_capacity_bucket",
+        "move_capacity_reason"
+      ],
+      "planned_buckets": [
+        "NO_MOVE",
+        "DEAD_FLAT",
+        "LOW_MOVE_CHOP",
+        "SMALL_EDGE_0P7",
+        "WORKING_EDGE_1P0",
+        "MOVE_OK_1P1",
+        "MOVE_OK_1P2",
+        "STRONG_EDGE_1P5",
+        "HIGH_VOL_SAFE_PULLBACK",
+        "LOCAL_LOW_REBOUND_EDGE",
+        "POST_KNIFE_RETEST_EDGE",
+        "HIGH_VOL_DANGER",
+        "DOWN_WAVE_ACTIVE",
+        "DOWN_WAVE_EXHAUSTION",
+        "NO_MOVE_DOWN_CHANNEL",
+        "DOWN_CHANNEL_WEAK_BOUNCE",
+        "LATE_PUMP_DEPENDENT",
+        "DANGER_THEN_LATE_RECOVERY",
+        "SPIKE_EXTREME",
+        "SPIKE_TRAP"
+      ],
+      "planned_live_output_columns": [
+        "ENTRY_ML_LIVE_DECISION_BEFORE_STAS8",
+        "STAS8_LIVE_ACTION",
+        "STAS8_MOVE_CAPACITY_SCORE",
+        "STAS8_MOVE_EDGE_SCORE",
+        "STAS8_MOVE_CAPACITY_BUCKET",
+        "STAS8_MOVE_CAPACITY_DECISION",
+        "STAS8_MOVE_CAPACITY_ACTION",
+        "STAS8_MOVE_CAPACITY_REASON_TAGS",
+        "ENTRY_ML_LIVE_DECISION_AFTER_STAS8",
+        "RISKGATE_INPUT_DECISION"
+      ],
+      "planned_actions": [
+        "KEEP_ENTRY_DECISION",
+        "STAS8_WAIT_NO_MOVE",
+        "STAS8_WAIT_WARMUP",
+        "STAS8_WARN_DEMOTE_TO_WATCH",
+        "STAS8_BLOCK_TO_SKIP",
+        "STAS8_KEEP_REBOUND_PROTECTED"
+      ],
+      "allowed_live_sources_from_x439_x463": [
+        "cs_range_15m_pct",
+        "cs_range_60m_pct",
+        "cs_range_120m_pct",
+        "cs_return_60m_pct",
+        "cs_return_120m_pct",
+        "cs_atr_expansion_score",
+        "cs_last_candle_range_pct",
+        "session_so_far_range_pct",
+        "day_so_far_range_pct",
+        "fcs_channel_width_pct",
+        "fcs_channel_slope_pct_per_min",
+        "fcs_channel_position_0_1",
+        "cs_short_pressure_now",
+        "cs_long_pressure_now",
+        "cs_dump_acceleration_score",
+        "cs_pre_dump_risk_score",
+        "fcs_knife_risk_score",
+        "fcs_regime_score_active_dump",
+        "fcs_bounce_from_knife_low_pct",
+        "fcs_retest_after_knife_score",
+        "fcs_regime_changed_recently",
+        "bb20_width_pct",
+        "bb20_mid_slope_15m_pct",
+        "bb20_mid_slope_60m_pct",
+        "bb20_position_0_1"
+      ],
+      "forbidden_live_x_patterns": [
+        "future_*",
+        "post_*",
+        "hit_*",
+        "*mfe*",
+        "*mae*",
+        "time_to_*",
+        "tp",
+        "exit",
+        "manual",
+        "review",
+        "entry_y",
+        "risk_bad_y",
+        "move_capacity_y",
+        "move_edge_y",
+        "phase_y",
+        "state_y",
+        "reason_y",
+        "*manual*",
+        "*review*"
+      ],
+      "first_future_steps_ru": [
+        "Обновить ТЗ и config: R2/R3/R4 = train, R5 2026-03-21..2026-03-27 = blind audit/preview.",
+        "Сначала собрать STAS8 audit-only на готовом no-risk/no-Bollinger forward, без обучения и без изменения decisions.",
+        "Нарисовать компактную полосу: ALLOW, PAUSE, DOWN ONLY, NO VOL, MOVE 1.1, MOVE 1.2, MOVE 1.5, REBOUND OK.",
+        "Проверить глазами проблемные дни 2026-03-26 и 2026-03-27.",
+        "Настроить preview-пороги range/wave/bounce/channel без ML.",
+        "Только после visual OK собрать STAS8 guard и dataset.",
+        "Если учить ML, target брать из teacher grid, features оставлять только causal X439/X463 + live STAS8 context.",
+        "R5 добавлять в обучение только после ручного approved review."
+      ],
+      "no_future_rule_ru": "Future-свечи используются только для offline teacher/audit. Live-решение STAS8 работает только по causal X439/X463 с source_time <= entry_time_utc; teacher hit/future/MFE/MAE/time_to запрещены в live X.",
+      "selection_status": "AUDIT_PREVIEW_R5_PASS_NOT_SELECTED_NOT_TRAINED"
+    },
+    "STAS8_SOFT_CAPACITY_V2": {
+      "enabled": false,
+      "selected_for_entry": false,
+      "selected_for_safety": false,
+      "mode": "read_only_preview_not_selected",
+      "type": "rule_based_soft_capacity_overlay",
+      "planned_on_local_date": "2026-07-22",
+      "responsibility_ru": "Мягкий preview-слой STAS8: hard-block только для live no-move/down-only/active-knife, soft wait для слабого хода, protect для post-knife/local-low rebound.",
+      "current_status": "PASS_V5C_STAS8_SOFT_CAPACITY_V2_PREVIEW_READY_NO_TRAINING_NO_FORWARD_NO_DECISION_CHANGE",
+      "source_forward_run_id": "stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1",
+      "source_forward_range": "2026-03-21..2026-03-27",
+      "source_forward_rows": 564,
+      "source_forward_feature_count": 463,
+      "source_forward_riskgate_applied": false,
+      "source_predictions_sha": "cd7bc6f7a2855a116d6973ef0a827b160c2843cf9df04c432db4b95b2acfd579",
+      "training_started_by_soft_v2": false,
+      "forward_rerun_started_by_soft_v2": false,
+      "predictions_rewritten_by_soft_v2": false,
+      "audit_dir": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2",
+      "audit_csv": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS5_V5C_STAS8_SOFT_CAPACITY_V2_AUDIT_20260321_20260327.csv",
+      "summary_csv": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS5_V5C_STAS8_SOFT_CAPACITY_V2_SUMMARY_20260321_20260327.csv",
+      "manifest_json": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS5_V5C_STAS8_SOFT_CAPACITY_V2_MANIFEST_20260321_20260327.json",
+      "guard_json": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS5_V5C_STAS8_SOFT_CAPACITY_V2_GUARD_20260321_20260327.json",
+      "audit_ru": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS5_V5C_STAS8_SOFT_CAPACITY_V2_PREVIEW_20260321_20260327_RU.md",
+      "contact_sheets": {
+        "strict": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS8_SOFT_V2_STRICT_CONTACT_SHEET.png",
+        "balanced": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS8_SOFT_V2_BALANCED_CONTACT_SHEET.png",
+        "wide": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS8_SOFT_V2_WIDE_CONTACT_SHEET.png"
+      },
+      "presets": {
+        "strict": {
+          "live_ENTER": 2,
+          "live_WATCH": 118,
+          "live_SKIP": 444,
+          "marker_GREEN_FINAL_ENTER": 2,
+          "marker_RED_SQUARE_ENTER_TO_WATCH": 6,
+          "marker_RED_CIRCLE_HARD_BLOCK": 107,
+          "hidden_SKIP_RECALL_WATCH_AUDIT": 0,
+          "role_ru": "Нижняя осторожная граница; как production-кандидат слишком жесткий."
+        },
+        "balanced": {
+          "live_ENTER": 15,
+          "live_WATCH": 152,
+          "live_SKIP": 397,
+          "marker_GREEN_FINAL_ENTER": 15,
+          "marker_RED_SQUARE_ENTER_TO_WATCH": 11,
+          "marker_RED_CIRCLE_HARD_BLOCK": 60,
+          "hidden_SKIP_RECALL_WATCH_AUDIT": 48,
+          "role_ru": "Главный кандидат для ручного просмотра."
+        },
+        "wide": {
+          "live_ENTER": 36,
+          "live_WATCH": 161,
+          "live_SKIP": 367,
+          "marker_GREEN_FINAL_ENTER": 36,
+          "marker_RED_SQUARE_ENTER_TO_WATCH": 6,
+          "marker_RED_CIRCLE_HARD_BLOCK": 30,
+          "hidden_SKIP_RECALL_WATCH_AUDIT": 48,
+          "role_ru": "Раздушенный вариант для поиска пропущенных rebound/local-low входов; опаснее на down-channel."
+        }
+      },
+      "marker_legend_ru": {
+        "green_circle": "Только финальный live ENTER после STAS8. Не означает SKIP->RECALL_WATCH.",
+        "red_square": "Исходный ENTER понижен в WATCH, сделку лучше ждать.",
+        "red_circle": "HARD RISK BLOCK, long опасен.",
+        "hidden_skip_recall_watch_audit": "Offline-подсказка для просмотра пропущенных SKIP, хранится в CSV/отчете и не рисуется зеленым кругом."
+      },
+      "visual_fix_20260722_ru": "Старая картинка смешивала final ENTER, WATCH protect и SKIP recall одним зеленым кругом. Исправлено: PNG показывает только live-смысл; recall не является торговым сигналом.",
+      "visual_review_findings_20260722_ru": "2026-03-26/2026-03-27 проверены глазами: визуальная путаница снята, но balanced/wide еще требуют down-channel tuning перед любым train/enforce.",
+      "hard_block_buckets": [
+        "LIVE_ACTIVE_KNIFE",
+        "LIVE_NO_MOVE",
+        "LIVE_DOWN_ONLY"
+      ],
+      "soft_wait_buckets": [
+        "LIVE_LOW_MOVE_CHOP",
+        "LIVE_DOWN_CHANNEL_WEAK_BOUNCE",
+        "LIVE_MOVE_WARMUP",
+        "LIVE_WAIT_CONFIRMATION"
+      ],
+      "protect_buckets": [
+        "LIVE_POST_KNIFE_REBOUND_EDGE",
+        "LIVE_MOVE_OK"
+      ],
+      "guard_summary": {
+        "checks": 18,
+        "failed_count": 0,
+        "no_skip_to_enter_promotion": true,
+        "hard_block_forces_original_enter_watch_to_skip": true,
+        "no_hard_block_and_protect_conflict_on_original_enter_watch": true,
+        "visual_markers_match_live_semantics": true,
+        "stas8_live_source_time_lte_entry_time": true,
+        "predictions_not_modified": true
+      },
+      "forbidden_live_x_patterns": [
+        "future_*",
+        "post_*",
+        "hit_*",
+        "*mfe*",
+        "*mae*",
+        "time_to_*",
+        "move_capacity_y",
+        "move_edge_y",
+        "*teacher*",
+        "*manual*",
+        "*review*"
+      ],
+      "review_rule_ru": "Сначала смотреть balanced contact sheet, потом wide; R5 нельзя добавлять в train до ручной разметки и отдельного OK.",
+      "selection_status": "PREVIEW_R5_PASS_NOT_SELECTED_NOT_TRAINED"
+    }
+  },
+  "decision_pipeline": {
+    "current_v5c_r3": [
+      "continuous_X439",
+      "load_selected_entry_model_from_train_manifest",
+      "ENTRY_BASELINE_ML",
+      "ENTRY_ML_LIVE_SCORE",
+      "ENTRY_ML_LIVE_DECISION",
+      "visual_review_ENTER_WATCH_SKIP"
+    ],
+    "planned_with_risk_gate": [
+      "continuous_X439",
+      "selected_ENTRY_alpha_model",
+      "ENTRY_ALPHA_SCORE_and_ENTRY_ALPHA_DECISION",
+      "RISKGATE_ML_LIVE_SCORE_and_RISKGATE_ML_LIVE_DECISION",
+      "ENTRY_ML_LIVE_DECISION_BEFORE_RISKGATE",
+      "ENTRY_ML_LIVE_DECISION_after_RISKGATE_ML",
+      "visual_review_final_ENTER_WATCH_SKIP"
+    ],
+    "future_with_stas8_move_capacity": [
+      "continuous_X439",
+      "ENTRY_BASELINE_ML_opportunity_score",
+      "STAS8_MOVE_CAPACITY_GRID_or_MOVE_EDGE_ML_confirms_1p0_1p5_move_capacity",
+      "RISKGATE_ML_blocks_fatal_risk",
+      "future_EXIT_TP_layer_after_separate_TZ",
+      "visual_review_final_ENTER_WATCH_SKIP"
+    ]
+  },
+  "stas8_move_capacity_learning_plan": {
+    "status": "SOFT_CAPACITY_V2_PREVIEW_R5_PASS_NO_TRAINING_WAITING_VISUAL_REVIEW",
+    "tz_document": "STAS5_ML_CORE/10_STAS8_MOVE_CAPACITY_GRID_TZ_RU.md",
+    "phase_0": {
+      "name": "MOVE_CAPACITY_GRID_AUDIT_ONLY",
+      "status": "done_r5_audit_preview_pass",
+      "training": "none",
+      "goal_ru": "По свечам после входа посчитать, был ли реальный ход цены 1.0-1.5%, какая была просадка и сколько минут занял ход.",
+      "latest_artifact": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1/STAS5_V5C_STAS8_MOVE_CAPACITY_AUDIT_20260321_20260327_V1.csv"
+    },
+    "phase_1": {
+      "name": "MOVE_CAPACITY_VISUAL_PREVIEW",
+      "status": "done_r5_visual_preview_pass",
+      "goal_ru": "Показать на графике, где рынок живой, где нет движения, где нисходящий канал без long-edge.",
+      "latest_visual_dir": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1/visual_review"
+    },
+    "phase_2": {
+      "name": "SOFT_CAPACITY_V2_PRESET_SELECTION",
+      "status": "done_preview_waiting_user_visual_review",
+      "training": "none",
+      "goal_ru": "Сравнить strict/balanced/wide на R5 и выбрать режим, который не лезет в down-channel, но не душит post-knife/local-low rebound.",
+      "latest_artifact": "STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2/STAS5_V5C_STAS8_SOFT_CAPACITY_V2_MANIFEST_20260321_20260327.json"
+    },
+    "phase_3": {
+      "name": "MOVE_EDGE_ML",
+      "status": "optional_after_visual_ok",
+      "target": "move_edge_y",
+      "train_input": "X439_only",
+      "guard_required": true,
+      "goal_ru": "Если audit покажет пользу, обучить отдельную вероятность рабочего хода 1.0-1.5% без future в X."
+    }
+  },
+  "risk_gate_learning_plan": {
+    "phase_0": {
+      "name": "RISK_GATE_RULE_V0_AUDIT_ONLY",
+      "status": "next_candidate",
+      "training": "none",
+      "goal_ru": "На R3 forward week3 проверить, сколько плохих long в дампе он бы заблокировал и сколько хороших rebound случайно потерял."
+    },
+    "phase_1": {
+      "name": "RISK_GOLDEN_LABELS",
+      "status": "done_in_approved_review_pack_r2_r3_r4",
+      "labels": [
+        "BAD_ACTIVE_DUMP",
+        "BAD_PRE_KNIFE",
+        "BAD_SHORT_PRESSURE_NO_REVERSAL",
+        "GOOD_FLUSH_REBOUND",
+        "GOOD_RETEST_AFTER_KNIFE",
+        "NEUTRAL_UNKNOWN"
+      ]
+    },
+    "phase_1_5": {
+      "name": "RISKGATE_ML",
+      "status": "ready_for_user_started_train",
+      "training_guard": "PASS_V5C_RISKGATE_ML_TRAINING_GUARD_READY_FOR_TRAINING",
+      "dataset": "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X439_RISK_BAD_Y_V1.csv",
+      "target": "risk_bad_y",
+      "train_command": "run_stas5_v5c_continuous_train_forward.ps1 -Mode Train"
+    },
+    "phase_2": {
+      "name": "DUMP_AVOID_ML",
+      "status": "planned_after_audit",
+      "guard_required": true,
+      "target_rule_example": "safety_y_bad_dump=1 если unacceptable MAE случается до полезного MFE или ручная risk-разметка отмечает active dump/pre-knife."
+    }
+  },
+  "manual_review_contract": {
+    "review_labels_are_teacher_only": true,
+    "review_days_after_inclusion_are_not_blind_proof": true,
+    "two_target_split": {
+      "source_rows": "same_candidate_rows",
+      "live_x": "X439",
+      "entry_target": "entry_y",
+      "riskgate_target": "risk_bad_y",
+      "entry_rule_ru": "Хорошо/вход/крестик хорошо/ромбик хорошо -> entry_y=1; плохо -> entry_y=0; риск плохо тоже дает entry_y=0.",
+      "riskgate_rule_ru": "Фразы со словом риск плохо -> entry_y=0 + risk_bad_y=1. Это отдельная safety-цель, не feature и не замена entry_y.",
+      "riskgate_unlabeled_policy": "unlabeled_is_not_automatic_safe",
+      "riskgate_unlabeled_policy_ru": "Если кандидат не получил risk_bad_y=1, это еще не значит автоматически safe=1; отрицательные примеры для RiskGate нужно формировать отдельным правилом при сборке RiskGate dataset.",
+      "final_decision_rule_ru": "ENTRY_BASELINE_ML ищет возможность входа, RiskGate запрещает смертельно опасный режим; ENTRY good + Risk safe = ENTER, ENTRY good + Risk bad = BLOCK.",
+      "live_feature_guard_ru": "entry_y, risk_bad_y, phase_y, state_y, reason_y и ручные review-комментарии запрещены в live X."
+    },
+    "good_review_meaning_ru": "Кандидат должен стать entry_y=1 в следующем train batch.",
+    "bad_review_meaning_ru": "Кандидат остается entry_y=0 и может дополнительно попасть в risk taxonomy для safety-обучения.",
+    "missed_good_x_or_watch_meaning_ru": "Если пользователь отмечает крестик или ромбик как хороший вход, этот LA становится GoodId при пересборке дня."
+  },
+  "guards_required_before_any_training": [
+    "batch_guard_pass",
+    "feature_allowlist_439_match",
+    "target_manual_columns_not_in_x",
+    "forbidden_future_postfact_columns_not_in_x",
+    "cs_fcs_source_time_lte_entry_time",
+    "no_duplicate_day_candidate_id_or_record_id",
+    "approved_review_pack_guard_pass_if_review_pack_used",
+    "x439_source_guard_pass",
+    "entry_train_dataset_guard_pass",
+    "riskgate_train_dataset_guard_pass",
+    "riskgate_ml_training_guard_pass",
+    "stas8_move_capacity_future_columns_not_in_x_if_enabled_later",
+    "review_labels_joined_only_by_day_candidate_or_record_id",
+    "missing_joined_label_ids_zero",
+    "risk_bad_y_1_is_always_entry_y_0",
+    "riskgate_negative_examples_explicit_not_unlabeled",
+    "training_and_forward_not_started_during_dataset_build"
+  ],
+  "guards_required_before_forward": [
+    "saved_train_manifest_exists",
+    "post_train_guard_pass",
+    "riskgate_ml_post_train_guard_pass_if_enabled",
+    "forward_days_not_used_for_training",
+    "forward_x439_allowlist_matches_train",
+    "no_true_phase_state_reason_entry_used_as_forward_features",
+    "risk_gate_guard_pass_if_risk_gate_enabled"
+  ],
+  "operator_rules_ru": [
+    "Не считать WideReview production-режимом. Это широкий режим для ручного review.",
+    "Не считать ENTRY_BASELINE финальной боевой системой без RiskGate.",
+    "RiskGate ML применять только после PASS dataset guard, PASS training guard и PASS post-train guard.",
+    "Не подмешивать forward-неделю в обучение до завершения ручного review этой недели.",
+    "После включения review-недели в train следующая проверка качества должна идти на новой unseen forward-неделе.",
+    "Не использовать manual targets, phase/state/reason или future-outcomes как live X.",
+    "STAS8 MOVE_CAPACITY на 2026-07-22 только зафиксирован в ТЗ и YAML как будущая рельса: не запускать code/train/forward без отдельного OK.",
+    "Следующий запуск Train запрещен, пока не собраны X439_SOURCE, ENTRY_TRAIN_DATASET и RISKGATE_TRAIN_DATASET и пока их guards не получили PASS.",
+    "RISK BAD всегда является ENTRY BAD: если пользователь сказал риск плохо, эта строка учит RiskGate блокировать режим и ENTRY не считать этот вход хорошим."
+  ]
+}

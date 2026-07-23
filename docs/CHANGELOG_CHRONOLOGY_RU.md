@@ -27932,3 +27932,216 @@ reports/qa_gate/p774_text_guard_repair_audit_20260530T122121Z.json.
    best OOS `0%`, trades `0`, no candidate; summary `reports/adaptive/short_only_pool_20260603t102158z_w3/adaptive_loop_SOLUSDT_1m_2026-06-01_20260603T102202Z.json`.
 5. Риск/откат:
    изменение не выбирает кандидатов и не меняет ranking; оно только не дает worker-у падать при пустом report JSON. Откат: вернуть прямое чтение report JSON в `adaptive_auto_train.py`.
+
+---
+
+## 2026-07-13
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Feature Visual Approval Before Ablation
+1. Причина:
+   пользователь попросил не переходить сразу к ablation/training после V2 pre-ML audit, а сначала показать один train-день со всеми признаками на графике в стиле старого STAS4 overlay. Выбран `2026-05-04`.
+2. Что изменено:
+   добавлен `src/mlbotnav/stas5_v2_feature_visual_approval.py` и тест `tests/test_stas5_v2_feature_visual_approval.py`; обновлены `STAS5_ML_CORE/README_RU.md`, `STAS5_ML_CORE/05_STAS5_V2_CONTOUR2_TZ_RU.md`, `docs/codex/*`, `docs/ACTIVE_WORK_ITEMS_RU.md`.
+3. Как проверено:
+   `py_compile` PASS; `tests/test_stas5_v2_feature_visual_approval.py` PASS `3 passed`; render command PASS; PNG pixel-check: `4960x4262`, не пустой.
+4. Артефакты:
+   `STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.png`; `STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.manifest.json`.
+5. Риск/откат:
+   это visual approval only, без обучения, threshold tuning, TP/Stas3/API. Откат: не использовать новый approval PNG и вернуться к состоянию после V2 pre-ML audit, где следующий шаг был ablation baseline.
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Strategy Audit Strip On Approval Graph
+1. Причина:
+   пользователь уточнил, что на approval-графике должны быть видны четыре выбранных STAS4 strategy-блока перед переходом к ablation.
+2. Что изменено:
+   `src/mlbotnav/stas5_v2_feature_visual_approval.py` получил полосу `STAS4 Audit` с `density_profile+structure_ta`, `pattern+structure_ta`, `structure_ta+volume_flow`, `structure_ta+trend_momentum`; добавлен кэш базовых family payloads, чтобы не пересчитывать тяжелый `structure_ta` несколько раз. Обновлен тест `tests/test_stas5_v2_feature_visual_approval.py` и рабочие документы STAS5.
+3. Как проверено:
+   `py_compile` PASS; `pytest tests/test_stas5_v2_feature_visual_approval.py -q` PASS `5 passed`; render command PASS. Strategy counts в manifest: `22/2`, `38/1`, `52/1`, `59/4`.
+4. Артефакты:
+   `STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.png`; `STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.manifest.json`.
+5. Риск/откат:
+   полоса является audit-only. `X` не является hard-filter, `UP` не является готовым входом, обучение/threshold/TP/Stas3/API не запускались. Откат: убрать strategy strip из renderer и использовать предыдущий visual approval без этой полосы.
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Numeric Coverage Audit And Missing Numeric Features
+1. Причина:
+   пользователь уточнил, что ML видит только числа, поэтому нужно проверить, все ли индикаторы, фичи, стратегии и блоки с approval-графика реально передаются в ML feature matrix.
+2. Что изменено:
+   в `src/mlbotnav/stas5_v2_combo_feature_exporter.py` добавлены causal numeric groups `stas4_v2_block_*`, `stas4_v2_pattern_*`, `stas5_v2_short_wave_*`; в `src/mlbotnav/stas5_common.py` усилены forbidden feature patterns; `src/mlbotnav/stas5_v2_pre_ml_audit.py` распознает новые группы; создан `src/mlbotnav/stas5_v2_numeric_coverage_audit.py`.
+3. Как проверено:
+   train combo export `PASS 972 163`; forward combo export `PASS 435 163`; V2 snapshot `PASS 972 274`; leakage guard `PASS`; numeric coverage audit за `2026-05-04` `READY`; V2 tests `23 passed`; STAS5 tests `30 passed`.
+4. Артефакты:
+   `STAS5_ML_CORE/artifacts/v2_audit/STAS5_V2_NUMERIC_COVERAGE_AUDIT_20260504_RU.md`; `STAS5_ML_CORE/artifacts/v2_audit/stas5_v2_numeric_coverage_audit_20260504_v0.json`; `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_feature_snapshot_20260501_20260514_v0.csv`.
+5. Риск/откат:
+   новые признаки являются context-only и не дают торговое разрешение. `X/UP`, yellow X/conflict, postfact, TP/Stas3/exit не стали feature columns. Откат: вернуть exporter/audit к предыдущей feature matrix `214` columns и использовать strategy strip только как visual approval.
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Controlled Model And Forward PNG
+1. Причина:
+   пользователь подтвердил запуск полного V2-прохода после numeric coverage: ablation, controlled train, forward `2026-05-15..2026-05-20` и графики с ML-входами.
+2. Что изменено:
+   созданы `src/mlbotnav/stas5_v2_entry_ranker_train.py` и `src/mlbotnav/stas5_v2_forward_entry_review.py`; добавлены тесты `tests/test_stas5_v2_entry_ranker_train.py` и `tests/test_stas5_v2_forward_entry_review.py`.
+3. Результат ablation:
+   выбран `v1_plus_risk_gate` как controlled feature set: `126` features, LOO AUC `0.684988`; `full_v2_all_274` слабее, AUC `0.649292`.
+4. Результат forward:
+   blind-forward `2026-05-15..2026-05-20`: `ENTER=106`, `UNSURE=45`, `SKIP=284`; PNG по 6 дням готовы.
+5. Как проверено:
+   `py_compile` PASS; новые tests `4 passed`; V2 leakage guard `PASS`; полный STAS5 pack `34 passed`; PNG check `6/6`, размер `4640x3987`.
+6. Артефакты:
+   `STAS5_ML_CORE/artifacts/v2/model/STAS5_V2_CONTROLLED_MODEL_AND_FORWARD_REPORT_RU.md`; `STAS5_ML_CORE/artifacts/v2/model/stas5_v2_entry_ranker_20260501_20260514_v0.joblib`; `STAS5_ML_CORE/artifacts/v2/forward/STAS5_V2_FORWARD_ENTRY_REVIEW_MANIFEST.json`; `STAS5_ML_CORE/artifacts/v2/forward/20260515..20260520/*.png`.
+7. Риск/откат:
+   forward postfact audit-only, threshold tuning по forward не выполнялся, TP/Stas3/API/Optuna не запускались. Откат: использовать предыдущий numeric coverage state без V2 selected model и forward PNG.
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Run Isolation For Repeated Runs
+1. Причина:
+   пользователь заметил, что повторный прогон пишет поверх старых папок forward, и попросил различать прогоны папками.
+2. Что изменено:
+   `src/mlbotnav/stas5_v2_entry_ranker_train.py` и `src/mlbotnav/stas5_v2_forward_entry_review.py` получили `--run-id`; output теперь уходит в `artifacts/v2/model/runs/<run_id>/` и `artifacts/v2/forward/runs/<run_id>/`.
+3. Дополнительно:
+   добавлены latest pointers `STAS5_V2_LATEST_MODEL_RUN.json` и `STAS5_V2_LATEST_FORWARD_RUN.json`.
+4. Как проверено:
+   isolated run `stas5_v2_run_20260713_190743` создан; forward PNG за `20260515..20260520` лежат внутри `forward/runs/stas5_v2_run_20260713_190743/`; full STAS5 tests `34 passed`.
+5. Риск/откат:
+   изменение касается только путей артефактов CLI. Старые фиксированные артефакты остаются на месте и не удалялись.
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Train Visual Batch For 14 Train Days
+1. Причина:
+   пользователь указал, что train-графики должны покрывать все дни `2026-05-01..2026-05-14`, а не один контрольный день `2026-05-04`.
+2. Что изменено:
+   добавлен `src/mlbotnav/stas5_v2_train_visual_batch.py`, который рендерит `STAS5_V2_FEATURE_VISUAL_APPROVAL_YYYYMMDD.png` по всем train-дням из V2 snapshot.
+3. Результат:
+   создан run `STAS5_ML_CORE/artifacts/v2/visual_approval/runs/stas5_v2_train_visual_20260713_14d/`, `14/14` PNG, rows `972`, KEEP `115`, CUT `857`.
+4. Как проверено:
+   PNG dimensions `4960x4557`, visual smoke `20260501` открыт, full STAS5 tests `34 passed`.
+5. Риск/откат:
+   это visual/audit only. Обучение, forward threshold tuning, TP/Stas3/API/Optuna не запускались.
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Graph To Feature Audit 2026-05-04
+1. Причина:
+   пользователь попросил перепроверить контрольный train-график `2026-05-04`: все ли, что видно на графике, реально совпадает с цифрами для ML.
+2. Что изменено:
+   создан отчет `STAS5_ML_CORE/artifacts/v2_audit/STAS5_V2_GRAPH_TO_FEATURE_AUDIT_20260504_RU.md` и JSON `stas5_v2_graph_to_feature_audit_20260504_v0.json`.
+3. Как проверено:
+   сверены visual manifest, V2 feature snapshot manifest/CSV и latest model manifest. Full snapshot: `74` строки дня, `9 KEEP`, `65 CUT`, `274` feature columns. Latest model: `v1_plus_risk_gate`, `126` признаков.
+4. Итог:
+   `GRAPH_TO_FULL_SNAPSHOT=PASS`, но `FULL_SNAPSHOT_TO_LATEST_MODEL=PARTIAL`: latest model не использует combo/density/structure/STAS4 blocks/pattern/short-wave/divergence, хотя они есть в full snapshot.
+5. Риск/откат:
+   это audit-only. Новое обучение, threshold tuning, TP/Stas3/API/Optuna не запускались. Откат не нужен: добавлены только отчетные артефакты и статусы.
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Full 274 Train Forward Wrapper
+1. Причина:
+   пользователь попросил подготовить команду, которая переобучит STAS5 V2 на всех `274` признаках и построит forward-графики `2026-05-15..2026-05-20`.
+2. Что изменено:
+   создан `STAS5_ML_CORE/run_stas5_v2_full_274_train_forward.ps1`.
+3. Что делает wrapper:
+   пересобирает V2 combo train features, V2 train snapshot, leakage guard, pre-ML audit, numeric coverage audit, forward V2 combo features; затем обучает `full_v2_all_274` и запускает blind-forward review.
+4. Как проверено:
+   PowerShell syntax PASS; `py_compile` для `stas5_v2_combo_feature_exporter`, `stas5_v2_feature_snapshot_builder`, `stas5_v2_leakage_guard`, `stas5_v2_pre_ml_audit`, `stas5_v2_numeric_coverage_audit`, `stas5_v2_entry_ranker_train`, `stas5_v2_forward_entry_review` PASS.
+5. Риск/откат:
+   тяжелый full-прогон не запускался. Откат: не использовать wrapper и запускать прежние CLI вручную.
+
+### [2026-07-13T00:00:00Z] STAS5 V2 Full274 Run Check 20260713_203703
+1. Причина:
+   пользователь попросил проверить последний прогон `full274`, все ли там сошлось.
+2. Что проверено:
+   latest model pointer, latest forward pointer, model manifest, forward manifest, общий forward CSV, дневные CSV и PNG.
+3. Как проверено:
+   model/forward `run_id` совпали; manifest показал `model_feature_set=full_v2_all_274`, `feature_count=274`; PNG/CSV row parity PASS; `6/6` PNG непустые, `4640x3987`.
+4. Результат:
+   forward `435` строк, `ENTER=77`, `UNSURE=24`, `SKIP=334`; guard `PASS`; pre-ML audit `READY_FOR_V2_ABLATION_BASELINE`.
+5. Риск/откат:
+   full274 технически валиден, но не должен автоматически заменить baseline: train AUC full274 `0.649292`, baseline `v1_plus_risk_gate` `0.684988`. Следующий шаг - визуальный review PNG.
+
+### [2026-07-14T07:20:00Z] STAS5 V3 Review Train Forward 21-25
+1. Причина:
+   пользователь подтвердил собрать контур от начала до конца: добавить ручной review `2026-05-16..2026-05-20`, переобучить entry ML и выдать новые blind-forward графики `2026-05-21..2026-05-25`.
+2. Что изменено:
+   добавлены `src/mlbotnav/stas5_v3_user_review_ledger.py`, `stas5_v3_training_dataset_builder.py`, `stas5_v3_leakage_guard.py`, `stas5_v3_entry_ranker_train.py`, `stas5_v3_forward_entry_review.py`, wrapper `STAS5_ML_CORE/run_stas5_v3_review_train_forward_21_25.ps1`, V3 тесты и отчет `STAS5_ML_CORE/06_STAS5_V3_REVIEW_TRAIN_FORWARD_RESULT_RU.md`.
+3. Как проверено:
+   `py_compile` PASS; targeted pytest PASS; PowerShell parse PASS; полный wrapper-run `stas5_v3_wrapper_smoke2_20260714` PASS.
+4. Результат:
+   ledger `34 KEEP_APPROVED / 100 CUT_APPROVED`, dataset `1106` rows / `274` features, guard `PASS`, forward `5/5` PNG READY. Forward totals: `ENTER=79`, `UNSURE=31`, `SKIP=247`.
+5. Риск/откат:
+   `2026-05-15` исключен из train; `2026-05-21..2026-05-25` blind-forward only. TP/Stas3/API/Optuna/threshold tuning не запускались. Откат: использовать V2 artifacts, V3 лежит отдельно в `STAS5_ML_CORE/artifacts/v3`.
+
+### [2026-07-14T16:50:00Z] STAS5 V4 Human-Style Group Ranker Train Forward
+1. Причина:
+   пользователь подтвердил, что `2026-05-15` больше не карантинный день и должен входить в исправленный блок `2026-05-15..2026-05-25`; цель V4 - ранжировать входы внутри локальной группы, а не ставить много независимых `ENTER`.
+2. Что изменено:
+   добавлены `src/mlbotnav/stas5_v4_group_rank_dataset.py`, `src/mlbotnav/stas5_v4_group_rank_train.py`, `src/mlbotnav/stas5_v4_forward_group_rank_review.py`, V4 тесты и V4-рендер поверх forward-графика.
+3. Данные для обучения:
+   собран dataset `STAS5_ML_CORE/artifacts/v4/features/STAS5_V4_GROUP_RANK_TRAIN_DATASET_20260501_20260525.csv`: `1710` строк, `25` дней, `103` winner, `287` признаков (`274` старых контекстных + `13` group-rank признаков). Исправленный ручной ledger `2026-05-15..2026-05-25` joined `738/738`, missing `0`, duplicate keys `0`.
+4. Обучение:
+   создан run `stas5_v4_train_20260714_163911`; model `STAS5_ML_CORE/artifacts/v4/model/runs/stas5_v4_train_20260714_163911/stas5_v4_group_ranker_20260501_20260525_v0.joblib`. OOF: `top1_group_accuracy=0.679612`, `winner_in_top2=0.834951`, `MRR=0.797006`, `NDCG@3=0.805523`, `bad_in_group_top1_count=15`.
+5. Forward:
+   blind-forward review `2026-05-26..2026-05-30` создан в `STAS5_ML_CORE/artifacts/v4/forward/runs/stas5_v4_forward_20260526_20260530_20260714_164144`: `363` строк, `25` auto-groups, `ENTER=24`, `UNSURE=16`, `SKIP=323`; PNG/CSV готовы по 5 дням.
+6. Guard:
+   старые `ML_*`, `future`, `postfact`, `hit_*`, `TP`, `Stas3`, `exit` не попали в features; V4 group features обязательны. `pytest` в окружении недоступен, поэтому V4 smoke tests выполнены прямым вызовом test-функций и прошли.
+7. Риск/откат:
+   forward-группы `2026-05-26..2026-05-30` пока авто-группы для визуального review, не финальный ручной ledger. Откат: использовать V3/V2 artifacts; V4 лежит отдельно в `STAS5_ML_CORE/artifacts/v4`.
+
+### [2026-07-14T17:25:00Z] STAS5 V4 No-Future Audit And V4L Plan
+1. Причина:
+   пользователь правильно указал, что модель не имеет права знать будущий состав группы; красивые offline-входы должны быть достигнуты без подсмотра в будущее.
+2. Что зафиксировано:
+   в `STAS5_ML_CORE/07_STAS5_V4_HUMAN_STYLE_GROUP_RANKER_TZ_RU.md` добавлен вечный закон `No-Future / Live-Safe`: будущий состав группы считается future leakage так же, как TP/Stas3/future outcome.
+3. Новый план:
+   создан `STAS5_ML_CORE/08_STAS5_V4L_LIVE_SAFE_GROUP_RANKER_PLAN_RU.md`: live-состояние группы, `v4l_*_so_far` признаки, forbidden/audit-only признаки, adaptive micro-groups, decision policy, guard tests и метрики.
+4. Итог аудита:
+   текущий V4 train `stas5_v4_train_20260714_163911` и forward `stas5_v4_forward_20260526_20260530_20260714_164144` помечены как `OFFLINE_GROUP_REVIEW_NOT_LIVE_SAFE`, потому что full-group признаки считались по уже собранной группе.
+5. Следующий шаг:
+   делать V4L replay dataset и guard: `LIVE_SAFE_FEATURE_ALLOWLIST`, banned-column scan, `feature_available_time_utc <= entry_time_utc`, `prefix invariance`, `retroactive_feature/score/decision_change_count=0`. Новое live-safe обучение запрещено до guard `PASS`.
+
+## 2026-07-14 STAS5 V4L live-safe train/forward готов
+
+1. Создан отдельный live-safe контур V4L:
+   `src/mlbotnav/stas5_v4l_live_safe_dataset.py`, `src/mlbotnav/stas5_v4l_live_safe_train.py`, `src/mlbotnav/stas5_v4l_live_safe_forward.py`.
+2. Добавлена единая команда:
+   `STAS5_ML_CORE/run_stas5_v4l_live_safe_train_forward.ps1`.
+3. Dataset `2026-05-01..2026-05-25` собран заново с исправленными правками `15..25`, включая `2026-05-15`:
+   `1710` rows, `103` winners, `289` features, из них `15` live-safe `v4l_*_so_far`.
+4. Guard прошел:
+   forbidden features `{}`, prefix-invariance `1710/1710`, full-group V4 признаки отсутствуют.
+5. Последний проверенный forward `2026-05-26..2026-05-30` готов:
+   `STAS5_ML_CORE/artifacts/v4l/forward/runs/stas5_v4l_forward_20260526_20260530_20260714_181635`, totals `ENTER=23`, `UNSURE=80`, `SKIP=260`.
+6. Следующий шаг:
+   пользовательская визуальная проверка PNG и калибровка V4L thresholds/policy без возврата full-group future признаков и без day-end top-N.
+
+## 2026-07-21 STAS5 V5C review-supervised datasets готовы
+
+1. Причина:
+   нужно применить approved-разметку пользователя `R2/R3/R4` (`2026-02-28..2026-03-20`) к обучению без подсмотра в будущее и без попадания ручных меток в live features.
+2. Что изменено:
+   добавлены `src/mlbotnav/stas5_v5c_train_dataset_builder.py`, `STAS5_ML_CORE/run_stas5_v5c_train_dataset_builder.ps1`, `tests/test_stas5_v5c_train_dataset_builder.py`; в `src/mlbotnav/stas5_v5_two_block_ml.py` чтение batch переведено на `low_memory=False`, чтобы убрать неопасный `DtypeWarning` от audit-колонок.
+3. Артефакты:
+   ENTRY batch `STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_ML_READY_439F_TARGETS_V1.csv`: `3285` строк, `GOOD=517`, `BAD=2768`, `features=439`, guard `PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING`.
+   RiskGate dataset `STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X439_RISK_BAD_Y_V1.csv`: `627` строк, `risk_bad_y=1=400`, explicit safe `227`, guard `PASS_V5C_RISKGATE_TRAIN_DATASET_GUARD_READY_NO_TRAINING`.
+4. Как проверено:
+   `py_compile PASS`; `pytest tests/test_stas5_v5c_train_dataset_builder.py tests/test_stas5_v5c_review_pack.py tests/test_stas5_v5c_review_ladder.py tests/test_stas5_v5c_riskgate_audit.py -q` = `24 passed`; TrainingGuard `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING` для `stas5_v5c_r4_train_20260127_20260320`.
+5. Риск/откат:
+   обучение и forward не запускались. Откат: использовать предыдущий R3 train `stas5_v5c_r3_train_20260127_20260313` и не запускать новый `-Mode Train`.
+
+## 2026-07-21 STAS5 V5C RiskGate ML подключен к будущему Train/Forward
+
+1. Причина:
+   после сборки RiskGate dataset нужно было, чтобы будущая ручная команда `-Mode Train` обучала не только ENTRY, но и отдельный safety-блок.
+2. Что изменено:
+   добавлен `src/mlbotnav/stas5_v5c_riskgate_ml.py`, обновлен `src/mlbotnav/stas5_v5_continuous_ml.py`, добавлен тест `tests/test_stas5_v5c_riskgate_ml.py`, обновлены YAML/JSON/RU config и рабочие docs.
+3. Новая цепочка:
+   `ENTRY` сохраняет исходное решение в `ENTRY_ML_LIVE_DECISION_BEFORE_RISKGATE`; `RISKGATE_ML` дает `RISKGATE_ML_LIVE_SCORE/DECISION/ACTION`; финальное `ENTRY_ML_LIVE_DECISION` становится решением после RiskGate.
+4. Проверки:
+   RiskGate ML TrainingGuard `PASS_V5C_RISKGATE_ML_TRAINING_GUARD_READY_FOR_TRAINING`; профильные tests PASS.
+5. Риск/откат:
+   обучение и forward не запускались. Если Train даст проблему, не использовать новый run и оставаться на предыдущем R3 train `stas5_v5c_r3_train_20260127_20260313`.
+
+## 2026-07-22 STAS5 V5C Bollinger Layer V1 X463
+
+1. Причина:
+   пользователь визуально подтвердил, что полосы Bollinger нужны не только как PNG, а как причинная информация для ML: входы на хаях/down-channel/falling-knife должны становиться плохими по ручной разметке, но хорошие отскоки от локального лоя нельзя душить автоматически.
+2. Что изменено:
+   добавлен общий модуль `src/mlbotnav/stas5_v5c_bollinger_layer.py`; обновлены `stas5_v5c_train_dataset_builder.py`, `stas5_v5_continuous_ml.py`, `stas5_v5c_review_gallery.py`, `stas5_v5c_review_ladder.py`, PowerShell-раннеры и config-документы. Новый контракт: `X439_PLUS_BB24_V1`, `463` features.
+3. Артефакты:
+   ENTRY batch `STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_ML_READY_463F_TARGETS_V1.csv`: `3285` строк, `GOOD=517`, `BAD=2768`, guard PASS.
+   RiskGate dataset `STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X463_RISK_BAD_Y_V1.csv`: `627` строк, `risk_bad_y=1=400`, explicit safe `227`, guard PASS.
+   R2/R3/R4 gallery: `STAS5_ML_CORE/artifacts/v5c/review/_ALL_ROUNDS_VISUAL_REVIEW_BOLLINGER20_2SIGMA/`.
+4. Как проверено:
+   `py_compile PASS`; `pytest tests/test_stas5_v5c_bollinger_layer.py tests/test_stas5_v5c_train_dataset_builder.py -q` = `2 passed`; YAML/JSON config parse PASS; ENTRY TrainingGuard PASS и RiskGate ML TrainingGuard PASS для `stas5_v5c_r4bb_train_20260127_20260320`.
+5. Риск/откат:
+   обучение и forward не запускались. Откат: использовать старые `439F/X439` batch-файлы и запускать train без `-EnableBollingerLayer`; Bollinger preview-колонки `bb_preview_*` не являются X.

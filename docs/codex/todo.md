@@ -1,5 +1,1930 @@
 # Todo
 
+## 2026-07-23 SOL Event Pipeline Design
+
+Статус: `schema_dry_run_done`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Закрепить канонический source SOLUSDT 1m | done | Не добавлять другие физические копии |
+| Создать EVENT-контракт | done | Использовать `stas9_sol_event_v1` |
+| Создать `EVENTS/SOL` | done, YAML events `0` | Принимать только schema-validated события |
+| Зафиксировать первые event types | done, `9` | Исследовать распределения без произвольных порогов |
+| Выполнить pipeline dry-run без записи | done, `PASS` | Сохранить no-write gate |
+| Утвердить detector contract | pending_explicit_tz | Окна, пороги и confirmation semantics |
+| Утвердить feature/outcome/label contracts | pending_explicit_tz | До dataset builder |
+| Создать реальные события | blocked_until_contracts | Не создавать на текущем этапе |
+| Создать dataset или обучить модель | blocked | Только отдельное прямое ТЗ |
+
+## 2026-07-23 STAS9 VS Code On-Demand Workflow
+
+Статус: `done`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Закрепить VS Code + Codex как основной интерфейс | done | Открывать `🤖 STAS9 Workspace` |
+| Перевести Sentinel на роль Codex `ON_DEMAND` | done | Активировать только обращением пользователя |
+| Отключить фоновый процесс и сканирование | done | Сохранять idle `NONE` |
+| Сохранить console launcher | done | Использовать только для диагностики |
+| Проверить процессы и автозапуск | done, совпадений `0` | Повторять только при симптомах |
+| Проверить STAS5, data и models | done, fingerprints unchanged | Не изменять без отдельного ТЗ |
+| Проверить открытие ярлыка в интерфейсе | manual_optional | Один раз открыть ярлык пользователем |
+
+## 2026-07-23 STAS9 Agent Roles and SOL ML Preparation
+
+Статус: `setup_done_training_blocked`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Создать документы ролей | done, `7/7` | Использовать через Sentinel |
+| Создать `STAS9_MARKET_RESEARCH` | done | Передавать только SOL read-only задачи |
+| Создать маршрутизатор и память обязанностей | done | Обновлять после важных задач |
+| Создать `MARKET_KNOWLEDGE` и event template | done | Не считать template наблюдением |
+| Создать безопасный dataset pipeline | done | Сначала события, признаки и labels |
+| Проанализировать реальные свечи SOL | pending_user_scope | Нужны точный путь, таймфрейм и интервал |
+| Запустить обучение или Optuna | blocked | Только по отдельному прямому ТЗ |
+
+## 2026-07-23 STAS9 Persistent Memory
+
+Статус: `done`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Проверить текущую архитектуру STAS9 | done | Сохранять схему `Codex -> Sentinel -> Control Plane` |
+| Создать краткую постоянную память | done | Обновлять после важной работы |
+| Создать инструкцию нового чата | done | Начинать через `START_HERE_RU.md` |
+| Сохранить `SAFE` и границу STAS5–STAS8 | done | Повышать режим только явной ограниченной командой |
+| Реализовать `schemas/adapters/gates/run_plans` | proposed | Только по отдельному ТЗ |
+
+## 2026-07-23 STAS9 VS Code/Codex Interface
+
+Статус: `done`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Создать workspace | done | Открывать через ярлык |
+| Автоматически фокусировать Codex | done | `chatgpt.openOnStartup=true` |
+| Создать STAS9_INTERFACE | done | Нет |
+| Настроить голосовой ввод | done | Пользователь нажимает `Win+H` в composer |
+| Настроить SAFE/DEVELOPMENT/EXPERIMENT | done | Подтверждать повышение режима |
+| Создать журнал общения | done | Sentinel ведёт YAML audit trail |
+| Сохранить terminal launcher | done | Использовать только как технический резерв |
+| Проверить STAS5/STAS8 | done | SHA256 сохранён |
+
+Необязательная ручная проверка: открыть новый ярлык и проверить фактический доступ Windows к микрофону.
+
+## 2026-07-23 STAS9 Codex Runtime
+
+Статус: `done`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Обновить Codex CLI | done, `0.145.0` | Использовать ярлык STAS9 |
+| Проверить launcher | done | Нет |
+| Проверить `gpt-5.6-sol` | done, `STAS9_MODEL_OK` | Нет |
+| Подтвердить неизменность STAS5/STAS8 | done | Сохранять SHA-грань |
+
+## 2026-07-23 STAS9 Multi-Agent Control Layer
+
+Статус: `done`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Создать главного и специализированных агентов | done | Использовать через Sentinel |
+| Добавить память, журналы и глобальную политику | done | Сохранять append-only историю |
+| Создать launcher только для Sentinel | done | Рабочий запуск выполняет пользователь |
+| Создать ярлык на рабочем столе | done | Ручная проверка интерфейса по желанию |
+| Проверить Git, YAML, структуру и SHA256 | done | Сохранять SHA-грань перед следующими работами |
+
+## 2026-07-23 STAS9 Multi-Agent Structure
+
+Статус: `done`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Создать `STAS9_AGENTS` и семь каталогов агентов | done | Наполнять только по отдельному ТЗ |
+| Создать служебные каталоги control plane | done | Наполнять только по отдельному ТЗ |
+| Не создавать отсутствующие `STAS6`/`STAS7` | done | Сохранять границу |
+| Не изменять STAS5–STAS8 | done | Контролировать отпечатком перед следующими изменениями |
+
+## 2026-07-23 STAS9 Control Plane
+
+Статус: `audit_and_registry_baseline_done`.
+
+| Задача | Статус | Следующее действие | Зависимость |
+|---|---|---|---|
+| Создать STAS9 без изменения STAS5–STAS8 | done | Сохранить read-only границу | metadata fingerprint |
+| Составить карту STAS1–STAS8 | done | Утвердить роли и пробелы STAS6/STAS7 | `PROJECT_MAP.md` |
+| Зарегистрировать модели | done | Не исправлять broken pointer без отдельного разрешения | `MODEL_REGISTRY.yaml` |
+| Зарегистрировать признаки | done | При реализации добавить schema/hash validator | `FEATURE_REGISTRY.yaml` |
+| Зарегистрировать ТЗ | done | Активировать legacy ТЗ только отдельным action_id | `TASK_REGISTRY.md` |
+| Зафиксировать архивную политику | done | Применять admission gate к старым артефактам | `ARCHIVE_POLICY.md` |
+| Реализовать STAS9 schemas/adapters/gates | proposed | Сначала получить архитектурное подтверждение | отдельное ТЗ |
+| Определить судьбу STAS6/STAS7 | blocked_by_product_decision | Не выдумывать роли автоматически | решение пользователя |
+| Исправить старый active/champion pointer | blocked_by_explicit_authorization | Выбрать модель и провести promotion audit | отдельное разрешение |
+
+## 2026-07-23 Codex Project CPU Relief
+
+Статус: `done_cpu_stabilized`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Найти источник CPU | done | Codex Git scan по generated STAS4, не ML | process audit |
+| Уменьшить Git/VS Code scan | done | STAS4 generated подпапки игнорируются, верхние Markdown остаются видимыми | `.gitignore`, `.vscode/settings.json` |
+| Проверить ML-процессы | done | Активных Python/обучения нет | process audit |
+| Проверить итоговую нагрузку | done | `10.0..13.6%`, среднее `12.3%` | 5-second CPU sample |
+| После перезапуска Codex | optional | Если приоритет сбросился и CPU снова высокий, применить команду мягкого `Idle` | user observation |
+
+## 2026-07-22 STAS5 V5 Base R2-Style Review Gallery
+
+Статус: `ready_for_user_visual_review`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сделать обычные графики базы как R2/R3/R4 | done | Пользователь проходит глазами `CURRENT_REVIEW` PNG | base ML_READY CSV |
+| Проверить контрольные цифры базы | done | PASS: `32/32`, `rows=2596`, `GOOD=290`, `BAD=2306` | manifest |
+| Дать команду повторной пересборки | done | `run_stas5_v5_base_review_gallery.ps1` | builder |
+| Пересобирать ML-базу по новым ручным правкам | blocked | Только после ручного review и отдельной команды/OK | user labels |
+
+## 2026-07-22 STAS5 V5C Entry Visual Check Pack
+
+Статус: `ready_for_user_visual_review`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Пересобрать R2/R3/R4 review-графики без нового train/forward | done | PASS: `R2=7`, `R3=7`, `R4=7` | review ledgers |
+| Собрать единый пакет BASE+R2/R3/R4 | done | Открыть папку и пройти глазами входы | visual artifacts |
+| Проверить количество дней и no-training/no-forward флаги | done | `total_png_days=53`, `no_training=True`, `no_forward=True` | manifest |
+| Следующее обучение | blocked | Только после ручного visual OK и согласованной правки входов/риска/STAS8 | user review |
+
+## 2026-07-22 STAS5 V5C R4BB Table/ML Audit
+
+Статус: `done_no_fatal_table_bug_found`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить, применились ли R2/R3/R4 ручные правки в train datasets | done | PASS: mismatch `0`, `risk плохо -> entry_y=0 + risk_bad_y=1` | approved review pack |
+| Проверить X463/joblib/allowlist на старый X439 и leakage | done | PASS: `463` features, `24` `bb20_*`, forbidden hits `0` | R4BB train run |
+| Проверить, попал ли STAS8 Soft V2 visual bug в обучение | done | PASS: `STAS8_SOFT/RECALL_WATCH/marker` не входят в X | R5 preview |
+| Зафиксировать причину качества | done | Не table bug; дальше настраивать ENTRY recall, RiskGate threshold и STAS8/move-capacity preview | audit |
+| Делать новое обучение | blocked | Только после визуального OK по следующему preview/согласованной логике | no-future rails |
+
+## 2026-07-22 STAS8 Soft Capacity V2 Preview R5
+
+Статус: `preview_visual_semantics_fixed_needs_down_channel_tuning`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Реализовать `STAS8_SOFT_CAPACITY_V2` с режимами `strict/balanced/wide` | done | Смотреть contact sheets и дневные PNG | STAS8 V1 audit |
+| Пересобрать R5 `2026-03-21..2026-03-27` без нового train/forward | done | Guard PASS, predictions SHA unchanged | R5 no-risk forward |
+| Добавить сводные contact sheets | done | `STRICT/BALANCED/WIDE_CONTACT_SHEET.png` лежат в `soft_capacity_v2` | visual outputs |
+| Исправить визуальную семантику маркеров | done | Зеленый круг теперь только final live `ENTER`; `SKIP->RECALL_WATCH` скрыт с цены | user visual audit |
+| Проверить no-future/immutability guard | done | `18` checks PASS, failed_count=0 | guard |
+| Выбрать рабочий preset | blocked | Сначала подстроить down-channel: `balanced` еще оставляет 1 live ENTER на 2026-03-26, `wide` оставляет 9 | visual review |
+| Настроить down-channel/no-long без убийства rebound | current_next | Сделать следующий preview, где long в монотонном канале вниз режется жестче, а post-knife/local-low отскок не душится | R5 26/27 visual |
+| Включать V2 в обучение или боевой forward | blocked | Только после ручного OK и отдельного training/forward guard | no-future rails |
+
+## 2026-07-22 STAS8 R5 Entry/Move Audit
+
+Статус: `audit_done_next_soft_capacity_v2_preview`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Посчитать R5 `2026-03-21..2026-03-27` по ENTRY/STAS8/future move audit | done | Отчет и CSV-срезы сохранены в `stas8_move_capacity_audit/v1` | R5 no-risk X463 forward |
+| Подтвердить, что текущий STAS8 V1 слишком жесткий | done | Не включать V1 в production/enforce | audit |
+| Разделить рабочие и опасные buckets | done | `NO_MOVE/LOW_MOVE_CHOP/NO_MOVE_DOWN_CHANNEL` резать; `POST_KNIFE_RETEST_EDGE/MOVE_OK_*` защищать | audit |
+| Спроектировать `STAS8_SOFT_CAPACITY_V2` | next | Сделать read-only preview с режимами `strict/balanced/wide` без train/forward | user OK |
+| Добавлять R5 в обучение | blocked | Только после ручного review R5 и отдельного approved review pack | no-future rails |
+
+## 2026-07-22 STAS8 R5 Visuals Without Bollinger
+
+Статус: `done`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Убрать Bollinger-полосы со STAS8 R5 PNG | done | Смотреть чистые графики без фиолетовых полос | user request |
+| Проверить, что это не поменяло ML/forward | done | Guard PASS, counts unchanged, `visual_bollinger_preview=false` | STAS8 audit |
+| Настраивать STAS8 по 26/27 марта | user_next | Разобрать, где down-channel блок верный, а где нужен post-knife rebound allow | visual review |
+
+## 2026-07-22 STAS8 Move Capacity Audit Preview R5
+
+Статус: `audit_preview_done_needs_visual_tuning_before_train_or_enforce`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Реализовать `STAS8_MOVE_CAPACITY_AUDIT_V1` | done | Код и wrapper готовы | user OK |
+| Прогнать R5 `2026-03-21..2026-03-27` | done | Guard PASS, 564 rows, 7 PNG | актуальный no-risk X463 forward |
+| Проверить no-future/immutability guard | done | predictions SHA unchanged, teacher-grid отдельно | guard |
+| Посмотреть PNG `2026-03-26/2026-03-27` | user_next | Настроить пороги, потому что preview сейчас слишком жесткий | visual review |
+| Включать STAS8 в train/forward | blocked | Только после визуального OK и отдельного dataset/training guard | user approval |
+
+## 2026-07-22 STAS8 Live Wave + Move Capacity
+
+Статус: `tz_locked_no_code_no_training`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Обновить ТЗ STAS8 под live wave context | done | ТЗ и config зафиксированы | user correction |
+| Разделить teacher grid и live context | done | `STAS8_TEACHER_MOVE_GRID_V1` и `STAS8_LIVE_MOVE_CONTEXT_V1` записаны | no-future rule |
+| Зафиксировать train/forward рельсу | done | R2/R3/R4 = train material; R5 `2026-03-21..2026-03-27` = blind audit до review | review protocol |
+| Реализовывать STAS8 audit preview | blocked | Только после отдельного OK пользователя | TZ locked |
+| Обучать MOVE_EDGE_ML | blocked | Только после audit-preview, visual OK и STAS8 guard PASS | future step |
+
+## 2026-07-22 STAS5 V5C R4BB Fast Train Audit
+
+Статус: `done`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить, не проигнорировался ли X463/Bollinger в быстром train | done | Аудит PASS: manifest/joblib используют `463` features и `24` `bb20_*` | user train |
+| Проверить ENTRY/RiskGate post-train guards | done | ENTRY PASS, RiskGate PASS, non-pass checks `0` | train artifacts |
+| Исправить stale X439/invalid wording | done | Код и текущие R4BB guard/manifests используют нейтральные имена без старых X439-меток | guard text |
+| Исправить `active_context.train` в управляющем config | done | YAML/JSON теперь указывают на `stas5_v5c_r4bb_train_20260127_20260320`, `feature_count=463` | audit PASS |
+| Дальше запускать forward | user_next | Только если пользователь хочет прогон по сохраненной модели; использовать manifest `stas5_v5c_r4bb_train_20260127_20260320` | config fixed |
+
+## 2026-07-22 STAS5 V5C Bollinger Layer V1 X463
+
+Статус: `ready_for_user_visual_review_then_manual_train`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Реализовать общий causal расчет `bb20_*` | done | Использовать один модуль в train/forward/visual | OHLCV 1m |
+| Собрать ENTRY dataset `X463` по base32 + approved R2/R3/R4 | done | `rows=3285`, `GOOD=517`, `BAD=2768`, guard PASS | review pack |
+| Собрать RiskGate dataset `X463` | done | `rows=627`, `risk_bad=400`, `safe=227`, guard PASS | review pack |
+| Прогнать ENTRY TrainingGuard | done | `stas5_v5c_r4bb_train_20260127_20260320`, features `463`, PASS | X463 batch |
+| Прогнать RiskGate ML TrainingGuard | done | features `463`, PASS | X463 risk dataset |
+| Собрать R2/R3/R4 gallery с Bollinger | done | Открыть `_ALL_ROUNDS_VISUAL_REVIEW_BOLLINGER20_2SIGMA` и сверить визуально | approved ledgers |
+| Запускать обучение | user_next | Пользователь вручную запускает train после визуального OK | guards PASS |
+| Запускать forward `2026-03-21..2026-03-27` | blocked | Только после train + post-train guards PASS | manual Train |
+
+## 2026-07-22 STAS5 V5C R5 ENTRY-Only No-Risk Bollinger
+
+Статус: `visual_review`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать Bollinger `20/2` в правильной R5 no-risk папке `visual_review` | done | Пользователь смотрит дневные `*_BOLLINGER20_2SIGMA_PREVIEW.png` | R5 ENTRY-only forward |
+| Наложить `BB_BLOCK_V0` красными кругами на опасные `ENTER/WATCH` за `2026-03-21..2026-03-27` | done | Смотреть `*_ENTER_WATCH_BOLLINGER_BLOCK_V0_RED_CIRCLES.png`, особенно `2026-03-26/2026-03-27` | Bollinger preview |
+| Проверить, не душит ли `BB_BLOCK_V0` хорошие отскоки | user_next | Пользователь глазами отмечает, какие красные круги верные, а какие режут хорошие входы | red-circle PNG |
+| Не путать с `safety_pulse_preview/down_channel_no_long_v1` | guard | Для no-risk графиков использовать `mlbotnav.stas5_v5_forward_visual_review --bollinger-preview` | текущая папка пользователя |
+
+## 2026-07-22 STAS5 V5C Bollinger Visual Preview
+
+Статус: `visual_review`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Наложить Bollinger `20/2` на все графики недели `2026-03-21..2026-03-27` | done | Пользователь смотрит PNG и решает, помогает ли слой для отбора интересных входов | готовый `DOWN_CHANNEL_NO_LONG_V1` preview |
+| Не превращать Bollinger в feature/фильтр без отдельного OK | guard | Пока только визуальный анализ | user OK |
+| Если слой полезен | user_next | Обсудить отдельный STAS8/move-capacity или volatility-band признак через causal/no-future guard | визуальное OK |
+
+## 2026-07-22 STAS5 V5C ENTRY-Only Wide R5
+
+Статус: `user_next`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить `-SkipRiskGateML` для ENTRY-only train | done | Пользователь может запускать train-команду | R2/R3/R4 batch |
+| Добавить `-DisableRiskGateML` для ENTRY-only forward | done | Пользователь может запускать forward без RiskGate | saved train manifest |
+| Использовать `WideReview` для раздушенных входов | ready | Смотреть больше кандидатов на графике | Train PASS |
+| Накладывать RiskGate / short-channel / move 1.2% | later | Только после визуального анализа ENTRY-only | графики R5 |
+
+## 2026-07-22 STAS8 Move Capacity Grid TZ
+
+Статус: `deferred`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать ТЗ `STAS8 MOVE CAPACITY GRID V1` | done | Документ сохранен | идея volatility vs edge |
+| Записать STAS8 в управляющий YAML | done | Блок выключен: `enabled=false`, `mode=deferred_tz_only` | ML config |
+| Реализовывать код/датасет/обучение STAS8 | blocked | Только после отдельного OK пользователя | визуальное согласование |
+| Следить за no-future | guard | Future/MFE/MAE/hit/time_to только offline teacher/audit, не X | будущая реализация |
+
+## 2026-07-21 STAS5 V5C Down-Channel Safety Pulse Preview
+
+Статус: `current_visual_review`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить `DOWN_CHANNEL_NO_LONG_V1` в safety pulse preview | done | Код и ps1 готовы | R4 forward |
+| Использовать causal X439 для down-channel/no-edge blocker | done | `source_x439_exists PASS`, join `564/564` | X439 forward dataset |
+| Пересобрать preview PNG/CSV за `2026-03-21..2026-03-27` | done | `ENTER=40`, `WATCH=136`, `SKIP=388` | готовый forward |
+| Проверить 26/27 марта | done | `2026-03-26 ENTER=4`; `2026-03-27 ENTER=7` | PNG preview |
+| Визуально согласовать с пользователем | user_next | Смотреть папку `down_channel_no_long_v1`, особенно `20260326/20260327` | preview PASS |
+| Встраивать в боевой forward или запускать новый train | blocked | Только после визуального OK и отдельного guard/решения | user OK |
+
+## 2026-07-21 STAS5 V5C Safety Pulse Preview Before Retrain
+
+Статус: `current_visual_review`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать preview без обучения поверх `2026-03-21..2026-03-27` | done | Смотреть PNG в `safety_pulse_preview` | R4 forward |
+| Проверить `BALANCED_SAFETY_V1` | done | Слишком жестко: `ENTER=3`, использовать только как нижнюю границу безопасности | taxonomy audit |
+| Проверить `HARD_BLOCK_ONLY_V1` | done | Кандидат на следующий пульс: `ENTER=27`, `WATCH=138`, `SKIP=399` | taxonomy audit |
+| Визуально согласовать с пользователем | user_next | Пользователь смотрит графики и говорит, какой пульс брать дальше | preview PNG |
+| Встраивать в боевой forward | blocked | Только после визуального OK и отдельного guard | user OK |
+| Переобучать заново | blocked | Только после согласованного пульса и новой разметки/guard | visual OK |
+
+## 2026-07-21 STAS5 V5C RiskGate ML Train Wiring Ready
+
+Статус: `current_next_train_manual`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Подключить `RISKGATE_ML` к `-Mode Train` | done | Train будет учить RiskGate после ENTRY/two-block | ENTRY batch + RiskGate dataset |
+| Подключить `RISKGATE_ML` к будущему forward | done | Forward сохранит `ENTRY_ML_LIVE_DECISION_BEFORE_RISKGATE` и выдаст финальный `ENTRY_ML_LIVE_DECISION` после safety-фильтра | saved RiskGate model |
+| Прогнать RiskGate ML TrainingGuard | done | `PASS_V5C_RISKGATE_ML_TRAINING_GUARD_READY_FOR_TRAINING` | RiskGate dataset guard PASS |
+| Запустить обучение | user_next | Пользователь вручную запускает `-Mode Train` для `stas5_v5c_r4_train_20260127_20260320` | все guards PASS |
+| Запустить forward | blocked | Только после Train и PASS post-train guards ENTRY + RiskGate | manual Train |
+
+## 2026-07-21 STAS5 V5C Review-Supervised Datasets Ready
+
+Статус: `current_next_train_manual`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать `X439_SOURCE` из base32 + approved R2/R3/R4 | done | `PASS_BUILT_FROM_BASE32_AND_APPROVED_REVIEW_PACK` | approved review-pack |
+| Собрать `ENTRY_TRAIN_DATASET` | done | `3285 rows`, `GOOD=517`, `BAD=2768` | X439_SOURCE |
+| Собрать `RISKGATE_TRAIN_DATASET` | done | `627 rows`, `risk_bad_y=1=400`, explicit safe `227` | X439_SOURCE |
+| Прогнать dataset guards | done | ENTRY guard PASS, RiskGate guard PASS | оба dataset |
+| Прогнать training guard | done | `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING` | ENTRY batch |
+| Запустить обучение | user_next | Пользователь запускает `-Mode Train` вручную в VS Code | training guard PASS |
+| Запустить forward | blocked | Только после сохраненной модели и post-train guard PASS | Train |
+
+## 2026-07-21 STAS5 V5C Dataset Rails Locked
+
+Статус: `current_next`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать dataset rails в YAML/JSON/RU config | done | `REVIEW_PACK_DATASET_RAILS_LOCKED_NO_TRAINING` | approved review-pack |
+| Собрать `X439_SOURCE` | pending | Единый causal X439 слой по base 32d + reviewed 21d, без review/manual/future в X | dataset builder |
+| Собрать `ENTRY_TRAIN_DATASET` | pending | Ожидаемо `3285 rows`, `GOOD=517`, `BAD=2768` | X439_SOURCE + approved pack |
+| Собрать `RISKGATE_TRAIN_DATASET` | pending | `risk_bad_y=1` positives `400`, negatives только explicit safe | X439_SOURCE + approved pack |
+| Прогнать dataset guards | pending | Проверить allowlist 439, join labels, no future, no duplicates, `risk_bad_y=1 -> entry_y=0` | оба dataset |
+| Запускать training | blocked | Только после dataset guards + training guard PASS | user command after guards |
+
+## 2026-07-21 STAS5 V5C Review Pack R2/R3/R4
+
+Статус: `done`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать единый approved review-pack по R2/R3/R4 | done | `STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1` | approved review ledgers |
+| Проверить 21 день и связь PNG с CSV/JSON | done | `21/21`, `21` current PNG, `21` visual manifest | review folders |
+| Проверить ENTRY/RiskGate targets | done | `ENTRY rows=689`, `GOOD=227`, `BAD=462`, `RISK BAD=400` | review pack guard |
+| Проверить, что каждый risk BAD является ENTRY BAD | done | `risk_bad_also_entry_bad PASS`, конфликтов нет | two-target contract |
+| Запустить обучение | blocked | Сначала собрать train dataset с применением review-pack и пройти отдельный dataset/training guard | user approval + next builder |
+| Следующий технический шаг | current_next | Сделать builder, который применит pack к базовой train-цепочке и сформирует ENTRY/RiskGate train targets без ручных полей в X439 | review pack PASS |
+
+## 2026-07-20 STAS5 V5C Current Review Cleanup
+
+Статус: `done`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сделать один официальный PNG в корне дня | done | `*_CURRENT_REVIEW.png` | review ladder |
+| Убрать старые/preview PNG из корня без удаления | done | `_visual_archive/` | review ladder/gallery |
+| Связать current PNG с цифрами | done | `*_CURRENT_VISUAL_MANIFEST_V1.json` | approved ledgers |
+| Пересобрать контрольный R2 `2026-03-01` | done | `ENTRY GOOD=10`, `ENTRY BAD=26`, `RISK BAD=21` | user review |
+| Обновить R2 gallery | done | В day folder витрины тоже один `CURRENT_REVIEW.png` | review gallery |
+
+## 2026-07-20 STAS5 V5C Review LA Labels Above Markers
+
+Статус: `done`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Поднять `LAxxx` над review-кругами/квадратами | done | Renderer рисует review overlay раньше, затем `LAxxx` верхним слоем | user OK |
+| Сохранить старую компактную раскладку подписей | done | Для review-точек добавлен только небольшой подъем подписи | visual renderer |
+| Пересобрать R2/R3/R4 gallery | done | `STAS5_ML_CORE/artifacts/v5c/review/_ALL_ROUNDS_VISUAL_REVIEW/` | review gallery |
+| Проверить код и профильные тесты | done | `py_compile PASS`, `pytest 6 passed` | local checks |
+
+## 2026-07-20 STAS5 V5C Review Gallery
+
+Статус: `done`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сделать общую папку R2/R3/R4 review-графиков | done | `STAS5_ML_CORE/artifacts/v5c/review/_ALL_ROUNDS_VISUAL_REVIEW/` | review artifacts |
+| Пересобрать R2 визуально | done | `7` дней, `14` PNG | R2 approved ledgers |
+| Пересобрать R3 визуально | done | `7` дней, `14` PNG | R3 approved ledgers |
+| Пересобрать текущий R4 визуально | done | `2026-03-18`, `2` PNG | R4 approved ledger |
+| Диктовать новые правки по R2/R3/R4 | user_next | Использовать review ladder, затем обновлять gallery round | user review |
+
+## 2026-07-20 STAS5 V5C ENTRY/RiskGate Two Targets
+
+Статус: `done`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать отдельные цели `entry_y` и `risk_bad_y` поверх одних строк `X439` | done | Использовать этот контракт при следующей сборке RiskGate/обучении | user OK |
+| Зафиксировать `риск плохо` как ENTRY BAD + RiskGate BAD | done | `риск плохо` пишет `entry_y=0 + risk_bad_y=1` | review ladder |
+| Не пускать ручные review/risk поля в live features | done | Guard должен держать `entry_y/risk_bad_y/phase_y/state_y/reason_y` вне `X439` | no-future contract |
+
+## STAS5 V5C Quick Review Ladder
+
+Статус: `READY_FOR_USER_R4_REVIEW_LABELS`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать диктовку ENTRY vs RiskGate | done | `риск хорошо` запрещен, `риск плохо` отдельный слой | user decision |
+| Сделать быстрый parser/ledger | done | `stas5_v5c_review_ladder.py` | code |
+| Сделать PowerShell wrapper | done | `run_stas5_v5c_review_ladder.ps1` | code |
+| Проверить parser/smoke | done | `21 passed`, `-Stage Parse` PASS | tests |
+| Размечать R4/RiskGate дни `2026-03-14..2026-03-20` | user_next | Пользователь диктует фразы по графикам, команда сохраняет ledgers | visual review |
+| Пересобрать день в V5 package | manual_next | Только после закрытия дня, `-Stage All -Approve` | approved review |
+| Делать training | blocked | Только после закрытия review-недели и отдельного batch/training guard PASS | review week |
+
+## STAS5 V5C RiskGate Taxonomy V1
+
+Статус: `IMPLEMENTED_AUDIT_ONLY_NEXT_MULTI_DAY_REVIEW`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Завести полный список режимов RiskGate | done | `RISK_GATE_TAXONOMY_V1` в коде и YAML | user OK |
+| Добавить audit-колонки `RISK_GATE_PRIMARY_REGIME` и `RISK_GATE_TAGS` | done | Смотреть CSV/PNG в `riskgate_audit` | code |
+| Добавить флаги/score по каждому режиму | done | `RISK_MODE_*_SCORE/FLAG` в CSV | code |
+| Сохранить старую лестницу действий | done | `BLOCK_HARD/BLOCK_RISK/WARN_RISK/PASS_*` не заменены режимами | guardrail |
+| Пересобрать `2026-03-18` | done | PASS; `BLOCK_HARD=6`, `BLOCK_RISK=3`, `WARN_RISK=3`, `PASS_USER_REBOUND=3` | R3 forward |
+| Прогнать RiskGate Taxonomy V1 по всей неделе `2026-03-14..2026-03-20` | current_next | Только `-Mode RiskGate`, без training/forward | user command |
+| Переводить RiskGate в enforce | blocked | Только после multi-day audit, guard PASS и ручного подтверждения | user review |
+
+## STAS5 V5C RiskGate Audit-Only
+
+Статус: `IMPLEMENTED_AUDIT_ONLY_NEXT_MULTI_DAY_REVIEW`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Реализовать RiskGate как отдельный audit-only режим | done | Использовать `-Mode RiskGate` | user approval |
+| Подключить PowerShell-команду | done | `run_stas5_v5c_continuous_train_forward.ps1 -Mode RiskGate` | module |
+| Проверить на `2026-03-18` | done | PASS, user pass ids `LA059,LA067,LA078` | R3 forward |
+| Прогнать RiskGate audit по всей неделе `2026-03-14..2026-03-20` | current_next | После команды пользователя, без training/forward | implemented audit |
+| Переводить RiskGate в enforce | blocked | Только после multi-day audit, guard PASS и ручного подтверждения | user review |
+
+## STAS5 V5C RiskGate Preview 2026-03-18
+
+Статус: `V1_USER_PASS_DONE_NEXT_RISKGATE_EXCEPTION_RULES`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать RiskGate V0 preview для `2026-03-18` | done | Смотреть PNG/CSV в `riskgate_preview/20260318` | R3 forward week3 |
+| Зафиксировать три проходящих входа пользователя | done | `LA059`, `LA067`, `LA078` сохранены как `PASS_USER_REBOUND` в V1 preview | user screenshot |
+| Сформировать правило исключений rebound/retest | current_next | Вывести признаки, которые отличают `LA059/LA067/LA078` от плохих `BLOCK_HARD` | V1 user-pass |
+| Перенести RiskGate из preview в кодовый `audit_only` overlay | pending | Сначала с учетом исключений `GOOD_REBOUND/GROUNDING/RETEST`, без enforce | user OK |
+| Включать RiskGate enforce | blocked | Только после отдельного guard PASS и review нескольких дней | audit_only results |
+
+## STAS5 V5C Freeze Two-Block
+
+Статус: `ENTRY_TWO_BLOCK_FROZEN_DONE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Заморозить `ENTRY_ML_TWO_BLOCK` | done | В YAML стоит `enabled=false`, `mode=frozen_not_selected` | user decision |
+| Не тратить время на Block 3 | done | Оставить артефакт для истории, не считать active entry | YAML |
+| Сфокусироваться на baseline + RiskGate | current_next | Подключать `RISK_GATE_RULE_V0` только как `audit_only` overlay | user OK |
+
+## STAS5 V5C YAML Comments
+
+Статус: `YAML_COMMENTS_DONE_NEXT_RISKGATE_AUDIT_ONLY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Расписать русские комментарии в YAML по каждому ML-блоку | done | Комментарии добавлены в `STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml`; YAML validation PASS | YAML config |
+| Подключить код к YAML | pending | Отдельным шагом, без запуска training | user OK |
+| Подключить RiskGate V0 | current_next | Только `audit_only` overlay | YAML + user OK |
+
+## STAS5 V5C YAML Control Config
+
+Статус: `YAML_CONFIG_READY_NEXT_RISKGATE_AUDIT_ONLY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Перевести ML control config в один YAML | done | Главный файл: `STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml` | user approval |
+| Пометить JSON/RU как reference | done | JSON/RU оставлены как справка, не source-of-truth | YAML |
+| Подключить код к YAML | pending | Отдельным шагом добавить чтение YAML в раннеры/guard, без запуска training | YAML |
+| Подключить RiskGate V0 | current_next | Только `audit_only` overlay рядом с текущими predictions | YAML + user OK |
+
+## STAS5 V5C ML Control Config / RiskGate Rails
+
+Статус: `CONFIG_READY_NEXT_RISKGATE_AUDIT_ONLY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать единый config ML-блоков | done | `STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.json` и `_RU.md` созданы | R3 train/forward manifests |
+| Зафиксировать активную ML | done | `ENTRY_BASELINE_ML` выбран как текущий entry alpha; `ENTRY_ML_TWO_BLOCK` обучен, но не выбран | R3 train manifest |
+| Зафиксировать будущий safety-контур | done | `RISK_GATE_RULE_V0` описан как `planned_audit_only`; `DUMP_AVOID_ML` и `REBOUND_ALLOW_ML` выключены | user risk discussion |
+| Подключить RiskGate V0 overlay | current_next | Делать отдельным артефактом рядом с forward predictions, не перезаписывая текущий CSV | config V1 |
+| Сделать RiskGate guard | pending | Проверить only X439 causal risk columns, `RISK_SOURCE_MAX_TIME_UTC <= entry_time_utc`, no future/manual target leakage | RiskGate V0 |
+| Переводить RiskGate в enforce | blocked | Только после audit-only PASS и ручной проверки, что плохие дампы блокируются, а хорошие rebound-входы сохраняются | user review |
+
+## STAS5 V5C R3 Train / Next Blind Forward
+
+Статус: `R3_TRAIN_PASS_WAIT_USER_RUN_FORWARD_WEEK3`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать R3 user review `2026-03-07..2026-03-13` | done | Approved-ledger создан, `GOOD=73`, `BAD=34` в review-слое | user labels |
+| Пересобрать дневные V5 passports `2026-03-07..2026-03-13` | done | В дневных CSV `GOOD=73`, `BAD=481`, features `439`, guards PASS | approved GoodIds |
+| Собрать R3 batch `2026-01-27..2026-03-13` | done | `rows=3726`, `entry_y 1=432`, `entry_y 0=3294`, `features=439` | day packages |
+| Проверить R3 batch guard | done | `PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING` | batch |
+| Запустить R3 TrainingGuard | done | `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING` | R3 batch PASS |
+| Запустить R3 Train | done | Post-train guard `PASS_V5_TWO_BLOCK_POST_TRAIN_GUARD_READY_FOR_FORWARD` | training guard |
+| Проверить/подготовить следующую неделю свечей | done | `2026-03-14..2026-03-20` OHLCV `part-final.csv` существуют | trained R3 model |
+| Запустить следующий blind-forward | user_next | Пользователь запускает forward week3 командой из `docs/codex/commands.md` | trained R3 model |
+
+## STAS5 V5C R2Q WideReview Week2 User Review For R3
+
+Статус: `R3_REVIEW_20260307_DRAFT_WAIT_USER_CONFIRM_CLOSE_DAY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать wide-review прогон `2026-03-07..2026-03-13` | done | Контрольный файл создан рядом с run | wide_v2 manifest |
+| Проверить фактические counts | done | `ENTER=64`, `WATCH=167`, `SKIP=323`, visual PNG `14` | predictions CSV |
+| Принять ручную разметку пользователя по `2026-03-07` | done | Draft сохранен: `GOOD=9`, `BAD=4`, `LA057=BAD` | visual review |
+| Подтвердить закрытие `2026-03-07` | user_next | Пользователь говорит `7 марта день закрыт` или дает правки | draft review |
+| Принять ручную разметку пользователя по `2026-03-08` | done | Draft сохранен: `GOOD=10`, `BAD=5`; `LA027/LA031/LA064` как пропущенные GOOD | visual review |
+| Подтвердить закрытие `2026-03-08` | user_next | Пользователь говорит `8 марта день закрыт` или дает правки | draft review |
+| Принять ручную разметку пользователя по `2026-03-09` | done | Draft сохранен: `GOOD=12`, `BAD=1`; `LA067` marker=`yellow_diamond`/GOOD | visual review |
+| Подтвердить закрытие `2026-03-09` | user_next | Пользователь говорит `9 марта день закрыт` или дает правки | draft review |
+| Принять ручную разметку пользователя по `2026-03-10` | done | Draft сохранен: `GOOD=9`, `BAD=7`; `LA052` только context note, не label | visual review |
+| Подтвердить закрытие `2026-03-10` | user_next | Пользователь говорит `10 марта день закрыт` или дает правки | draft review |
+| Принять ручную разметку пользователя по `2026-03-11` | done | Draft сохранен: `GOOD=12`, `BAD=0`; `LA058` только context note, не label | visual review |
+| Подтвердить закрытие `2026-03-11` | user_next | Пользователь говорит `11 марта день закрыт` или дает правки | draft review |
+| Принять ручную разметку пользователя по `2026-03-12` | done | Draft сохранен: `GOOD=12`, `BAD=4`; `LA055` крестик GOOD, `LA070/LA086` ромбики GOOD | visual review |
+| Подтвердить закрытие `2026-03-12` | user_next | Пользователь говорит `12 марта день закрыт` или дает правки | draft review |
+| Принять ручную разметку пользователя по `2026-03-13` | done | Draft сохранен: `GOOD=9`, `BAD=13`; плохая серия `LA046..LA053`, context pump-dump | visual review |
+| Подтвердить закрытие `2026-03-13` | user_next | Пользователь говорит `13 марта день закрыт` или дает правки | draft review |
+| Сохранять R3 review-ledger по каждому дню | in_progress | Не терять BAD для плохих зеленых входов; GOOD ids собрать отдельно | user labels |
+| Пересобрать дневной V5 passport `2026-03-07` с GoodIds | blocked | Только после подтверждения закрытия дня | approved review-ledger |
+| Собрать R3 batch `2026-01-27..2026-03-13` | blocked | Только после закрытия всех 7 дней `2026-03-07..2026-03-13` | approved day packages |
+| R3 training | blocked | Только после R3 batch guard PASS | R3 batch |
+| Следующий blind-forward | blocked | Только на новой неделе после `2026-03-13`, не на уже размеченной week2 | R3 model |
+
+## STAS5 V5C R2Q Forward Threshold Rerun
+
+Статус: `CODE_FIXED_WAIT_USER_FORWARD_RERUN`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Найти причину малого числа ENTER в `Normal` | done | Старый `Normal` был `p96.5/p81.5`, на week2 дал только `ENTER=5` | user feedback |
+| Расширить `Normal` и `WideReview` без forward-label tuning | done | `Normal=p90/p60`, `WideReview=p80/p50`; пороги считаются только по train OOF | code |
+| Проверить ожидаемые counts на готовом week2 score | done | `Normal ENTER=25/WATCH=148`, `WideReview ENTER=64/WATCH=167` | existing forward scores |
+| Проверить код | done | `py_compile PASS`; PS syntax `PASS`; pytest `7 passed` | code |
+| Запустить новый forward-график | user_next | Команда в `docs/codex/commands.md`, рекомендован `-EntryDecisionPolicy WideReview` и run_id `stas5_v5c_r2q_forward_20260307_20260313_wide_v2` | user |
+
+## STAS5 V5C R2Q Train Retry After Multiclass Fix
+
+Статус: `CODE_FIXED_WAIT_USER_RETRY_TRAIN`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| R2Q TrainingGuard `stas5_v5c_r2q_train_20260127_20260306` | done | Guard PASS: `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING` | R2Q batch |
+| Исправить падение Train на multiclass phase/state | done | `MARKET_PHASE_STATE_ML` переведен на `PHASE_STATE_MODEL_KIND=extra_trees_balanced` | train traceback |
+| Проверить код | done | `py_compile PASS`; `pytest tests/test_stas5_v5_two_block_ml.py tests/test_stas5_v5_continuous_ml.py` = `5 passed` | code fix |
+| Повторить R2Q Train | user_next | Запустить ту же `-Mode Train` команду с run_id `stas5_v5c_r2q_train_20260127_20260306` | user |
+| Запустить diagnostic forward week2 | blocked | Только после post-train guard PASS | trained model |
+
+## STAS5 V5C R2Q Quality-Fix Train / Forward
+
+Статус: `CODE_FIXED_WAIT_USER_RUN_TRAINING_GUARD`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Аудит R2 lineage с агентами | done | Старый R1 не подмешан; R2 labels вошли в train | R2 artifacts |
+| Найти причину слабого качества | done | Причина: слабый вес свежих labels, p90 threshold, SGD phase/state warnings, two-block без selector | metrics audit |
+| Исправить ML-рельсу | done | Sample weights, precision/Wilson threshold, ExtraTrees candidate, stable phase/state, raw-proba guard, baseline/two-block selector | code |
+| Проверить код | done | `py_compile PASS`, targeted pytest `4 passed`, temp smoke train PASS | tests |
+| Запустить R2Q TrainingGuard | user_next | Команда в `docs/codex/commands.md`, run_id `stas5_v5c_r2q_train_20260127_20260306` | user |
+| Запустить R2Q Train | blocked | Только после TrainingGuard PASS; запускает пользователь | training guard |
+| Запустить R2Q diagnostic forward week2 | blocked | Только после post-train guard PASS; это диагностический повтор, не новый human-blind proof | trained model |
+
+## STAS5 V5C R2 Train / Forward Week2
+
+Статус: `R2_BATCH_PASS_WAIT_USER_RUN_TRAINING_GUARD`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Параметризовать V5C train range для R2 | done | `BuildBatch`, `TrainingGuard`, `Train` используют `TrainStartDay/TrainEndDay` | code |
+| Собрать R2 continuous batch `2026-01-27..2026-03-06` | done | Guard `PASS`, rows `3172`, GOOD `359`, BAD `2813`, features `439` | reviewed week1 |
+| Проверить свечи week2 `2026-03-07..2026-03-13` | done | Все 7 OHLCV `part-final.csv` существуют | data |
+| Запустить R2 TrainingGuard | user_next | Пользователь запускает команду из `docs/codex/commands.md`; Codex не запускал обучение | R2 batch PASS |
+| Запустить R2 Train | blocked | Только после `TrainingGuard PASS`; запуск делает пользователь | training guard |
+| Запустить blind forward week2 | blocked | Только после сохраненной R2 модели и post-train guard PASS; forward range `2026-03-07..2026-03-13` | trained R2 model |
+| Review week2 графиков | pending | После forward открыть `visual_review`, отметить GOOD/BAD для R3 teacher | forward week2 |
+
+## STAS5 V5C R2 User Review Week
+
+Статус: `R2_REVIEW_WEEK_20260228_20260306_CLOSED_READY_FOR_R2_BATCH_GUARD`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Исправить кракозябы в R2 review-ledger за все закрытые дни | done | UTF-8 audit `PASS`, `GoodIds/BAD/entry_y` не менялись | text encoding audit |
+| Зафиксировать пользовательскую разметку `2026-02-28` | done | Review-ledger сохранен в `artifacts/v5c/review/r2_user_review/20260228/` | user approval |
+| Собрать approved day package `2026-02-28` | done | Guard `PASS`, `rows=81`, `entry_y 1=10 / 0=71`, `features=439` | GoodIds |
+| Зафиксировать пользовательскую разметку `2026-03-01` | done | Review-ledger сохранен в `artifacts/v5c/review/r2_user_review/20260301/` | user approval |
+| Собрать approved day package `2026-03-01` | done | Guard `PASS`, `rows=81`, `entry_y 1=9 / 0=72`, `features=439` | GoodIds |
+| Зафиксировать пользовательскую разметку `2026-03-02` | done | Review-ledger сохранен в `artifacts/v5c/review/r2_user_review/20260302/` | user approval |
+| Собрать approved day package `2026-03-02` | done | Guard `PASS`, `rows=81`, `entry_y 1=12 / 0=69`, `features=439` | GoodIds |
+| Зафиксировать пользовательскую разметку `2026-03-03` | done | Review-ledger сохранен в `artifacts/v5c/review/r2_user_review/20260303/` | user approval |
+| Собрать approved day package `2026-03-03` | done | Guard `PASS`, `rows=89`, `entry_y 1=12 / 0=77`, `features=439` | GoodIds |
+| Зафиксировать пользовательскую разметку `2026-03-04` | done | Review-ledger сохранен в `artifacts/v5c/review/r2_user_review/20260304/` | user approval |
+| Собрать approved day package `2026-03-04` | done | Guard `PASS`, `rows=72`, `entry_y 1=9 / 0=63`, `features=439` | GoodIds |
+| Зафиксировать пользовательскую разметку `2026-03-05` | done | Review-ledger сохранен в `artifacts/v5c/review/r2_user_review/20260305/` | user approval |
+| Собрать approved day package `2026-03-05` | done | Guard `PASS`, `rows=85`, `entry_y 1=11 / 0=74`, `features=439` | GoodIds |
+| Зафиксировать пользовательскую разметку `2026-03-06` | done | Review-ledger сохранен в `artifacts/v5c/review/r2_user_review/20260306/` | user approval |
+| Собрать approved day package `2026-03-06` | done | Guard `PASS`, `rows=87`, `entry_y 1=6 / 0=81`, `features=439` | GoodIds |
+| Собрать R2 train dataset | current_next | Объединить закрытую teacher-неделю `2026-02-28..2026-03-06` с базой по утвержденному R2-правилу и проверить отдельным R2 batch guard | reviewed days |
+| Запустить R2 training | blocked | Только после R2 batch guard PASS; `2026-02-28..2026-03-06` после включения в train уже не считать blind proof | R2 dataset |
+
+## STAS5 V5C WAVE Strip Cumulative Carry
+
+Статус: `USER_APPROVED_VISUAL_STANDARD_DONE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Растянуть active WAVE до конца доступных свечей дня | done | Смотреть новые overview PNG | V5C visual renderer |
+| Убрать черный хвост после active LONG/SHORT | done | Manifest: `macro_wave_strip_covers_available_candle_end=PASS` | WAVE rows |
+| Перевести подписи WAVE на cumulative percent от настоящего старта волны | done | Читать `cum start->end%` на cross-day кусках | ohlcv_contexts |
+| Не менять ML predictions | done | SHA256 predictions до/после render совпал | no-future contract |
+| Утвердить формат графиков | done | Пользователь подтвердил 2026-07-17: графики норм | user approval |
+| Ручной review входов | current_next | Проверить `62 ENTER` на утвержденных графиках с корректной WAVE-полосой | user review |
+
+## STAS5 V5C Forward Visual Review Continuous Strip
+
+Статус: `USER_APPROVED_VISUAL_STANDARD_DONE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить в V5C forward overview блок `Fon / LONG / SHORT / WAVE` | done | Использовать новые PNG в `visual_review` | V5C forward predictions |
+| Сохранить текущие маркеры `LAxxx / SKIP X / WATCH diamond / ENTER triangle` | done | Визуально проверять входы на обновленных графиках | renderer |
+| Убрать серый дневной `GAP` в WAVE | done | Manifest: `rendered_gap_rows_total=0` | ohlcv_contexts |
+| Не менять обучение и predictions | done | SHA256 predictions до/после render совпал | no-future contract |
+| Ручная оценка `62 ENTER` | current_next | Отметить хорошие/плохие входы по новым графикам с блоком силы | user review |
+
+## STAS5 V5C Continuous Train + Forward
+
+Статус: `V5C_CONTINUOUS_FORWARD_READY_USER_REVIEW_NEXT`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сделать отдельный V5C continuous-контур без перезаписи дневного V5 | done | Использовать `STAS5_ML_CORE/artifacts/v5c/` | V5 дневной PASS |
+| Пересобрать train X439 с rolling continuous warmup | done | Batch guard `PASS`, `rows=2596`, `features=439` | daily V5 approved 274 |
+| Проверить отсутствие midnight-reset | done | `2026-02-28 LA001: cs_context_rows=748, cs_rows_240m=240` | V5C forward dataset |
+| Обучить V5C two-block ML | done | Run `stas5_v5c_continuous_train_20260716_154826`, post-train guard PASS | V5C batch guard |
+| Прогнать blind forward `2026-02-28..2026-03-06` | done | Run `stas5_v5c_continuous_forward_20260228_20260306_20260716_155343`, guard PASS | V5C trained model |
+| Построить forward visual review | done | `14` PNG, все LA labels, ENTER triangles | V5C forward predictions |
+| Визуально проверить `62 ENTER` | current_next | Открыть `visual_review` и отметить хорошие/плохие входы | user review |
+| Сравнить V5C continuous с дневным V5 и baseline | current_next | Дневной V5: `ENTER=20`; V5C: `ENTER=62`; OOF two-block чуть лучше baseline, но нужна проверка глазами | review |
+| Выбирать production-схему | blocked | Только после ручного review и сравнения | review |
+
+## STAS5 V5 Forward Visual Review With All LA Labels
+
+Статус: `VISUAL_REVIEW_PNG_READY_USER_REVIEW_NEXT`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить V5 forward-графики со всеми желтыми `LAxxx` и без длинных `ENTER`-стрелок | done | Использовать `visual_review/*/*_ENTER_ARROWS.png`; имя файла старое, внутри новый стиль | V5 forward predictions |
+| Добавить closeup-листы по каждому `ENTER` | done | Использовать `visual_review/*/*_ENTER_CLOSEUPS_YYYYMMDD.png` | V5 forward predictions |
+| Подключить рендер к будущему V5 forward | done | `Forward` строит visual review автоматически; `RenderForward` дорисовывает уже готовый run | wrapper |
+| Проверить текущий run `2026-02-28..2026-03-06` | done | Manifest `PASS`, `png_count=14` | OHLCV |
+| Ручной visual review 20 `ENTER` | current_next | Смотреть обзорные PNG и closeups, помечать хорошие/плохие входы | user review |
+
+## STAS5 V5 Two-Block Train + Forward Done
+
+Статус: `REVIEW_REQUIRED_AFTER_FORWARD`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Реализовать V5 two-block training/forward module | done | Использовать `src/mlbotnav/stas5_v5_two_block_ml.py` | TZ + batch guard |
+| Реализовать wrapper `run_stas5_v5_two_block_ml.ps1` | done | Запускать `TrainingGuard`, `Train`, `Forward`, `TrainForward` | module |
+| Запустить training guard на 32 днях | done | Guard `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING` | batch guard PASS |
+| Обучить `ENTRY_BASELINE_ML`, `MARKET_PHASE_STATE_ML`, `ENTRY_ML` | done | Run `stas5_v5_two_block_train_20260716_32d` | training guard |
+| Post-train guard | done | Guard `PASS_V5_TWO_BLOCK_POST_TRAIN_GUARD_READY_FOR_FORWARD` | trained models |
+| Собрать FULL274/X439 forward `2026-02-28..2026-03-06` | done | 7 дней, `576` rows, all day full guards PASS | OHLCV |
+| Запустить blind/no-future forward | done | `ENTER=20`, `WATCH=120`, `SKIP=436` | post-train guard |
+| Проверить 20 `ENTER` глазами | current_next | Открыть forward predictions/report и разметить качество входов | forward done |
+| Сравнить two-block с baseline-forward | current_next | Baseline сильнее по OOF, нужен baseline forward для честного выбора | trained baseline |
+| Назначить production-схему | blocked | Только после review; two-block пока не доказал преимущество | review |
+
+## STAS5 V5 Two-Block ML TZ Ready
+
+Статус: `TZ_READY_NEXT_TRAINING_GUARD_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Расписать ТЗ `STAS5 V5 Two-Block ML` вместе с агентом | done | Читать `STAS5_ML_CORE/09_STAS5_V5_TWO_BLOCK_ML_TZ_RU.md` | batch guard PASS |
+| Зафиксировать baseline как обязательный контроль | done | `ENTRY_BASELINE_ML: X439 -> entry_y` сравнивается с two-block | TZ |
+| Зафиксировать OOF-правило для `ENTRY_ML` | done | На train только OOF phase/state predictions, на forward только live predictions | TZ |
+| Реализовать `STAS5_V5_TWO_BLOCK_TRAINING_GUARD_V1` | current_next | Проверить batch guard, `X439`, forbidden columns, OOF policy, split, no model/forward artifacts | TZ + batch guard PASS |
+| Запускать baseline/training | blocked | Только после training guard `PASS` и отдельной команды пользователя | training guard |
+| Запускать forward | blocked | Только после сохраненной модели и post-train guard `PASS` | trained model |
+
+## STAS5 V5 Batch Dataset And Guard Done
+
+Статус: `BATCH_GUARD_PASS_NEXT_TRAINING_GUARD`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать единый V5 batch dataset `2026-01-27..2026-02-27` | done | Использовать `STAS5_V5_BATCH_20260127_20260227_ML_READY_439F_TARGETS_V1.csv` | range audit PASS |
+| Создать batch feature allowlist `439F` | done | Использовать только `FEATURE_ALLOWLIST_439F_V1.json` как `X` контракт | daily allowlists |
+| Сделать batch leakage/no-future guard | done | Guard `PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING` | batch dataset |
+| Нормализовать пустые feature values | done | В batch `feature_nulls=0`; заполнение только в `X`, targets не тронуты | batch builder |
+| Реализовать training guard | current_next | Проверить `X=439`, targets не в `X`, OOF-схему, split, model output paths, no forward before model | batch guard PASS |
+| Реализовать `MARKET_PHASE_STATE_ML` | pending | Учить `phase_y/state_y` только по 439 causal features | training guard |
+| Сформировать OOF phase/state predictions | pending | Для train `ENTRY_ML` использовать только OOF predictions первого блока | phase/state model |
+| Реализовать `ENTRY_ML` | pending | Учить `entry_y` по 439 causal features + OOF/live predictions, без настоящих `phase_y/state_y` в `X` | OOF predictions |
+| Запустить forward | blocked | Только после сохраненной модели и guard `PASS` | trained V5 |
+
+## STAS5 V5 Batch Dataset And Guard After 32 Full-Ready Days
+
+Статус: `CURRENT_NEXT`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Закрыть диапазон `2026-01-27..2026-02-27` | done | `32/32` full-ready, `rows=2596`, `entry_y 1=290 / 0=2306` | daily packages |
+| Исправить missing `2026-02-07` | done | День пересобран по GOOD ids, full guard `PASS`, карта создана | existing FULL274 + user ids |
+| Сделать range audit | done | Читать `STAS5_ML_CORE/artifacts/v5/STAS5_V5_RANGE_AUDIT_20260127_20260227_RU.md` | full-ready range |
+| Собрать единый V5 batch dataset | current_next | Новый builder должен объединить 32 дневных `ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv` | range audit PASS |
+| Сделать batch leakage/no-future guard | pending | Проверить одинаковый allowlist `439`, targets не в X, forbidden/future/source-time leakage отсутствуют | batch dataset |
+| Реализовать `MARKET_PHASE_STATE_ML` | pending | Учить `phase_y/state_y` только по causal X | batch guard PASS |
+| Сделать OOF phase/state predictions | pending | Для train `ENTRY_ML` использовать только OOF, не истинные `phase_y/state_y` | phase model |
+| Реализовать `ENTRY_ML` | pending | Учить `entry_y` по causal X + OOF/live phase preds | phase OOF |
+| Запустить blind forward | blocked | Только после training guard и сохраненной модели | trained V5 |
+
+## STAS5 V5 Six Full-Ready Days Before Batch Training
+
+Статус: `AUDIT_PASS_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить `2026-02-01` по V5 full-causal контракту | done | Audit report: `STAS5_ML_CORE/artifacts/v5/market_passports/20260201/STAS5_V5_MARKET_PASSPORT_20260201_AUDIT_RU.md` | daily package |
+| Сверить GOOD ids `2026-02-01` | done | В CSV `entry_y=1` есть `14` GOOD; порядок по времени | user ids |
+| Проверить no-future для `cs_*` и `fcs_*` | done | Нарушений `0` | guards |
+| Проверить общий V5 folder audit | done | `full-ready=6`, `partial/not-ready=27`, `model=False`, `forward=False` | daily packages |
+| Зафиксировать два будущих ML-блока | done | `MARKET_PHASE_STATE_ML` -> `ENTRY_ML`; пока не обучались | training schema |
+| Собрать batch dataset по full-ready дням | current_next | Делать отдельной командой и отдельным batch guard | 6 full-ready days |
+| Запустить V5 training / forward | blocked | Не запускать до batch dataset и batch leakage guard | batch guard |
+
+## STAS5 V5 Approved Day Flow 2026-01-28
+
+Статус: `PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать builder approved-passport из списка GOOD ids | done | Использовать `STAS5_ML_CORE/run_stas5_v5_approved_passport_builder.ps1` | FULL274 run + user GOOD ids |
+| Подключить `-GoodIds` к day ladder | done | Запускать одну команду `run_stas5_v5_day_ladder.ps1 -Stage All -GoodIds ...` | approved builder |
+| Собрать approved baseline для `2026-01-28` | done | `rows=93`, `entry_y 1=9 / 0=84`, `feature_count=274` | user ids |
+| Собрать `cs_*` для `2026-01-28` | done | `feature_count=355`, guard `PASS` | approved baseline |
+| Собрать `fcs_*` для `2026-01-28` | done | `feature_count=439`, guard `PASS`; карта создана | cs layer |
+| Обновить V5 folder audit | done | `full-ready=2`, `partial/not-ready=31`, `model=False`, `forward=False` | full day package |
+| Следующий день | current_next | Пользователь дает новый день и GOOD ids; запускать ту же лестницу с `-GoodIds` | next screenshot/review |
+| Batch dataset / training / forward | blocked | Не запускать, пока не будет пачки full-ready дней и отдельного batch guard | multiple approved days |
+
+## STAS5 V5 Day Ladder And Folder Audit
+
+Статус: `PASS_V5_FOLDER_AUDIT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать главную лесенку дня | done | Использовать `STAS5_ML_CORE/run_stas5_v5_day_ladder.ps1` | V5 daily flow |
+| Создать аудит V5-папки | done | Использовать `STAS5_ML_CORE/run_stas5_v5_folder_audit.ps1` | V5 artifacts |
+| Проверить лесенку на готовом дне | done | `2026-01-27 Stage All -NoPlot` прошел: `features=439`, guard `PASS` | approved day |
+| Проверить stop-guard на неготовом дне | done | `2026-01-28 Stage All` остановился на missing approved passport, FULL274 найден | no approved passport |
+| Сделать approved passport для следующего дня | current_next | Пользователь выбирает день, мы разбираем график и создаем approved targets; после этого `Stage BuildApproved` | manual review |
+| Batch dataset / training / forward | blocked | Не запускать, пока нет нескольких full-ready days и batch guard | batch guard |
+
+## STAS5 V5 Full Causal Market-Structure Builder
+
+Статус: `PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать full causal market-structure builder | done | Использовать `src/mlbotnav/stas5_v5_full_causal_structure_builder.py` или wrapper `STAS5_ML_CORE/run_stas5_v5_full_causal_structure_builder.ps1` | approved market passport + cs builder |
+| Собрать `fcs_*` признаки для `2026-01-27` | done | Главный output: `STAS5_V5_MARKET_PASSPORT_20260127_FULL_STRUCTURE_CANDIDATE_FEATURES_CAUSAL_V1.csv` | OHLCV + `274F_PLUS_CAUSAL` |
+| Собрать уровни/каналы/режимы/события | done | Outputs: `LEVELS_CAUSAL_V1`, `CHANNELS_CAUSAL_V1`, `REGIMES_CAUSAL_V1`, `EVENTS_CAUSAL_V1` | full builder |
+| Собрать ML-ready `274F + cs_* + fcs_* + targets` | done | Использовать `STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv` как текущий главный CSV дня | full causal builder |
+| Создать allowlist `274 + cs_* + fcs_*` | done | Использовать `STAS5_V5_MARKET_PASSPORT_20260127_FEATURE_ALLOWLIST_274_PLUS_FULL_CAUSAL_STRUCTURE_V1.json` | guard |
+| Проверить no-future guard | done | Guard `PASS`: targets не в X, forbidden features отсутствуют, `fcs_max_source_time_utc < entry_time_utc` | full causal guard |
+| Создать полную карту структуры | done | Открывать `DAY_MARKET_PASSPORT_20260127_FULL_CAUSAL_STRUCTURE_MAP_V1.png` | plot |
+| Обновить навигацию дня | done | Открывать первым `00_OPEN_FIRST_RU.md`; текущая версия = `PLUS_FULL_CAUSAL_STRUCTURE` | docs |
+| Собрать такие же full-пакеты на следующие январские дни | next | Для каждого дня: FULL274 -> ручной паспорт -> targets -> causal builder -> full causal builder -> guard PASS | user-approved days |
+| Собрать общий batch dataset | pending | Только после нескольких approved дней; нужен отдельный batch guard | daily packages |
+| Запустить V5 training / forward | blocked | Не запускать на одном дне; сначала batch dataset и batch no-future guard | batch guard |
+
+## STAS5 V5 Causal Market-Structure Builder Previous `cs_*` Layer
+
+Статус: `PASS_NO_TRAINING_CAUSAL_STRUCTURE_READY`. Это предыдущий слой; текущий главный слой выше: `PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать causal market-structure builder | done | Использовать `src/mlbotnav/stas5_v5_causal_structure_builder.py` или wrapper `STAS5_ML_CORE/run_stas5_v5_causal_structure_builder.ps1` для дневных V5-пакетов | approved market passport |
+| Собрать `cs_*` признаки для `2026-01-27` | done | Главный output: `STAS5_V5_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_FEATURES_V1.csv` | OHLCV + ML-ready V2 |
+| Собрать ML-ready `274F + cs_* + targets` | done | Использовать `STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_PLUS_CAUSAL_STRUCTURE_TARGETS_V1.csv` как source/base для full-слоя | causal builder |
+| Создать allowlist `274 + cs_*` | done | Использовать `STAS5_V5_MARKET_PASSPORT_20260127_FEATURE_ALLOWLIST_274_PLUS_CAUSAL_STRUCTURE_V1.json` | guard |
+| Проверить no-future guard | done | Guard `PASS`: targets не в X, forbidden features отсутствуют, `source_time_before_entry=PASS` | causal guard |
+| Обновить навигацию дня | done | Открывать первым `00_OPEN_FIRST_RU.md`; старый `ENTRY_PHASE...V2` считать baseline без `cs_*` | docs |
+| Сделать аудит V5 по проекту | done | Читать `STAS5_ML_CORE/artifacts/v5/STAS5_V5_PROJECT_AUDIT_20260715_RU.md` | local audit |
+| Собрать такие же пакеты на следующие январские дни | next | Для каждого дня: FULL274 -> ручной паспорт -> targets -> causal builder -> guard PASS | user-approved days |
+| Собрать общий batch dataset | pending | Только после нескольких approved дней; нужен отдельный batch guard | daily packages |
+| Запустить V5 training / forward | blocked | Не запускать на одном дне; сначала batch dataset и batch no-future guard | batch guard |
+
+## STAS5 V5 Market Passport 2026-01-27 Phase/State/Reason Ready
+
+Статус: `PASS_NO_TRAINING_PHASE_STATE_REASON_READY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить `entry_y/phase_y/state_y/reason_y` target-слой | done | Использовать `ML_READY_274F_ENTRY_PHASE_STATE_REASON_TARGETS_V2.csv` как актуальный ML-ready source для этого дня | approved V3 |
+| Зафиксировать 5 фаз `phase_y` | done | `P1_RANGE_CHOP=15`, `P2_SLOW_DRIFT_SHORT_PRESSURE=26`, `P3_FLUSH_BASE=6`, `P4_PUMP_PULLBACK_DUMP=7`, `P5_LATE_CONTINUATION_HIGH_RANGE=21` | phase passport |
+| Проверить feature allowlist | done | `274` causal-признака, forbidden feature columns `[]`; targets не входят в `X` | guard V2 |
+| Проверить good ids | done | `LA002, LA018, LA026, LA042, LA044, LA047, LA049, LA054, LA055, LA058, LA062` | user approval |
+| Обучение ML | blocked | Не запускать на одном дне; сначала собрать пачку approved-дней этим же шаблоном и отдельный leakage guard | batch approval |
+
+## STAS5 V5 Market Passport 2026-01-27 User Approved V3
+
+Статус: `USER_APPROVED_V3_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать финальное решение по `GOOD_ALT` и `REVIEW_ONLY` | done | Бывшие `GOOD_ALT/REVIEW_ONLY` переведены в negative, потому что пользователь подтвердил: остальные входы хуже | user review |
+| Создать approved V3 ledger | done | Использовать `DAY_MARKET_PASSPORT_LEDGER_20260127_USER_APPROVED_V3.csv` как source для этого дня | approved V3 |
+| Проверить счетчики V3 | done | `GOOD_APPROVED=11`, `BAD_IN_GROUP=50`, `NO_TRADE_ZONE=14`, `TOTAL=75` | local assert |
+| Упаковать день в отдельную V5 numeric-папку | done | Использовать `STAS5_ML_CORE/artifacts/v5/market_passports/20260127/` | V3 + FULL274 |
+| Создать ML-ready таблицу `274F + labels` | done | `STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_LABELS_V1.csv`, `rows=75`, `feature_count=274` | package |
+| Создать числовую структуру дня | done | `MARKET_STRUCTURE_NUMERIC_V1.csv` и context table; это teacher/source-of-truth для labels, а прямым live-feature станет только после causal-engine | package |
+| Добавить день в общую январскую базу | current_next | Делать, когда будут готовы остальные январские паспорта | batch plan |
+| Обучение ML | blocked | Не запускать на одном дне; запускать только после сборки общей approved базы и leakage guard | guardrail |
+
+## STAS5 V5 Market Passport 2026-01-27 V2
+
+Статус: `DRAFT_V2_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать, что работаем с январем `2026-01-27`, не апрелем | done | Не возвращаться к апрельской базе без отдельной команды пользователя | user correction |
+| Принять `11` пользовательских GOOD-входов | done | GOOD список: `LA002`, `LA018`, `LA026`, `LA042`, `LA044`, `LA047`, `LA049`, `LA054`, `LA055`, `LA058`, `LA062` | user approval |
+| Разобрать все остальные кандидаты дня | done | Покрытие `75/75`: `GOOD_APPROVED=11`, `GOOD_ALT=8`, `REVIEW_ONLY=7`, `BAD_IN_GROUP=35`, `NO_TRADE_ZONE=14` | FULL274 CSV + agent review |
+| Сверить `GOOD_ALT` и `REVIEW_ONLY` глазами пользователя | current_next | Проверить `LA001`, `LA017`, `LA025`, `LA041`, `LA043`, `LA053`, `LA057`, `LA059`, а также `LA014`, `LA015`, `LA056`, `LA066`, `LA067`, `LA068`, `LA070` | V2 draft |
+| Перевести день в approved numeric ledger | pending | Делать только после ручного подтверждения V2 | user approval |
+| Обучение ML | blocked | Не запускать на этом дне, пока паспорт `2026-01-27` не станет approved | guardrail |
+
+## STAS5 V5 Market Passport Trial 2026-01-27
+
+Статус: `DRAFT_VISUAL_REVIEW_ONLY_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Найти и проверить run `full274_feature_collect_20260127_20260715_090857` | done | Использовать как source для пробного паспорта | user request |
+| Создать overlay на оригинальном PNG | done | Открыть `STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_ANNOTATED_TOP.png` и сверить глазами | FULL274 PNG |
+| Создать draft CSV зон | done | Сверить `19` строк: target/review/bad зоны | FULL274 CSV |
+| Утвердить зоны пользователем | current_next | Пользователь правит/подтверждает target/no-buy/review зоны | visual review |
+| Превратить draft в approved label ledger | pending | Делать только после ручного подтверждения | user approval |
+| Обучение ML | blocked | Не запускать на trial-паспорте до approved label ledger | guardrail |
+
+## STAS5 FULL274 Feature Collect 2026-07-15
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сделать отдельный wrapper для FULL274 one-day collect | done | Использовать `STAS5_ML_CORE/run_stas5_full274_feature_collect.ps1` | user request |
+| Проверить wrapper на `2026-04-01` | done | Контрольный run `full274_feature_collect_20260401_20260715_084509`, `features=274` | local smoke |
+| Не собирать 274 руками через отдельные команды | current_rule | Для новых дней запускать wrapper, чтобы STAS1/STAS2/V1/V2/FULL274/PNG были в одном run | wrapper |
+| Обучение ML | blocked | Не запускать этой командой; это только предобучающий сбор и визуальная проверка | manual approval |
+
+## Актуальный источник правды STAS5 V4
+
+Текущий рабочий статус V4: ручной forward-review `2026-05-15..2026-05-25` проверен по пользовательским кругам, unified guard `PASS`.
+
+```text
+rows=738
+BEST_GOOD=64
+GOOD_ALT=42
+BAD_IN_GROUP=433
+NO_TRADE_GROUP=199
+```
+
+Старые todo-секции ниже являются историей промежуточных правок; для следующего действия смотреть верхний `2026-05-25` блок и актуальный guard.
+
+## Todo 2026-07-14 STAS5 V4 2026-05-25 Screenshot Check
+
+Статус: `STAS5_V4_20260525_USER_CHECKED_PASS_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить свежий скрин `2026-05-25` | done | Круги совпали с `LA020` и `LA038` | user screenshot |
+| Проверить, нужна ли CSV-правка | done | CSV не менять: `LA020/LA038` уже `BEST_GOOD`, `LA019` остается `GOOD_ALT` | visual check |
+| Создать checked day25 report | done | Использовать `STAS5_V4_GROUP_RANK_REVIEW_20260525_USER_CHECKED_V1_RU.md` | user check |
+| Unified ledger, guard и risk audit | done | Не пересчитывались, потому что CSV не менялся; guard остается `PASS` после day23 | no CSV change |
+| Ручная сверка `2026-05-15..25` | current_next | Финальный sanity-check перед group features только по отдельной команде пользователя | user review |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до финального ручного ledger и отдельного решения по group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-24 Screenshot Check
+
+Статус: `STAS5_V4_20260524_USER_CHECKED_PASS_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить свежий скрин `2026-05-24` | done | Круги совпали с `LA015` и `LA042`; поздняя нижняя зона совпала с `LA065` | user screenshot |
+| Проверить, нужна ли CSV-правка | done | CSV не менять: `LA015/LA042/LA065` уже `BEST_GOOD`, `LA067` остается `GOOD_ALT` | visual check |
+| Создать checked day24 report | done | Использовать `STAS5_V4_GROUP_RANK_REVIEW_20260524_USER_CHECKED_V1_RU.md` | user check |
+| Unified ledger, guard и risk audit | done | Не пересчитывались, потому что CSV не менялся; guard остается `PASS` после day23 | no CSV change |
+| Следующий день/зона | current_next | Продолжать точечно по пользовательским кругам, дальше `2026-05-25` | user review |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до финального ручного ledger и отдельного решения по group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-23 Screenshot Check
+
+Статус: `STAS5_V4_20260523_USER_CORRECTED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить свежий скрин `2026-05-23` | done | Красные круги справа подтверждают отдельные входы `LA034`, `LA036`, `LA042`, `LA051` | user screenshot |
+| Исправить широкую группу `LA034..LA042` | done | Разбита на `004A`, `004B`, `004C`; `LA034` и `LA042` стали отдельными `BEST_GOOD` | visual check |
+| Создать corrected day23 CSV | done | Использовать `STAS5_V4_GROUP_RANK_LEDGER_20260523_USER_CORRECTED_V1.csv` | group correction |
+| Обновить unified ledger, guard и risk audit | done | Guard `PASS`; unified totals `BEST_GOOD=64`, `GOOD_ALT=42`, `BAD_IN_GROUP=433`, `NO_TRADE_GROUP=199` | day23 correction |
+| Следующий день/зона | current_next | Продолжать точечно по пользовательским кругам, дальше `2026-05-24/25` | user review |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до финального ручного ledger и отдельного решения по group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-22 Screenshot Check
+
+Статус: `STAS5_V4_20260522_USER_CORRECTED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить свежий скрин `2026-05-22` | done | Видимый конфликт найден в pre-London зоне: `LA024`, не `LA022`, является главным отмеченным входом | user screenshot |
+| Исправить группу `05:36-09:01` | done | `LA022` переведен в `GOOD_ALT`, `LA024` повышен до `BEST_GOOD` | visual check |
+| Создать corrected day22 CSV | done | Использовать `STAS5_V4_GROUP_RANK_LEDGER_20260522_USER_CORRECTED_V1.csv` | group correction |
+| Обновить unified ledger, guard и risk audit | done | Guard `PASS`, totals без изменения: `BEST_GOOD=62`, `GOOD_ALT=43` | day22 correction |
+| Следующий день/зона | current_next | Продолжать точечно по пользовательским кругам, дальше `2026-05-23/24/25` | user review |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до финального ручного ledger и отдельного решения по group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-21 Screenshot Check
+
+Статус: `STAS5_V4_20260521_USER_CORRECTED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить четыре красных круга `2026-05-21` | done | `LA006` совпал, `LA039/LA050/LA057` требовали micro-group повышения | user screenshot |
+| Разбить sell-wave группу `LA022..LA050` | done | `LA039`, `LA045`, `LA050` теперь winners в отдельных micro-groups | visual check |
+| Разбить pre-breakout группу `LA051..LA060` | done | `LA057` и `LA059` теперь отдельные winners | visual check |
+| Создать corrected day21 CSV | done | Использовать `STAS5_V4_GROUP_RANK_LEDGER_20260521_USER_CORRECTED_V1.csv` | group correction |
+| Обновить unified ledger, guard и risk audit | done | Guard `PASS`, totals `BEST_GOOD=62`, `GOOD_ALT=43` | day21 correction |
+| Следующий день/зона | current_next | Продолжать точечно по пользовательским кругам/risk audit, особенно `2026-05-23/24` | user review |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до финального ручного ledger и group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-20 Screenshot Check
+
+Статус: `STAS5_V4_20260520_USER_CORRECTED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить два красных круга `2026-05-20` | done | Нижний круг = `LA037`, верхний круг = `LA038` | user screenshot |
+| Разбить crash-low группу | done | `LA037` и `LA038` теперь winners в отдельных micro-groups | visual check |
+| Создать corrected day20 CSV | done | Использовать `STAS5_V4_GROUP_RANK_LEDGER_20260520_USER_CORRECTED_V1.csv` | group correction |
+| Обновить unified ledger, guard и risk audit | done | Guard `PASS`, totals `BEST_GOOD=59`, `BAD_IN_GROUP=436` | day20 correction |
+| Следующий день/зона | current_next | Продолжать точечно по пользовательским кругам/risk audit, без массовой пересборки | user review |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до финального ручного ledger и group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-19 Screenshot Check
+
+Статус: `STAS5_V4_20260519_USER_CORRECTED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить красную обводку `2026-05-19` | done | Обведенная зона `0.86` соответствует `LA046`, а не `LA045` в CSV | user screenshot |
+| Разбить широкую группу `LA034..LA047` | done | `LA042` и `LA046` теперь winners в отдельных micro-groups | visual check |
+| Создать corrected day19 CSV | done | Использовать `STAS5_V4_GROUP_RANK_LEDGER_20260519_USER_CORRECTED_V1.csv` | group correction |
+| Обновить unified ledger и guard | done | Guard `PASS`, totals `BEST_GOOD=58`, `GOOD_ALT=44` | day19 correction |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до финального ручного ledger и group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-18 Screenshot Check
+
+Статус: `STAS5_V4_20260518_USER_CORRECTED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить красные обводки `2026-05-18` | done | `LA036` и `LA066` оказались отдельными micro-group winners | user screenshot |
+| Создать corrected day18 CSV | done | Использовать `STAS5_V4_GROUP_RANK_LEDGER_20260518_USER_CORRECTED_V1.csv` | visual check |
+| Обновить unified ledger и guard | done | Guard `PASS`, totals `BEST_GOOD=57`, `GOOD_ALT=44` | day18 correction |
+| Обновить risk audit | done | `GOOD_ALT_MAY_NEED_MICRO_GROUP=41`, `BEST_GOOD_FROM_OLD_NON_ENTER=23` | audit refresh |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до финального ручного ledger и group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-17 Screenshot Check
+
+Статус: `STAS5_V4_20260517_USER_CHECKED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить `2026-05-17` с пользовательским скрином | done | Расхождений нет: winners `LA004/LA006/LA036/LA046/LA063` | visual check |
+| Создать проверочный отчет | done | Использовать `STAS5_V4_GROUP_RANK_REVIEW_20260517_USER_CHECKED_V1_RU.md` как отметку сверки | audit trail |
+| Менять day17 CSV | not_needed | `STAS5_V4_GROUP_RANK_LEDGER_20260517_DRAFT.csv` уже совпадает со скрином | visual check |
+| V4 training/features/threshold/Optuna/API | blocked | Не запускать до завершения ручной сверки и отдельного решения по group features | guardrails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-16 Screenshot Check
+
+Статус: `STAS5_V4_20260516_USER_CORRECTED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить `2026-05-16` с пользовательским скрином | done | Winners `LA016/LA027/LA038/LA041` | user screenshot |
+| Убрать неподчеркнутый `LA049` из winners | done | Группа `LA043..LA049` стала `NO_TRADE_GROUP` | visual check |
+| Пересчитать unified ledger и guard | done | Guard `PASS`, totals `BEST_GOOD=55` | day16 correction |
+| Следующий день/зона | current_next | Проверять по скрину и risk audit, без массовой пересборки | user review |
+
+## Todo 2026-07-14 STAS5 V4 Micro-Group Correction
+
+Статус: `STAS5_V4_20260515_MICRO_GROUP_V2_FIXED_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Исправить `2026-05-15` под 6 человеческих целевых входов | done | Использовать `USER_CORRECTED_V2`, а не V1 | user screenshot correction |
+| Разбить старую широкую группу `01:22-02:35` | done | `LA004` winner в `001A`, `LA007` winner в `001B` | micro-group rule |
+| Обновить unified ledger `2026-05-15..25` | done | Guard `PASS`, totals `BEST_GOOD=56`, `GOOD_ALT=43` | day15 V2 |
+| Проверить `2026-05-16..25` на похожую ошибку | current_next | После day21 продолжить по audit/скринам, особенно `2026-05-23/24`; `GOOD_ALT_MAY_NEED_MICRO_GROUP=40` | risk audit |
+| Пересобирать все 10 дней целиком | blocked | Не делать без точечной ручной причины по audit | avoid churn |
+| V4 train/group features/Optuna/API/TP/Stas3/exit | blocked | Только после финального ручного ledger и guard | V4 rails |
+
+## Todo 2026-07-14 STAS5 Screenshot Artifact Inventory
+
+Статус: `STAS5_V4_SCREENSHOT_ARTIFACT_INVENTORY_DONE_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Найти рабочие PNG `2026-05-01..2026-05-14` | done | Использовать контакт-лист train visual approval | artifact inventory |
+| Найти рабочие forward PNG `2026-05-15..2026-05-25` | done | Использовать контакт-лист forward source | artifact inventory |
+| Найти V4 group-block PNG `2026-05-15..2026-05-25` | done | Использовать контакт-лист V4 group blocks | artifact inventory |
+| Проверить пропуски | done | `missing=[]` | index |
+| Пролистать картинки глазами с пользователем | current_next | Открыть `STAS5_ML_CORE/artifacts/v4/review_navigation/20260714_artifact_inventory` и смотреть контакт-листы | user review |
+| V4 group-block разбор `2026-05-01..2026-05-14` | pending | Делать отдельной задачей, если пользователь решит переводить train-base в group ledger | user decision |
+| V4 train/group features | blocked | Не запускать в рамках инвентаризации скринов | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 Unified Forward Review 2026-05-15..2026-05-25
+
+Статус: `STAS5_V4_FORWARD_REVIEW_20260515_20260525_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Исправить календарь V4 | done | `2026-05-15` входит в `forward_review_11`, а не в отдельную карантинную/approved ветку | user correction |
+| Единый ledger `2026-05-15..25` | done | `738` строк, `62` winners, все `label_status=DRAFT` | day ledgers |
+| Supersede старый 15-only главный ledger | done | Сохранена копия `STAS5_V4_GROUP_RANK_LEDGER_20260515_ONLY_SUPERSEDED_20260714T124741Z.csv` | unified ledger |
+| Group features | pending | Построить обязательные признаки группы: rank by price, distance to group low, before/after best low, duplicate basin | unified ledger |
+| Visual group-check | pending | Показать по группам winner, bad рядом и reason-code на графике | group features |
+| Адаптивный дневной счетчик | done | `2..5` не hard cap; число входов зависит от режима дня, но каждый вход должен иметь group edge/reason | user correction |
+| V4 group ranker train | blocked | Только после final approval, group features и guard PASS | no training yet |
+| Threshold/Optuna/API/TP/Stas3/exit | blocked | Не запускать в текущем шаге | rails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-15 Quarantine Removed
+
+Статус: `STAS5_V4_20260515_APPROVED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Снять карантин с `2026-05-15` | done | Approved V1 создан из user-corrected V1 | user approval |
+| Approved CSV `2026-05-15` | done | `41` строка, winners `LA007/LA021/LA024/LA054/LA061` | guard pass |
+| Общий approved ledger | done | `STAS5_V4_GROUP_RANK_LEDGER.csv` содержит approved `2026-05-15` | approved day |
+| Draft days `2026-05-16..25` | pending | Переводить в approved только по отдельному подтверждению | user approval |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-25 Draft Group Review
+
+Статус: `STAS5_V4_20260525_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-25` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260525_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-25` | done | `68` строк, winners `LA014/LA020/LA038/LA059/LA066`; не использовать как train до approval | group review |
+| Approved ledger `2026-05-25` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-25`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-24 Draft Group Review
+
+Статус: `STAS5_V4_20260524_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-24` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260524_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-24` | done | `70` строк, winners `LA009/LA015/LA024/LA042/LA065`; не использовать как train до approval | group review |
+| Approved ledger `2026-05-24` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-24`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-23 Draft Group Review
+
+Статус: `STAS5_V4_20260523_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-23` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260523_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-23` | done | `63` строки, winners `LA007/LA022/LA033/LA036/LA051`; не использовать как train до approval | group review |
+| Approved ledger `2026-05-23` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-23`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-22 Draft Group Review
+
+Статус: `STAS5_V4_20260522_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-22` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260522_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-22` | done | `75` строк, winners `LA007/LA022/LA036/LA047/LA061`; не использовать как train до approval | group review |
+| Approved ledger `2026-05-22` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-22`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-21 Draft Group Review
+
+Статус: `STAS5_V4_20260521_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-21` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260521_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-21` | done | `81` строка, winners `LA006/LA019/LA045/LA059/LA066`; не использовать как train до approval | group review |
+| Approved ledger `2026-05-21` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-21`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-20 Draft Group Review
+
+Статус: `STAS5_V4_20260520_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-20` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260520_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-20` | done | `68` строк, winners `LA011/LA037/LA045/LA053/LA057`; не использовать как train до approval | group review |
+| Approved ledger `2026-05-20` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-20`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-19 Draft Group Review
+
+Статус: `STAS5_V4_20260519_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-19` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260519_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-19` | done | `65` строк, winners `LA005/LA016/LA032/LA042/LA063`; не использовать как train до approval | group review |
+| Approved ledger `2026-05-19` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-19`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-18 Draft Group Review
+
+Статус: `SUPERSEDED_BY_20260518_USER_CORRECTED_V1_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-18` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260518_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-18` | superseded | Использовать `USER_CORRECTED_V1`: winners `LA006/LA019/LA034/LA036/LA049/LA061/LA066` | user correction |
+| Approved ledger `2026-05-18` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-18`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-17 Draft Group Review
+
+Статус: `STAS5_V4_20260517_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-17` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260517_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-17` | done | `63` строки, winners `LA004/LA006/LA036/LA046/LA063`; не использовать как train до approval | group review |
+| Approved ledger `2026-05-17` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-17`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 Review Encoding Fix
+
+Статус: `STAS5_V4_REVIEW_ENCODING_FIX_DONE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить V4 review Markdown на кракозябры | done | Скан показал `problems=0` по трем `.md` в `group_rank_review` | user report |
+| Убрать ложный `U+FFFD` из `docs/codex/commands.md` | done | Литеральный символ заменен на regex escape `\x{FFFD}` | commands hygiene |
+| Менять CSV/PNG/обучение | blocked | Не делать в рамках encoding fix | V4 approval rails |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-16 Draft Group Review
+
+Статус: `STAS5_V4_20260516_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft group review `2026-05-16` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260516_DRAFT_RU.md` и annotated PNG глазами | user screenshot |
+| Draft CSV `2026-05-16` | superseded | Использовать `USER_CORRECTED_V1`: winners `LA016/LA027/LA038/LA041`, `LA049` не winner | user correction |
+| Approved ledger `2026-05-16` | pending | После подтверждения перенести в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| Group feature builder | pending | Считать group-rank признаки для `2026-05-16`: rank by price, distance to group low, before/after best low | approved/draft decision |
+| V4 train | blocked | Только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 2026-05-15 User-Corrected V1
+
+Статус: `STAS5_V4_20260515_USER_CORRECTED_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| User-corrected group review `2026-05-15` | done | Использовать `STAS5_V4_GROUP_RANK_REVIEW_20260515_USER_CORRECTED_V1_RU.md` как актуальный ручной разбор по скрину | user correction |
+| User-corrected draft CSV `2026-05-15` | done | Проверен CSV на `41` строку: `BEST_GOOD=5`, `GOOD_ALT=4`, `BAD_IN_GROUP=26`, `NO_TRADE_GROUP=6`; не использовать как train до approval | group review |
+| Предыдущий `SCREENSHOT_DRAFT` | superseded | Оставить как архив черновика; не считать актуальным разбором 15 мая | user correction |
+| Approved ledger `2026-05-15` | pending | После финального подтверждения перенести `USER_CORRECTED_V1` в общий `STAS5_V4_GROUP_RANK_LEDGER.csv` | user approval |
+| V4 train | blocked | Запускать только после approved ledger, group features и guard PASS | V4 guard |
+
+## Todo 2026-07-14 STAS5 V4 Human-Style Group Ranker
+
+Статус: `STAS5_V4_20260515_SCREENSHOT_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| V4 ТЗ и папка | done | Использовать `STAS5_ML_CORE/07_STAS5_V4_HUMAN_STYLE_GROUP_RANKER_TZ_RU.md` | user decision |
+| Схема `STAS5_V4_GROUP_RANK_LEDGER` | done | Использовать `STAS5_ML_CORE/schemas/STAS5_V4_GROUP_RANK_LEDGER.schema.json` как контракт будущего CSV | V4 TZ |
+| Карантинный день `2026-05-15` | in_progress | Первый screenshot draft создан; нужен user review/правки перед approved ledger | manual group review |
+| Screenshot group-review `2026-05-15` | done | Проверить `STAS5_V4_GROUP_RANK_REVIEW_20260515_DRAFT_RU.md` и annotated PNG | user screenshot |
+| Partial draft CSV `2026-05-15` | done | `41` строк, winners `LA004/LA007/LA021/LA054/LA061`; не использовать как train до approval | screenshot review |
+| Перевод `2026-05-16..2026-05-20` | pending | Перенести текущие GOOD/BAD в `group_id + rank_label + reason_code + winner` | V3 review labels |
+| Разметка `2026-05-21..2026-05-25` | pending | После visual review перевести blind-forward V3 в group ledger | user visual review |
+| Base 24-day dataset | pending | Собирать только после group ledger coverage; без `2026-05-15` | approved group ledger |
+| Base 25-day dataset | blocked | Только после approved ledger для `2026-05-15` | quarantine approval |
+| Group features | pending | Построить обязательные признаки группы: rank by price, distance to group low, before/after best low, duplicate basin | group ledger |
+| Visual group review graph | pending | Показать группу, winner, bad рядом и reason-code | group features |
+| V4 group ranker train | blocked | Только после guard PASS; не построчный KEEP/CUT | ledger + features + guard |
+| TP/Stas3/API/Optuna/threshold tuning | blocked | Не запускать в текущем V4 TZ шаге | rails |
+
+## Todo 2026-07-14 STAS5 V3 Review Train Forward 21-25
+
+Статус: `STAS5_V3_REVIEW_TRAIN_FORWARD_21_25_READY_WAIT_USER_VISUAL_REVIEW`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| V3 user-review ledger `2026-05-16..2026-05-20` | done | Использовать `STAS5_V3_USER_REVIEW_LEDGER_20260516_20260520.csv` | user screenshots |
+| V3 train dataset `1-14 + 16-20` | done | Dataset `1106` rows, `274` features | ledger |
+| V3 leakage guard | done | Guard `PASS` | dataset |
+| V3 train `full_v2_all_274` | done | Wrapper-run `stas5_v3_wrapper_smoke2_20260714` | guard |
+| V3 blind-forward `2026-05-21..2026-05-25` | done | Смотреть PNG в `artifacts/v3/forward/runs/stas5_v3_wrapper_smoke2_20260714` | model |
+| User visual review новых PNG | current_next | Пользователь отмечает хорошие/плохие входы на `21..25` | forward PNG |
+| Следующий контур/улучшение | pending | После visual review: добавить новые user labels или править candidate detector/gate | user review |
+| TP/Stas3/API/Optuna/threshold tuning | blocked | Не запускать в этом entry-only контуре | rails |
+
+## Todo 2026-07-13 STAS5 V2 Full274 Run Check
+
+Статус: `STAS5_V2_FULL274_RUN_CHECK_PASS_TECHNICAL_REVIEW_REQUIRED`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить последний full274 run | done | Использовать отчет `STAS5_V2_FULL274_RUN_CHECK_20260713_203703_RU.md` | full274 run |
+| Проверить model/forward pointers и manifests | done | `run_id` совпал, `feature_count=274` | latest pointers |
+| Проверить forward PNG/CSV | done | `6/6` PNG READY, row parity PASS | forward artifacts |
+| Визуально сравнить входы full274 | current_next | Открыть PNG `20260515..20260520`, особенно 15-17 мая | user review |
+| Решить, заменять ли baseline | pending | Не заменять без визуального review, так как AUC full274 ниже baseline | user review |
+
+## Todo 2026-07-13 STAS5 V2 Full 274 Wrapper
+
+Статус: `STAS5_V2_FULL_274_WRAPPER_READY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить одну команду для full `274` train + forward | done | Запустить `STAS5_ML_CORE/run_stas5_v2_full_274_train_forward.ps1` | graph-to-feature audit |
+| Проверить wrapper без тяжелого прогона | done | PowerShell syntax PASS, py_compile PASS | local checks |
+| Выполнить full 274 прогон | current_next | Пользователь запускает команду и смотрит forward папку | wrapper |
+| Сравнить full 274 с baseline `v1_plus_risk_gate` | pending | После появления PNG/CSV full 274 | full run |
+
+## Todo 2026-07-13 STAS5 V2 Graph To Feature Audit
+
+Статус: `STAS5_V2_GRAPH_TO_FEATURE_AUDIT_READY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сверить график `2026-05-04` с full feature snapshot | done | Использовать отчет `STAS5_V2_GRAPH_TO_FEATURE_AUDIT_20260504_RU.md` | train visual batch + V2 snapshot |
+| Сверить full snapshot с latest model feature set | done | Учитывать, что latest model `v1_plus_risk_gate` взяла `126/274` признаков | model manifest |
+| Решить следующий model-set | current_next | Выбрать отдельный прогон `graph_context_v2` или `full_v2_all_274` для сравнения с baseline | user decision |
+| TP/Stas3/API/Optuna/threshold tuning | blocked | Не запускать в рамках этого аудита | rails |
+
+## Todo 2026-07-13 STAS5 V2 Train Visual Batch
+
+Статус: `STAS5_V2_TRAIN_VISUAL_BATCH_READY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сгенерировать train-графики `2026-05-01..2026-05-14` | done | Смотреть `visual_approval/runs/stas5_v2_train_visual_20260713_14d` | V2 snapshot |
+| Проверить соответствие train CSV и PNG | done | Manifest rows `972`, KEEP `115`, CUT `857` | batch render |
+| Пользовательский визуальный review train | current_next | Проверить, что ручные входы и слои на графиках совпадают с ожиданием | train PNG |
+
+## Todo 2026-07-13 STAS5 V2 Run Isolation
+
+Статус: `STAS5_V2_RUN_ISOLATION_READY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Не перезаписывать forward folders при повторном запуске | done | Использовать `$runId` и `runs/<run_id>` | user feedback |
+| Добавить latest pointers | done | Читать `STAS5_V2_LATEST_MODEL_RUN.json` и `STAS5_V2_LATEST_FORWARD_RUN.json` | run isolation |
+| Проверить новый isolated run | done | `stas5_v2_run_20260713_190743` создан | CLI |
+| Пользовательский visual review | current_next | Открывать PNG внутри `forward/runs/<run_id>/20260515..20260520` | isolated forward |
+
+## Todo 2026-07-13 STAS5 V2 Controlled Forward
+
+Статус: `STAS5_V2_CONTROLLED_FORWARD_READY_WAIT_USER_REVIEW`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| V2 ablation baseline | done | Использовать `STAS5_V2_ABLATION_BASELINE_20260501_20260514_RU.md` | numeric coverage |
+| V2 controlled model | done | Selected feature set `v1_plus_risk_gate` | ablation |
+| V2 blind-forward `2026-05-15..2026-05-20` | done | Смотреть PNG/CSV в `artifacts/v2/forward/` | controlled model |
+| Пользовательский visual review forward PNG | current_next | Отметить реальные/шумные `ENTER/UNSURE`, особенно 15-17 мая | forward PNG |
+| Следующее улучшение модели | pending | Делать после user review; не подбирать threshold по forward автоматически | user review |
+| TP/Stas3/API/Optuna/scorer/target-lock | blocked | Только отдельным решением | rails |
+
+## Todo 2026-07-13 STAS5 V2 Numeric Coverage
+
+Статус: `STAS5_V2_NUMERIC_COVERAGE_READY_WAIT_USER`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить, что важные слои approval-графика передаются в ML как числа | done | Использовать coverage audit за `2026-05-04` | visual approval + agents |
+| Добавить STAS4 block numeric features | done | Использовать `stas4_v2_block_*` как context, не hard-filter | V2 combo exporter |
+| Добавить pattern numeric features | done | Использовать `stas4_v2_pattern_*` | STAS4 pattern logic |
+| Добавить SHORT/WAVE causal context | done | Использовать `stas5_v2_short_wave_*` | OHLCV до входа |
+| Leakage/tests после расширения feature matrix | done | Guard `PASS`, STAS5 tests `30 passed` | rebuilt snapshot |
+| V2 ablation baseline | current_next | Запускать только после подтверждения пользователя, что numeric coverage понятен и принят | user approval |
+| V2 controlled model/training | blocked | Только после ablation baseline и отдельного решения | rails |
+| Optuna/scorer/target-lock/API/Stas3 TP | blocked | Не запускать в STAS5 entry numeric coverage | rails |
+
+## Todo 2026-07-13 STAS5 V2 Strategy Audit Strip
+
+Статус: `STAS5_V2_FEATURE_VISUAL_APPROVAL_WITH_STRATEGY_AUDIT_READY_WAIT_USER`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить 4 STAS4 strategy audit layers на approval PNG `2026-05-04` | done | Пользователь открывает обновленный PNG и проверяет глазами | V2 visual approval |
+| Зафиксировать, что стратегии audit-only | done | Не превращать `X` в hard-cut и не брать `UP` как финальный вход | guardrails |
+| V2 ablation baseline | blocked | Запускать только после визуального `норм` от пользователя | user approval |
+| V2 controlled model/training | blocked | Только после approval + ablation | rails |
+| Optuna/scorer/target-lock/API/Stas3 TP | blocked | Не запускать в STAS5 visual approval | rails |
+
+## Todo 2026-07-13 STAS5 V2 Feature Visual Approval
+
+Статус: `STAS5_V2_FEATURE_VISUAL_APPROVAL_READY_WAIT_USER`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| V2 feature visual approval graph за `2026-05-04` | done | Открыть `STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.png` | V2 snapshot + STAS2/STAS4 renderers |
+| Пользователь проверяет признаки глазами | current_next | Подтвердить, что график похож на нужный STAS4 overlay и признаки стоят правильно, либо назвать правки | visual graph |
+| V2 ablation baseline | blocked | Не запускать до визуального подтверждения | user approval |
+| V2 controlled model/training | blocked | Только после approval + ablation | rails |
+| Optuna/scorer/target-lock/API/Stas3 TP | blocked | Не запускать в STAS5 entry visual approval | rails |
+
+## Todo 2026-07-13 STAS5 V2 Main TZ After Pre-ML Audit
+
+Статус: `STAS5_V2_PRE_ML_AUDIT_READY_CURRENT_NEXT_ABLATION_BASELINE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| V2 combo feature exporter | done | Использовать `stas5_v2_combo_features_20260501_20260514_v0.csv` | STAS4 combo |
+| V2 feature snapshot builder | done | Использовать `stas5_v2_feature_snapshot_20260501_20260514_v0.csv` | v1 snapshot + V2 combo |
+| V2 leakage guard | done | Использовать `stas5_v2_leakage_guard_20260501_20260514_v0.json` | V2 snapshot |
+| Forward error ledger | done | Использовать `stas5_forward_error_ledger_20260515_20260520_v0.csv` строго audit-only | V2 guard |
+| V2 pre-ML audit | done | Использовать `STAS5_V2_PRE_ML_AUDIT_20260501_20260520_RU.md` | V2 guard + error ledger |
+| V2 ablation baseline | current_next | Сравнить feature groups без production training и без threshold tuning по forward `15+` | pre-ML audit |
+| V2 controlled model | blocked | Только после ablation baseline и отдельного решения | rails |
+| Optuna/scorer/target-lock/API/Stas3 TP | blocked | Не запускать в STAS5 entry research без отдельного решения | rails |
+
+## Todo 2026-07-13 STAS5 V2 Forward User Review
+
+Статус: `STAS5_V2_FORWARD_USER_REVIEW_READY_WAIT_USER_SELECTION`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сделать крупный review-график `2026-05-15` | done | Открыть страницы из `STAS5_ML_CORE/artifacts/v2/user_review/20260515/` | V2 combo features |
+| Создать CSV-шаблон ручной forward-разметки | done | Использовать `STAS5_V2_USER_REVIEW_TEMPLATE_20260515.csv` | review renderer |
+| Пользователь выбирает реальные входы | current_next | Назвать точные `LAxxx` из PNG; ожидается около 3 входов | visual review |
+| Заполнить forward audit labels | pending | `USER_KEEP_FORWARD_AUDIT` для выбранных, `NOISE_FORWARD_AUDIT` для остальных | user selection |
+| Сравнить признаки `USER_KEEP` против `NOISE` | pending | Найти правила/признаки, отделяющие 3 от 87 | labeled forward audit |
+| V2 model/training/threshold | blocked | Не запускать до train snapshot + guard + audit | rails |
+
+## Todo 2026-07-13 STAS5 V2 After Combo Exporter
+
+Статус: `STAS5_V2_COMBO_FEATURE_EXPORT_READY_CURRENT_NEXT_V2_SNAPSHOT`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать `stas5_v2_combo_feature_exporter.py` | done | Использовать готовый exporter | STAS4 combo code |
+| Экспортировать V2 combo train features `2026-05-01..2026-05-14` | done | Использовать `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260501_20260514_v0.csv` | exporter |
+| Экспортировать V2 combo forward features `2026-05-15..2026-05-20` | done | Использовать `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260515_20260520_forward_v0.csv` только для blind audit | exporter |
+| V2 feature snapshot builder | current_next | Создать `stas5_v2_feature_snapshot_builder.py`: join ledger/Stas2/v2 combo по `day,candidate_id,record_id`, без потери `KEEP + yellow_x` | combo features |
+| V2 leakage guard | pending | Проверить no future/postfact/yellow/strategy/Stas3/TP/exit, `feature_time_utc < entry_time_utc` | V2 snapshot |
+| V2 pre-ML audit | pending | Сравнить KEEP/CUT по combo/density/structure/risk/gate признакам до обучения | V2 guard |
+| Forward error ledger | pending | Разметить bad green / missed good на `2026-05-15..2026-05-20` как audit-only | v1 forward + V2 features |
+| V2 controlled model / ablation | blocked | Только после snapshot + guard + audit | audit |
+| Optuna/scorer/target-lock/API/Stas3 TP | blocked | Не запускать в STAS5 entry research без отдельного решения | rails |
+
+## Todo 2026-07-13 STAS5 V2 Contour 2
+
+Статус: `STAS5_V2_CONTOUR2_TZ_READY_PENDING_IMPLEMENTATION`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Провести hard audit STAS5 v1 | done | Использовать `STAS5_ML_CORE/04_STAS5_V1_HARD_AUDIT_RU.md` | v1 artifacts + agents |
+| Составить ТЗ STAS5 V2 / контур 2 | done | Использовать `STAS5_ML_CORE/05_STAS5_V2_CONTOUR2_TZ_RU.md` | hard audit |
+| Подключить combo-spectrum к ML как causal features | current_next | Создать `stas5_v2_combo_feature_exporter.py`, не брать PNG/JSON как готовую feature matrix | STAS4 code |
+| Добавить phase/permission gate | pending | Считать `LONG_ALLOWED/NO_TRADE/short_pressure` до входа | combo exporter |
+| Добавить risk/noise features | pending | `knife_risk_pre_entry`, `weak_bounce_inside_drop`, `too_high_in_drop`, `asia_weekend_risk` | feature exporter |
+| Сделать forward error ledger | pending | Разметить `GREEN_BAD`, `YELLOW_GOOD`, `SKIP_MISSED_GOOD` по `2026-05-15..2026-05-20` | v1 forward CSV |
+| Собрать V2 leakage guard | pending | Проверить `feature_available_at <= entry_time`, no future/postfact/Stas3/TP | V2 snapshot |
+| V2 ablation/calibration/permutation audit | pending | Сравнить V1, combo-only, risk-only, full V2 | V2 model |
+| Optuna/scorer/target-lock/API/Stas3 TP | blocked | Не запускать в V2 entry research без отдельного решения | rails |
+
+## Todo 2026-07-10 STAS5 Entry ML Pipeline Ready
+
+Статус: `STAS5_ENTRY_ML_PIPELINE_READY_TRAIN_1_14_FORWARD_15_20_NO_OPTUNA_NO_API_NO_STAS3`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать ML-ledger по `972` входам | done | Использовать `STAS5_ML_CORE/artifacts/ledger/stas5_ml_ledger_20260501_20260514_v0.csv` | manual labels + Stas2 records |
+| Собрать pre-entry feature snapshot | done | Использовать `STAS5_ML_CORE/artifacts/features/stas5_feature_snapshot_20260501_20260514_v0.csv` | ledger |
+| Сделать leakage guard | done | Guard `PASS`, feature columns `111`, forbidden columns `0` | feature snapshot |
+| Сделать pre-ML audit | done | Audit `READY_FOR_CONTROLLED_BASELINE` | guard |
+| Controlled baseline ML без yellow-полей | done | Модель `STAS5_ML_CORE/artifacts/model/stas5_entry_ranker_20260501_20260514_v0.joblib` | clean dataset |
+| Forward entry review `2026-05-15..2026-05-20` | done | Смотреть PNG/CSV в `STAS5_ML_CORE/artifacts/forward/` | controlled baseline |
+| Визуальный review forward PNG | current_next | Открыть дни `20260515..20260520`, проверить глазами `ENTER/UNSURE/SKIP` и выписать шум/попадания | user visual review |
+| Улучшение модели/ablation | pending | Только после визуального review; forward threshold не подбирать по `15+` | forward review |
+| Optuna/scorer/target-lock/API/мост Bybit/Stas3 TP | blocked | Не запускать в STAS-5 entry ML без отдельного решения | rails |
+
+## Todo 2026-07-10 STAS5 Memory Refresh
+
+Статус: `STAS5_TZ_TRAIN_1_14_FORWARD_15_PLUS_NO_TP_NO_API`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Обновить рабочую память STAS-5 | done | Читать `STAS5_ML_CORE/README_RU.md` и верхние блоки `docs/codex/*` | user request |
+| Создать сухое рабочее ТЗ STAS-5 | done | Использовать `STAS5_ML_CORE/03_STAS5_CURRENT_EXECUTION_INSTRUCTION_RU.md`: train `1-14`, forward `15+`, PNG с ML-входами | user request |
+| Собрать ML-ledger по `972` входам | current_next | Создать `src/mlbotnav/stas5_ml_ledger_builder.py` и артефакты `STAS5_ML_CORE/artifacts/ledger/*` | manual labels + Stas2 records |
+| Собрать pre-entry feature snapshot | pending | Брать только признаки, известные до входа; Stas2/Stas4 использовать как context/features | ML-ledger |
+| Сделать leakage guard и pre-ML audit | pending | Проверить no future fields, no Stas3, no yellow hard-cut | feature snapshot |
+| Controlled baseline ML без yellow-полей | blocked | Только после audit и leakage guard | clean dataset |
+| Forward entry review `2026-05-15+` | blocked | CSV/PNG: каждая кандидатная точка имеет ML `ENTER/UNSURE/SKIP`; forward не использовать для threshold tuning | controlled baseline |
+| ML/export/training/scorer/target-lock/Optuna/API/мост Bybit | blocked | Не запускать в этом этапе | rails |
+
+## Todo 2026-07-10 STAS4 Root Home
+
+Статус: `STAS4_ROOT_HOME_READY_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Вынести STAS4 в корень проекта | done | Использовать `STAS4_FEATURE_HYPOTHESIS_REVIEW` как рабочую папку STAS4 | user request |
+| Обновить default out-dir генератора STAS4 | done | Новые STAS4-прогоны писать в `STAS4_FEATURE_HYPOTHESIS_REVIEW` | source update |
+| Обновить ссылки в документах/отчетах | done | Старый путь не использовать как источник правды | path rewrite |
+| Удалить старые пустые директории из `reports/final_review/stas4_feature_hypothesis_screen_v0` | blocked | Не трогать процессы; можно удалить позже вручную после закрытия просмотрщика/проводника | Windows lock |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать в этом этапе | rails |
+
+## Todo 2026-07-10 STAS5 ML Entry Architecture
+
+Статус: `STAS5_ML_ENTRY_ARCHITECTURE_DRAFT_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать source-of-truth `STAS5_ML_CORE` | done | Использовать как главный документ STAS-5 по ML-входам | user STAS-5 spec |
+| Зафиксировать `human KEEP > strategy vote` | done | Yellow X хранить только как `AUDIT_ONLY`; конфликт сохранять как `yellow_x_conflict=1` | manual labels |
+| Собрать ML-ledger по `972` входам | pending | Объединить day/candidate/entry/human_label/yellow flags без потери строк | 14d draft labels |
+| Собрать pre-entry feature snapshot | pending | Только признаки, доступные до входа; Stas2/Stas4 как context/features | ML-ledger |
+| Сделать audit признаков без ML | pending | Сравнить признаки `KEEP_DRAFT` против `CUT_DRAFT`, отдельно yellow-X conflicts | feature snapshot |
+| Первый controlled baseline без yellow-полей | blocked | Только после audit и утверждения label/feature contract | approved ledger |
+| Stas3 TP/exit | blocked | Не включать в STAS-5 входы; отдельный будущий контур | STAS5 entry ML |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать в этом этапе | rails |
+
+## Todo 2026-07-10 Yellow X Audit Only Rule
+
+Статус: `YELLOW_X_AUDIT_ONLY_FIXED_RULE_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать `yellow X` как `AUDIT_ONLY` | done | Использовать `YELLOW_X_AUDIT_ONLY_RULE_RU.md` как правило для будущих dataset/export/training | user decision |
+| Запретить hard-cut по `yellow_x = 1` | done | Любой будущий export/training должен падать, если удален `KEEP_APPROVED + yellow_x = 1` | ML guardrails |
+| Первую ML-модель строить без yellow-полей в feature matrix | current_next | Feature allowlist должен исключать `stas4_*yellow*`, `would_cut*`, `strategy_vote*` до отдельного ablation | approved labels |
+| Проверить yellow X как passive feature | blocked | Только позже, через ablation и без hard veto | baseline model |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать в этом этапе | rails |
+
+## Todo 2026-07-10 STAS4 Manual Labels Draft 20260514 Complete
+
+Статус: `STAS4_MANUAL_LABELS_14D_DRAFT_COMPLETE_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Разметить `2026-05-14` | done | Использовать `11` KEEP: `LA014`, `LA015`, `LA032`, `LA039`, `LA046`, `LA047`, `LA048`, `LA049`, `LA053`, `LA055`, `LA056` | user screenshot |
+| Закрыть 14-дневную пачку `2026-05-01..2026-05-14` | done | Сверять итоговый ledger: `972` total, `115` KEEP_DRAFT, `857` CUT_DRAFT | manual labels |
+| Подготовить следующий этап анализа признаков | current_next | Разбирать, какие Stas4/индикаторные признаки объясняют пользовательский KEEP, без превращения `CUT_DRAFT` в автоматический фильтр | approved discussion |
+| Превращать draft-разметку в финальный ML-label | blocked | Делать только после отдельного утверждения схемы label/feature leakage guard | approved ledger |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | rails |
+
+## Todo 2026-07-10 STAS4 Manual Labels Draft 20260513
+
+Статус: `STAS4_MANUAL_LABELS_IN_PROGRESS_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Разметить `2026-05-13` | done | Использовать `4` KEEP: `LA002`, `LA043`, `LA058`, `LA072` | user screenshot |
+| Продолжить 14-дневную пачку | current_next | Ждать следующий скрин пользователя за `2026-05-14` и сопоставить красные подчеркивания с LA-входами | user visual review |
+| Превращать draft-разметку в финальный ML-label | blocked | Делать только после отдельного утверждения схемы label/feature leakage guard | approved ledger |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | rails |
+
+## Todo 2026-07-10 STAS4 Manual Labels Draft 20260512
+
+Статус: `STAS4_MANUAL_LABELS_IN_PROGRESS_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Разметить `2026-05-12` | done | Использовать `6` KEEP: `LA006`, `LA012`, `LA036`, `LA038`, `LA051`, `LA055` | user screenshot |
+| Продолжить 14-дневную пачку | current_next | Ждать следующий скрин пользователя за `2026-05-13` и сопоставить красные подчеркивания с LA-входами | user visual review |
+| Превращать draft-разметку в финальный ML-label | blocked | Делать только после отдельного утверждения схемы label/feature leakage guard | approved ledger |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | rails |
+
+## Todo 2026-07-10 STAS4 Manual Labels Draft
+
+Статус: `STAS4_MANUAL_LABELS_IN_PROGRESS_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Разметить `2026-05-01` красными подчеркиваниями пользователя | done | Использовать `KEEP_20260501_FROM_RED_UNDERLINES_DRAFT.csv` как draft | user screenshot |
+| Разметить `2026-05-02` | done | Использовать `KEEP_20260502_FROM_RED_UNDERLINES_DRAFT.csv` как draft | user screenshot |
+| Разметить `2026-05-03` | done | Пользователь уточнил, что входов `6`; использовать исправленную версию | user correction |
+| Разметить `2026-05-04` | done | Использовать `9` KEEP: `LA002`, `LA004`, `LA020`, `LA032`, `LA038`, `LA042`, `LA045`, `LA049`, `LA065` | user screenshot |
+| Разметить `2026-05-05` | done | Использовать `8` KEEP: `LA001`, `LA005`, `LA013`, `LA026`, `LA028`, `LA036`, `LA041`, `LA044` | user screenshot |
+| Разметить `2026-05-06` | done | Использовать `7` KEEP: `LA001`, `LA008`, `LA016`, `LA021`, `LA039`, `LA052`, `LA061` | user screenshot |
+| Разметить `2026-05-07` | done | Использовать `11` KEEP: `LA014`, `LA017`, `LA019`, `LA023`, `LA024`, `LA036`, `LA050`, `LA053`, `LA060`, `LA073`, `LA075` | user screenshot |
+| Разметить `2026-05-08` | done | Использовать `8` KEEP: `LA009`, `LA010`, `LA021`, `LA041`, `LA045`, `LA048`, `LA060`, `LA069` | user screenshot |
+| Разметить `2026-05-09` | done | Использовать `7` KEEP: `LA001`, `LA002`, `LA013`, `LA018`, `LA028`, `LA043`, `LA047` | user screenshot |
+| Разметить `2026-05-10` | done | Использовать `10` KEEP: `LA006`, `LA030`, `LA035`, `LA041`, `LA045`, `LA046`, `LA051`, `LA056`, `LA057`, `LA059` | user screenshot |
+| Разметить `2026-05-11` | done | Использовать `10` KEEP: `LA014`, `LA016`, `LA029`, `LA041`, `LA045`, `LA046`, `LA048`, `LA052`, `LA053`, `LA060` | user screenshot |
+| Продолжить 14-дневную пачку | current_next | Ждать следующий скрин пользователя за `2026-05-12` и сопоставить красные подчеркивания с LA-входами | user visual review |
+| Превращать draft-разметку в финальный ML-label | blocked | Делать только после отдельного утверждения схемы label/feature leakage guard | approved ledger |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | rails |
+
+## Todo 2026-07-10 STAS2/STAS4 Compact Strips
+
+Статус: `STAS2_STAS4_COMPACT_STRIPS_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сжать визуальные полосы `ФОН/LONG/SHORT/WAVE` примерно в 2 раза | done | Пользователю открыть smoke PNG и глазами подтвердить читаемость | Stas2/Stas4 visual |
+| Показать нижнюю ось времени от `00:00` до `00:00` | done | Проверить на разных днях, что правый `00:00` не обрезан | day overview |
+| Изменить расчет фаз/волн/entry | blocked | Не делать в этой задаче | no logic change |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного прямого approval | rails |
+
+## Todo 2026-07-09 STAS3 V2 Clean
+
+Статус: `STAS3_V2_CLEAN_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Пометить old-base V2 как невалидный | done | Не использовать `stas3_v2_20260510_20260512_long_only_20260709_112925` как принятый V2 | user correction |
+| Создать clean-модуль без старого Stas3 | done | Использовать `src/mlbotnav/visual_entry_stas3_v2_clean_review.py` | clean reset |
+| Сделать отдельный runner/open для clean V2 | done | `run_clean_v2.ps1`, `open_clean_v2_last_run.ps1` | clean module |
+| Прогнать clean V2 за `2026-05-10..2026-05-12` | done | Финальный run `STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_clean_20260510_20260512_long_only_20260709_123622` | Stas2 source |
+| Проверить таблицы/Excel/PNG | done | Acceptance PASS: `214` rows, `0` skipped, `66` PNG, пустых PNG нет | clean run |
+| Визуальная сверка пользователем | current_next | Открыть browse/entries/medium и проверить, что TP читается глазами и не похож на старый Stas3 | final clean run |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | rails |
+
+## Todo 2026-07-09 STAS3 V2 Reset TZ
+
+Статус: `OLD_BASE_V2_INVALID_REPLACED_BY_CLEAN_V2`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Заморозить Stas3 V1 как архив | done | Не удалять runs, не использовать V1 как source-of-truth | user reset |
+| Создать новое ТЗ Stas3 V2 | done | Читать `STAS3_PERCENT_LADDER_REVIEW/TZ_STAS3_V2_RESET_RU.md`; учтены LONG-only, входы из `STAS2_RECORDS.csv`, `entry_price_for_calc = entry_price_5bps`, быстрые TP `0.3-0.9%`, средние ходы `1.0-2.0%` шаг `0.1%`, далее `2.0-20.0%` шаг `0.2%`, рабочие дни `2026-05-10..2026-05-12`, context bundle session/bg/LONG/SHORT-risk/WAVE/volatility/volume; short-входы и short-TP запрещены | reset + user grid/source/context correction |
+| Реализовать Stas3 V2 | done | Финальный run `STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_20260510_20260512_long_only_20260709_112925` | user start |
+| Перепроектировать таблицы Stas3 V2 | done | Смотреть `STAS3_V2_ENTRY_TP_AUDIT.csv`, `STAS3_V2_CONTEXT_BUNDLE.csv`, `STAS3_V2_TP_LADDER_BY_PHASE.csv`, `STAS3_V2_WRONG_TP_REVIEW.csv` | V2 implementation |
+| Убрать MFE MAX из основного визуала TP | done | В основном визуале MFE только diagnostic point; отдельные big-move pages также diagnostic/hindsight | V2 implementation |
+| Решить WAVE-context join | done | `WAVE/GAP/continuous` протянуты с `wave_context_scope=HINDSIGHT_WAVE_REVIEW`, не causal feature | V2 implementation |
+| Визуальная сверка пользователем | current_next | Открыть browse/xlsx/tp и проверить, читаются ли entry price и review TP | final run |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | rails |
+
+## Todo 2026-07-09 STAS3 Rebuild From Latest STAS2
+
+Статус: `STAS3_REBUILD_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Пересобрать Stas3 поверх актуального Stas2 short labels v1 | done | Использовать `stas3_20260508_20260512_from_stas2_short_labels_v1_20260709_084730` | Stas2 latest |
+| Проверить Stas3 артефакты | done | Workbook/CSV/PNG прошли контроль | run output |
+| Открыть результат пользователю | current_next | `.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open browse` | user review |
+| Протянуть Stas2 WAVE/SHORT ledger в Stas3 entry rows | pending | Делать только если пользователь хочет видеть WAVE-контекст в Stas3-таблицах/PNG | user decision |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного approval | rails |
+
+## Todo 2026-07-09 STAS2 Short Strong Wave Labels
+
+Статус: `STAS2_SHORT_STRONG_WAVE_LABEL_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Подписывать короткие сильные WAVE | done | Проверить `2026-05-12`, участок `W38 LONG 12:32-12:40` | PNG |
+| Контрольный run `2026-05-08..2026-05-12` | done | Использовать `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260508_20260512_short_labels_v1_20260709_083138` | Stas1 carry48 |
+| Визуальная сверка пользователем | current_next | Посмотреть, не слишком ли мелко/шумно выглядит компактный `%` в узком блоке | user review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного approval | rails |
+
+## Todo 2026-07-09 STAS2 Continuous Wave Ledger
+
+Статус: `STAS2_CONTINUOUS_WAVE_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Убрать жесткую привязку WAVE к UTC-дню | done | Смотреть `STAS2_CONTINUOUS_WAVES.csv` как главный ledger волн | Stas2 graph |
+| Сделать дневные срезы continuous-волн | done | Смотреть `STAS2_MACRO_WAVES.csv`, поля `visible/full/carry` | continuous ledger |
+| Показать carry через 00:00 на графике | done | Проверить `W08 SHORT` на `2026-05-10` и `2026-05-11` | PNG |
+| Контрольный run `2026-05-10..2026-05-12` | done | Использовать `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_continuous_wave_v2_20260709_081330` | Stas1 carry48 |
+| Визуальная сверка пользователем | current_next | Проверить дни `2026-05-10`, `2026-05-11`, `2026-05-12`: не мешают ли `<`/`>` и `vis/full` | PNG/XLSX |
+| Перенос continuous-wave в ML | blocked | Не делать без отдельной causal-разметки; сейчас это hindsight/review | user approval |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного прямого approval | rails |
+
+## Todo 2026-07-09 STAS2 Macro Wave GAP Segments
+
+Статус: `STAS2_WAVE_GAP_SEGMENTS_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Учесть пропуски в строке `WAVE` | done | Смотреть серые `GAP`-квадраты с процентом на overview | Stas2 graph |
+| Сохранить GAP в таблицах | done | Проверять `STAS2_MACRO_WAVES.csv` и лист `Macro waves`: `macro_wave_segment_kind=GAP` | run output |
+| Контрольный run `2026-05-10..2026-05-12` | done | Использовать `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_gap_segments_v1_20260709_073810` | Stas1 carry48 |
+| Визуальная сверка пользователем | current_next | Открыть `2026-05-10`, затем `2026-05-11` и `2026-05-12`, проверить что GAP не мешает чтению волн | PNG/XLSX |
+| Перенос `GAP/WAVE` в ML | blocked | Не делать без отдельной causal-разметки; сейчас это hindsight/review | user approval |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного прямого approval | rails |
+
+## Todo 2026-07-09 STAS2 SHORT And Macro Wave Review
+
+Статус: `STAS2_SHORT_MACRO_WAVE_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить `SHORT` по закрытым часам | done | Смотреть `STAS2_HOURLY_PHASES.csv` и строку `SHORT` на overview | Stas2 graph |
+| Добавить переменные `WAVE` swing-блоки | done | Смотреть `STAS2_MACRO_WAVES.csv`, лист `Macro waves` и строку `WAVE` на overview | OHLCV day |
+| Контрольный run `2026-05-04..2026-05-09` | done | Использовать `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260504_20260509_short_macro_wave_v1_20260709_064759` | Stas1 carry48 |
+| Визуальная сверка пользователем | current_next | Открыть `2026-05-04`, затем остальные дни, глазами проверить, устраивает ли порог `1%` для `WAVE` | PNG/XLSX |
+| Перенос `macro_wave_*` в ML | blocked | Не делать без отдельного causal-approved ledger; сейчас это hindsight review | user approval |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного прямого approval | rails |
+
+## Todo 2026-07-06 STAS3 Percent Ladder Review
+
+Статус: `STAS3_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать отдельный Stas3 post-entry контур | done | Использовать `STAS3_PERCENT_LADDER_REVIEW/` | user `Стас3` |
+| Percent ladder `0.2..7.0%` | done | Смотреть `STAS3_RECORDS.csv` и Excel | Stas2 records |
+| Фаза входа Stas1/Stas2 | done | Смотреть `STAS3_ENTRY_PHASE_TABLE.csv` | Stas2 pre-entry fields |
+| Фактическое движение после входа | done | Смотреть `STAS3_ACTUAL_MOVEMENT.csv` | OHLCV |
+| Reasonable TP и mismatch к 1% | done | Смотреть `STAS3_REASONABLE_TP.csv` и `STAS3_TP_LADDER_V0_RU.md` | phase profile |
+| Лестница TP по фазам/profile/setup/session | done | Смотреть `STAS3_TP_LADDER_BY_PHASE.csv`, `STAS3_TP_LADDER_BY_PROFILE.csv` и workbook | Stas3 records |
+| Контрольный run `2026-05-02..2026-05-03` | done | Финальный run `STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260502_20260503_tp_ladder_v0_20260706_183011` | run output |
+| Расширенный run `2026-05-04..2026-05-09` | done | Финальный run `STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260504_20260509_tp_ladder_v0_20260707_055929` | latest Stas2 `20260504..20260509` |
+| Визуальный слой `SIGNAL -> ENTRY -> EXIT` | done | Актуальный run `STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260504_20260509_signal_entry_tp_move_v0_20260707_080253` показывает цену входа и красную стрелку TP-отработки | user visual bugs |
+| Анализ больших ходов `SIGNAL/ENTRY -> MFE MAX` | done | Актуальный run `STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260504_20260509_big_move_review_v2_20260707_090246`; смотреть `STAS3_BIG_MOVE_REVIEW_PAGE_*.png` и листы `Low to MFE max`, `Entry to TP path`, `Exit review` | user request: учиться тянуть больше 0.2% |
+| User visual review Stas3 | current_next | Открыть browse/xlsx/big move pages, глазами сверить `EARLY_1PCT_TRAIL_REVIEW`, `BIG_MFE_BUT_DEEP_MAE_REVIEW`, `LATE_MFE_PUMP_REVIEW` | PNG/XLSX/MD |
+| Approved-ledger для будущего ML | blocked | Только после ручного review и отдельного `APPROVED_FOR_ML` | user decision |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного явного approval | rails |
+
+## Todo 2026-07-06 STAS3 Separate Chat Handoff
+
+Статус: `STAS2_CLOSED_STAS3_IN_SEPARATE_CHAT_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Stas2 closure | done | Использовать как закрытую базу для следующего чата | user ok |
+| Stas3 в текущем чате | blocked | Не начинать здесь, пользователь делает в другом чате | user decision |
+| Handoff для Stas3 | done | В новом чате читать `docs/codex/*`, затем брать финальные Stas2 artifacts | Stas2 closed |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного явного approval | rails |
+
+## Todo 2026-07-06 STAS2 Closed For STAS3
+
+Статус: `STAS2_CLOSED_FOR_STAS3_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| STAS 1 inventory | done | Использовать `STAS1_GOOD_LOW_REVIEW/` как базу входов, Stas1 не переписывать | Stas1 runs |
+| STAS 2 market phases and sessions | done | Использовать Stas2 как pre-entry контекст фаз/сессий/дня | Stas2 reports |
+| Визуальный Stas2 слой на графике | done | Использовать финальный no-label overview с точками как в Stas1 | `STAS2_MARKET_PHASE_REVIEW` |
+| No-lookahead контроль Stas2 | done | Для входов использовать только `context_before_entry_check=True` | Stas2 records |
+| STAS 3 percent ladder and entry/TP validation | current_next | Составить ТЗ и отдельный слой, который после входа считает MFE/MAE, достижимый процент, время до цели, просадку и реалистичный TP | закрытый Stas2 |
+| STAS 4 features/hypotheses/indicators with phases for ML | blocked | Не начинать до отчета Stas3 | Stas3 |
+| STAS 5 ML architecture and responsibility map | blocked | Не начинать до отчета Stas4 | Stas4 |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного явного approval | guardrails |
+
+## Todo 2026-07-06 STAS2 Setup Quality Layer
+
+Статус: `STAS2_SETUP_QUALITY_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Разделить фон/LONG и качество конкретного входа | done | Смотреть подписи `SETUP` рядом с точками на overview | Stas2 review |
+| Подтянуть `stas1_risk_flags` и `stas1_feature_*` в Stas2 CSV/XLSX | done | Использовать `STAS2_RECORDS.csv` и лист `Entry context` | Stas1 carry48 run |
+| Добавить `STAS2_ENTRY_SETUP_QUALITY_SUMMARY.csv` | done | Смотреть clean/ok/warn/noise-сводку перед ручной чисткой | setup fields |
+| Проверить LA045-LA047 после выноса | done | В CSV/XLSX они должны читаться как `NOISE`; на overview названия возле точек не рисуются | visual review |
+| Пользовательский visual review нового графика | current_next | Открыть `2026-05-02` и глазами подтвердить/поправить пороги setup | PNG |
+| Stas3 percent ladder / TP validation | blocked | Начинать только после принятия Stas2 setup-схемы | user review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного решения | rails |
+
+## Todo 2026-07-06 STAS2 Background And LONG Wave Visual Fix
+
+Статус: `STAS2_BG_LONG_WAVE_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Разделить `Слабая` как фон и направленную LONG-волну | done | Смотреть две полосы `Фон` и `LONG` на overview | Stas2 script |
+| Добавить pre-entry `long_wave` поля | done | Использовать `pre_*_long_wave_up_from_low_pct` и `pre_*_long_wave_pullback_from_high_pct` в Stas2 review | entry rows |
+| Добавить отдельную summary-таблицу LONG-волн | done | Смотреть `STAS2_ENTRY_LONG_WAVE_SUMMARY.csv` и лист `Long wave summary` | run output |
+| Проверить no-lookahead | done | `context_before_entry_check=True`, long-wave окна используют только `open_time_utc < entry_time_utc` | records |
+| Пользовательский visual review | current_next | Открыть `.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse` и глазами сравнить `Фон` против `LONG` | PNG |
+| Stas3 percent ladder / TP validation | blocked | Начинать только после принятия визуальной схемы Stas2 | user review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного решения | rails |
+
+## Todo 2026-07-06 STAS2 Market Phase Visual Review
+
+Статус: `STAS2_REVIEW_READY_WAIT_USER_VISUAL_REVIEW_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать отдельный Stas2 review-контур | done | Использовать `STAS2_MARKET_PHASE_REVIEW/`, Stas1 не трогать | Stas1 runs |
+| Перенести сессии/фазы на график | done | Смотреть `STAS2_DAY_OVERVIEW_YYYYMMDD.png` и `BROWSE_BY_DAY/` | Stas2 script |
+| Добавить pre-entry окна `5m/15m/30m/60m` | done | Анализировать `STAS2_RECORDS.csv` и entry context pages | Stas1 entries |
+| No-lookahead guard | done | Проверять `context_before_entry_check=True` | Stas2 records |
+| Пользовательский visual review | current_next | Открыть `.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse` и глазами отметить, какие сессии/фазы дают шум | PNG |
+| Stas3 percent ladder / TP validation | blocked | Начинать только после принятия Stas2 review-схемы | user review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного решения | rails |
+
+## Todo 2026-07-06 STAS2 Market Phase Session Audit
+
+Статус: `STAS2_DONE_WAIT_STAS3_DECISION_NO_ML_NO_OPTUNA`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| STAS 1 inventory | done | Использовать `STAS1_GOOD_LOW_REVIEW/` как базу, не переписывать Stas 1 | текущие Stas1 runs |
+| STAS 2 market phases and sessions | done | Использовать схему `6 UTC-корзин + day_type`; пользователь принимает/правит ladder фаз перед Stas 3 | `STAS2_MARKET_PHASE_AUDIT_RU.md` |
+| STAS 3 percent ladder and entry/TP validation | pending | После принятия Stas 2 построить percent ladder `0.3-0.5 / 0.9-1.0 / 1.5-2.0 / 2.2-4.0+` по фазам/сессиям | Stas 2 report |
+| STAS 4 features/hypotheses/indicators with phases for ML | blocked | Не начинать до Stas 3 отчета | Stas 3 |
+| STAS 5 ML architecture and responsibility map | blocked | Не начинать до Stas 4 отчета | Stas 4 |
+
+## Todo 2026-07-06 STAS1 Block 1 Locked
+
+Статус: `STAS1_BLOCK_1_DONE_NEXT_CHAT_CONTINUE_FROM_REVIEW_POOL`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Блок 1: прогон low-кандидатов | done | Использовать как baseline | STAS1 |
+| Сохранение всех входов из прогона | done | Смотреть CSV/JSON и `BROWSE_BY_DAY/` | run output |
+| Управление процентом цели `+1%/+0.5%/target-pct` | done | Подбирать порог для review, не как ML-фичу | outcome label |
+| Проверка закрытия после полуночи | done | Использовать `-OutcomeLookaheadHours` | carry outcome |
+| Дневной просмотр без шума окон | done | Открывать `open_last_run.ps1 -Open browse` | BROWSE_BY_DAY |
+| Следующий чат | current_next | Продолжить с чистки шума low-кандидатов и ручного feedback | user review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного approval | rails |
+
+## Todo 2026-07-06 STAS1 Carry Outcome
+
+Статус: `WAIT_USER_REVIEW_STAS1_CARRY_OUTCOME_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Разделить период входов и период outcome | done | Использовать `-OutcomeLookaheadHours` | user decision |
+| Не подтягивать сделки до стартового дня | done | Проверять только entry period `-Day .. -EndDay` | guardrail |
+| Разрешить `+1%` после полуночи | done | Смотреть `hit_day_utc`, `carried_overnight`, `hold_minutes_to_target` | outcome window |
+| Добавить поля carry в CSV/JSON | done | Использовать для DCA/risk review | records |
+| Smoke-run `2026-05-07..2026-05-08` с `48h` | done | Пользователь смотрит browse-by-day глазами | PNG/CSV |
+| Полный пользовательский run с `-RenderGoodLimit 0` | current_next | Запустить команду из `docs/codex/commands.md` и открыть `-Open browse` | user review |
+| Калибровка шума low | pending | После ручных пометок по дневным папкам | visual feedback |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать без отдельного approval | rails |
+
+## Todo 2026-07-06 STAS1 Browse By Day
+
+Статус: `WAIT_USER_REVIEW_STAS1_BROWSE_BY_DAY`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Сделать дневную структуру просмотра run | done | Использовать `BROWSE_BY_DAY/` | user request |
+| Остановить открытие десятков PNG окон | done | `-Open all` и `-Open allcloseups` открывают один стартовый файл | open_last_run |
+| Сортировать сделки внутри дня по времени | done | Проверено по `2026-05-04`: CSV monotonic by `entry_time_utc` | renderer |
+| Полный run `2026-05-04..2026-05-06` | done | Пользователь смотрит дневные папки глазами | browse run |
+| User visual review | current_next | Открыть `-Open browse` или `-Open day -Day ...`, отметить шум/дубли/кривые low | PNG |
+| Калибровка low selector | pending | Только после user feedback | review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | guardrails |
+
+## Todo 2026-07-06 STAS1 ALL Closeups GOOD+BAD
+
+Статус: `WAIT_USER_REVIEW_STAS1_ALL_CLOSEUPS_BAD_X_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Добавить BAD на визуальные closeup-страницы | done | Использовать `GOOD_1PCT_REVIEW_POOL_ALL_CLOSEUPS_PAGE_*.png` | user request |
+| Сделать BAD отличимыми от GOOD | done | BAD = красный полупрозрачный крест, GOOD = зеленый треугольник | renderer |
+| Сохранить старые GOOD-only страницы | done | Не ломать прежний режим просмотра хороших входов | compatibility |
+| User review ALL closeups | current_next | Пользователь смотрит GOOD+BAD вместе и отмечает шум, дубли, неверные low и полезные negative-примеры | PNG |
+| Калибровка `visual_entry_low_anchor_suggester.py` | pending | Только после ручного feedback по ALL-страницам | user review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | guardrails |
+
+## Todo 2026-07-03 STAS1 Good Low Review
+
+Статус: `STAS1_BASELINE_FIXED_NEXT_USER_VISUAL_NOISE_REVIEW`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать основной скрипт `GOOD_1PCT_REVIEW_POOL` как `STAS1` | done | Использовать `src/mlbotnav/visual_entry_good_1pct_review_pool.py` как baseline | user decision |
+| Создать видную папку `STAS1_GOOD_LOW_REVIEW` | done | Пользователь запускает команды из корня проекта | project root |
+| Команда одного дня `+1%` | done | `.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-02` | STAS1 folder |
+| Команда одного дня `+0.5%` | done | `.\STAS1_GOOD_LOW_REVIEW\run_day_0p5.ps1 -Day 2026-05-02` | STAS1 folder |
+| Открыть последний run | done | `.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1` | STAS1 runs |
+| User visual noise review | current_next | Пользователь отмечает шум/дубли/сдвиги на 1 дне, затем на 3-4 днях | PNG |
+| Калибровать `visual_entry_low_anchor_suggester.py` | pending | Делать после ручного feedback, не раньше | user review |
+| Snapshot/zip рабочей версии | pending | После принятого результата глазами | calibrated version |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать в STAS1 baseline | approval required |
+
+## Todo 2026-07-02 DCA Risk And Knife Map Rails
+
+Статус: `NEXT_DCA_RISK_AUDIT_V0_ON_W18_W20_NO_ML`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать короткий полигон `W18-W20` | done | Работать только с `2026-04-27..2026-05-17`, run `W18_W20_learning_20260702_082819` | user decision |
+| Зафиксировать, что `+1% hit` не gold | done | Использовать `+1%` только как review/outcome, не как ML label | risk audit |
+| Зафиксировать цель `10` long-сделок в день | done | Трактовать как верхний лимит качественных входов, не как обязанность добирать мусор | user clarification |
+| Лестница фаз `0.3-0.5 / 0.9-1 / 1.5-2 / 2.2-4+` | done | Включить в DCA-аудит как offline outcome-фазы | user clarification |
+| `DCA_RISK_AUDIT_V0` | current_next | Считать DCA-корзины, просадку, докупки, поддержку, risk-aware классы и PNG | W18-W20 pool |
+| Phase outcome audit | current_next | Для каждой сделки считать достигнутую фазу, время до фазы, просадку и сессию | DCA_RISK_AUDIT_V0 |
+| Классы `GOOD_CLEAN_RECLAIM / GOOD_DCA_SURVIVABLE / BORDERLINE_SOFT / BAD_FALLING_KNIFE / BAD_CLUSTER_OVERLOAD` | pending | Уточнить пороги на 21 дне глазами | DCA audit |
+| `HEDGE_SIM_V0` | future_after_dca_audit | После DCA-аудита смоделировать защитный SHORT-хедж против перегруза LONG DCA-корзин, без реального API | DCA_RISK_AUDIT_V0 |
+| `FULL_HISTORY_KNIFE_MAP_V0` на `126` дней | blocked | Запускать только после стабильной механики на 21 дне | approved short-range process |
+| ML/export/training/Optuna | blocked | Только после ручного approved-ledger и отдельного `APPROVED_FOR_ML` | future approval |
+
+## Todo 2026-07-02 Low Anchor Entry 1pct Label Review V1 13 May
+
+Статус: `WAIT_USER_REVIEW_LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_20260513`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Пересобрать 13 мая по правилу `low signal -> next candle entry -> entry + 5bps -> +1%` | done | Использовать V1, не V0 от `anchor_low_price` | user correction |
+| Добавить execution band `0bps/5bps/10bps` | done | Считать погрешность только в slippage/execution | entry rails |
+| Пометить outcome labels | done | `4` strong, `0` normal, `1` soft, `82` bad | V1 CSV |
+| Показать full-day и zoom page 01 пользователю | current_next | Пользователь смотрит, где попали/не попали и что фиксить | PNG |
+| Запись в gold/dataset | blocked | Только после ручного visual review и точной фиксации good/bad | user decision |
+| Scorer / target-lock / Optuna / ML | blocked | Не запускать на V1 без отдельных этапов и approvals | rails |
+
+## Todo 2026-07-02 Low Anchor 1pct Label Review 13 May
+
+Статус: `WAIT_USER_REVIEW_LOW_ANCHOR_1PCT_LABEL_REVIEW_20260513`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Построить full-day `LOW_ANCHOR_1PCT_LABEL_REVIEW` по `2026-05-13` | done | Показать пользователю full-day и zoom pages | user request |
+| Пометить good/bad по `anchor_low_price * 1.01` | done | `8` good, `79` bad | candidate review |
+| User visual review | current_next | Пользователь отмечает, какие зеленые реально хорошие и какие красные/сдвиги спорные | PNG |
+| ML dataset запись | blocked | Только после ручного подтверждения; outcome label отдельно от causal features | rails |
+| Scorer / target-lock / Optuna / ML | blocked | Не запускать без отдельного approval | rails |
+
+## Todo 2026-07-02 Low Anchor Suggester 13 May
+
+Статус: `WAIT_USER_REVIEW_LOW_ANCHOR_20260513_STRICT_SCORE5`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Применить low-anchor suggester к `2026-05-13` | done | Использовать full/strict PNG для visual review | user request |
+| Зафиксировать `target_1pct_price` в кандидатах | done | Проверять цены в CSV/JSON | +1% rails |
+| Strict-лист `min_score=5.0` | done | Пользователь смотрит `18` кандидатов: норм / крест / сдвиг | PNG |
+| Gold-ledger по 13 мая | blocked | Только после ручного visual review | user decision |
+| Scorer / target-lock / Optuna / ML | blocked | Не запускать на этих кандидатах без отдельного approval | rails |
+
+## Todo 2026-07-02 Target 1pct Price Fix V0
+
+Статус: `TARGET_1PCT_PRICE_FIX_V0_DONE_NEXT_VISUAL_PASSPORT_STEP`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать `+1%` price target для `2026-05-14 M01..M19` и `2026-05-15 T15L confirmed 7` | done | Использовать как outcome/reference, не как selection feature | manual эталоны |
+| Проверить сводку достижений `+1%` | done | `14 день: 13/19`, `15 день: 4/7` | price fix |
+| Scorer / target-lock / Optuna / ML | blocked | Только после отдельного решения пользователя и `APPROVED_FOR_ML` | rails |
+| Следующий рабочий пункт | current_next | Продолжать по ручным эталонам и паспортным блокам, без cooldown-перебора и без ML | user direction |
+
+## Todo 2026-07-01 Complete 14 May Passport Layers Before T15
+
+Статус: `CURRENT_WAIT_USER_REVIEW_DATASET_BASE_V0_THEN_NEXT_DATASET_STEP`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Не переходить на `T15/2026-05-15`, пока 14 мая не закрыт | done | Держать это как верхнюю рельсу | user correction |
+| `V2A_STRUCTURE_LAYER` на `2026-05-14 M01..M19` | done | Использовать как первый слой evidence | V2A artifacts |
+| `V2B_FLOW_DENSITY_LAYER` на `2026-05-14 M01..M19` | done | Показать пользователю full-day/zoom PNG | V2B artifacts |
+| `V2C_ADX_STOCH_LAYER` на `2026-05-14 M01..M19` | done | Показать full-day/zoom PNG пользователю | user correction: skip repeated RSI/MACD/EMA |
+| `V2D_PATTERN_LAYER` на `2026-05-14 M01..M19` | done | Показать full-day/zoom PNG пользователю | V2C |
+| `V2E_SUMMARY_MATRIX` по 14 мая | done | Показать V2E PNG пользователю | V2A-V2D |
+| Повторить `B018_BOS` отдельно | done | Показать BOS-only PNG пользователю | user request |
+| Собрать target-led dataset base 14+15 | done | Показать dataset summary пользователю | user request |
+| Выбрать первый рабочий кластер/паспорт-кандидат по 14 мая | current_next_after_review | Брать только после visual review V2E | V2E |
+| Решить судьбу `unlabeled_review` | pending | Не включать в `ml_label`, пока пользователь не подтвердит good/reject | dataset base |
+| Перенос на `2026-05-15` | blocked | Только после выбора/фиксации первого кластера по 14 мая | completed 14 May |
+| Scorer / target-lock / Optuna / ML | blocked | Только после отдельного решения пользователя | rails |
+
+## Todo 2026-07-01 V2A Structure User Review Audit
+
+Статус: `SUPERSEDED_BY_COMPLETE_14_MAY_PASSPORT_LAYERS_BEFORE_T15`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Просмотреть V2A full-day/zoom/Fibo anchors по 14 мая | done | Использовать выводы audit-файла | V2A artifacts |
+| Зафиксировать, что `B014/B018` не являются сигналом | done | Держать как context/evidence | audit |
+| Зафиксировать Fibo как `context_only` | done | Перед active signal нужен freshness rule | Fibo anchors |
+| Перенести V2A на `2026-05-15` по 7 T15 входам | superseded | Не выполнять сейчас: сначала закрыть `V2C/V2D/V2E` по 14 мая | user correction |
+| Scorer / target-lock / Optuna / ML | blocked | Только после visual review и отдельного решения | rails |
+
 ## Todo 2026-07-01 V2A Structure Overlay 14 May
 
 Статус: `V2A_STRUCTURE_LAYER_20260514_READY_WAIT_USER_REVIEW`.
@@ -12,9 +1937,13 @@
 | Исправить агентский causal-audit по Fibo/BOS | done | Full-day zigzag заменен на prefix-causal zigzag per signal/event | agent audit |
 | Сделать Fibo понятным откуда-куда | done | Добавлены `V2A_FIBO_ANCHORS_PAGE_01/02_20260514.png` с `A -> B` | user feedback |
 | Проверить кодировку и хвосты python | done | Новые RU-файлы читаются нормально, хвостов после рендера нет | verification |
-| Получить user review по 14 мая | current_next | `норм / фиксить / шумно` | PNG |
+| Получить user review по 14 мая | done | Пользователь остановил переход на 15 мая: надо закрыть остальные блоки 14 дня | PNG |
 | Наложить V2A на `2026-05-15` 7 T15 | blocked | Только после review 14 мая | user decision |
-| V2B flow/density | blocked | После V2A user review по двум дням | V2A |
+| V2B flow/density | done | Использовать `V2B_FLOW_DENSITY_*_20260514` как evidence/context | V2A |
+| V2C ADX/Stochastic | done | `B008/B009` наложены на 14 мая; RSI/MACD/EMA не повторяли | user correction |
+| V2D pattern | done | Использовать `V2D_PATTERN_*_20260514` как pattern evidence | V2C |
+| V2E summary matrix | done | Использовать `V2E_SUMMARY_MATRIX_20260514` для выбора первого кластера | V2A-V2D |
+| First cluster/passport candidate | current_next_after_review | Предложить кластер по V2E после user review PNG | V2E |
 | Scorer / target-lock / Optuna / ML | blocked | Только после отдельных решений | rails |
 
 ## Todo 2026-07-01 Existing Passport Reconciliation And Overlay
@@ -26,11 +1955,12 @@
 | Зафиксировать верхний roadmap | done | Использовать `FRESH_TARGET_LED_STRATEGY_PASSPORT_ROADMAP_RU.md` | user direction |
 | Подключить агента для read-only аудита | done | `Lorentz`: `26` блоков, `82` активных связки, `82` matrix, пути найдены | user request |
 | V2A0 registry reconciliation | done | Использовать `PASSPORT_REGISTRY_RECONCILIATION_V0_RU.md` | registry YAML |
-| V2A structure overlay | in_progress | `2026-05-14 M01..M19` собран; после user review сделать `2026-05-15` 7 T15 | V2A0 |
-| V2B flow/density overlay | blocked | После user review V2A наложить `B010/B013/B026`, позже `B011/B012` | V2A user review |
-| V2C momentum overlay | blocked | После V2B наложить `B006/B007`; `B005` EMA reference/deferred | V2B user review |
-| V2D pattern overlay | blocked | После no-lookahead проверки pattern windows наложить `B019-B024`; `B025` unsafe/context-only | V2C |
-| V2E summary matrix | blocked | Свести support/conflict/silent по 26 входам | V2A-V2D |
+| V2A structure overlay | done | `2026-05-14 M01..M19` использовать как первый слой | V2A0 |
+| V2B flow/density overlay | done | `B010/B013/B026` наложены на 14 мая; `B011/B012` позже при необходимости | V2A user review |
+| V2C ADX/Stochastic overlay | done | `B008/B009` наложены после пользовательской правки | V2B user review |
+| V2D pattern overlay | done | `B019-B024` наложены; `B025` не active | V2C |
+| V2E summary matrix | done | Матрица готова, нужен visual review пользователя | V2A-V2D |
+| First cluster/passport candidate | current_next_after_review | Выбрать первый кластер/паспорт-кандидат по 14 мая | V2E |
 | Scorer / target-lock | blocked | Только после user visual review strategy overlay | user decision |
 | Optuna / ML/export/promotion | blocked | Только после отдельных approvals | user approval |
 
@@ -3279,3 +5209,389 @@ Do not start the larger calibration/OOS run yet; Stage 2 is still incomplete.
 | Показать M02 zoom | done | `signal 03:58 -> LONG entry 03:59` | M01 confirmed |
 | Зафиксировать решение по M02 | pending | `подходит / не подходит / сдвинуть` | user visual decision |
 | Перейти к M03 | pending | Только после решения по M02 | M02 decision |
+# Todo 2026-07-01 Dataset Base V1 Next Rails
+
+Статус: `NEXT_DATASET_QUALITY_AUDIT_OR_ARROW_SHIFT_ZOOM_NO_ML`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Закрыть 15 спорных текущих авто-точек | done | Использовать V1 как актуальную supervised-базу по текущим точкам | user feedback |
+| Две принятые точки `LA018`, `LA020` | done | Считать positive/gold в dataset V1 | user red rectangle |
+| Отклонить 13 текущих авто-точек | done | Считать negative по текущему entry | user feedback |
+| Стрелочные альтернативы `LA026/LA048/LA057/LA059/LA062` | pending | Делать только отдельным zoom/time, не вытаскивать точную минуту из скрина | user arrows |
+| Аудит блоков/фичей по `28/79` | next | Сравнить хорошие и плохие входы по causal-блокам без future return и без entry-candle OHLCV | dataset V1 |
+| ML/export/training/Optuna | blocked | Только после отдельного `APPROVED_FOR_ML` | user approval |
+# Todo 2026-07-01 Dataset Quality Audit Next
+
+Статус: `NEXT_BUILD_NARROW_RULE_CANDIDATE_NO_ML`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Аудит блоков по базе `28/79` | done | Использовать выводы V0, не простую сумму блоков | dataset V1 |
+| Выбрать первый узкий тип | current_next | Начать с `SUPPORT_RETEST_LOW` или `TREND_DIP_CONTINUATION` | quality audit |
+| `LOW_ANCHOR_RECLAIM` standalone | blocked | Не использовать как allow в текущем виде | `0/16` positive |
+| `B013/B020/divergence` standalone | blocked | Оставлять только как context/evidence после дополнительной проверки | audit V0 |
+| ML/export/training/Optuna | blocked | Только после отдельного `APPROVED_FOR_ML` | user approval |
+# Todo 2026-07-01 ML Dataset Ladder
+
+Статус: `NEXT_SUPPORT_RETEST_LOW_REVIEW_SHEET_NO_ML`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Зафиксировать лестницу до ML | done | Использовать `FRESH_TARGET_LED_ML_DATASET_LADDER_RU.md` | user request |
+| `2.1_SUPPORT_RETEST_LOW_REVIEW_SHEET_9_GOOD_16_BAD` | current_next | Собрать PNG review-sheet и короткий аудит признаков | dataset V1 |
+| Draft-паспорт `SUPPORT_RETEST_LOW` | blocked | Только после review-sheet и user `норм / фиксить` | 2.1 |
+| Scorer/target-lock | blocked | Только после draft-паспорта | passport |
+| Optuna | blocked | Только внутри готового паспорта после visual/scorer | passport |
+| ML/export/training | blocked | Только после отдельного `APPROVED_FOR_ML` | user approval |
+# Todo 2026-07-01 SUPPORT_RETEST_LOW Review Sheet V0
+
+Статус: `WAIT_USER_REVIEW_SUPPORT_RETEST_LOW_SHEET`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| `2.1_SUPPORT_RETEST_LOW_REVIEW_SHEET_9_GOOD_16_BAD` | done | Показать PNG пользователю | dataset V1 |
+| User visual review | current_next | Получить `норм / фиксить` и список панелей для сдвига, если есть | review-sheet |
+| Draft-паспорт `SUPPORT_RETEST_LOW` | blocked | Только после user `норм` | user review |
+| Scorer/target-lock | blocked | Только после draft-паспорта | passport |
+| ML/export/training/Optuna | blocked | Только после отдельных этапов и `APPROVED_FOR_ML` | approval |
+# Todo 2026-07-01 SUPPORT_RETEST_LOW Passport Draft V0
+
+Статус: `WAIT_USER_REVIEW_SUPPORT_RETEST_LOW_PASSPORT_DRAFT`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Draft-паспорт `SUPPORT_RETEST_LOW` | done | Показать пользователю паспорт/card | review-sheet норм |
+| User review passport draft | current_next | Получить `норм / фиксить` | draft passport |
+| Entry-only PNG/scorer seed-check | blocked | Только после user `норм` по паспорту | user review |
+| Target-lock / multi-day | blocked | Только после seed scorer и visual review | scorer |
+| Optuna | blocked | Только внутри готового паспорта после scorer | passport |
+| ML/export/training | blocked | Только после отдельного `APPROVED_FOR_ML` | approval |
+
+# Todo 2026-07-02 Outcome Low Miner V0
+
+Статус: `WAIT_USER_REVIEW_OUTCOME_LOW_MINER_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Outcome low miner V0 | done | Показать hit zoom PNG пользователю | user proposal |
+| User visual review | current_next | Получить `норм / фиксить / нужен меньший порог` | V0 PNG |
+| Соседний outcome threshold `+0.8%/+1.0%` | optional | Делать только после user review, как offline outcome label | V0 review |
+| Запись в ML dataset | blocked | Только после отдельного ручного подтверждения точек и `APPROVED_FOR_ML` | future approval |
+| Scorer/target-lock/Optuna | blocked | Outcome miner сам по себе не дает права на scorer/lock/Optuna | passport chain |
+
+# Todo 2026-07-02 Outcome Low Miner 1pct Comparison
+
+Статус: `WAIT_USER_REVIEW_OUTCOME_LOW_MINER_1PCT`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Outcome low miner `+1.0%` | done | Показать PNG пользователю | user request |
+| User visual review `+1.0%` | current_next | Получить `норм / слабые / нужны другие пороги` | hit zoom PNG |
+| Сравнить `+1.0%` против `+1.5%` | current_next | Решить, какой threshold использовать для ускоренного review pool | user review |
+| ML/export/training | blocked | Только после ручного approved-ledger и `APPROVED_FOR_ML` | future approval |
+# Todo 2026-07-02 SUPPORT_RETEST_LOW Entry-Only Scorer V0
+
+Статус: `WAIT_USER_REVIEW_SUPPORT_RETEST_LOW_SCORER_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Entry-only scorer seed-check V0 | done | Показать PNG пользователю | passport draft ok |
+| User review scorer V0 | current_next | Получить `норм / фиксить` по оранжевым false-positive | scorer PNG |
+| `V1_REJECT_GUARDS` | blocked | Разобрать `LA033/LA034/LA041/LA048/LA065/T15L17/T15L18/T15L20`, не потеряв 9 good | user review |
+| Target-lock / multi-day | blocked | Запрещено, пока false entries too many | scorer V0 |
+| Optuna | blocked | Только после чистого паспорта/scorer | later |
+| ML/export/training | blocked | Только после отдельного `APPROVED_FOR_ML` | approval |
+## Todo 2026-07-02 Good 1pct Review Pool
+
+Статус: `WAIT_USER_REVIEW_GOOD_1PCT_POOL_SMOKE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Multi-day review pool script | done | Использовать VS Code задачу или CLI для диапазона дат | user request |
+| Smoke `2026-05-13` | done | Показать пользователю PNG/CSV/JSON run-папку | script |
+| W18-W20 learning run | current_next | Запустить диапазон `2026-04-27..2026-05-17`, затем смотреть PNG глазами | user approval |
+| W21 blind check | blocked | Только после ручного review W18-W20, без донастройки по W21 | review pool |
+| W22 final blind check | blocked | Только после W21 | review pool |
+| ML/export/training | blocked | Только после ручного approved-ledger и отдельного `APPROVED_FOR_ML` | future approval |
+
+## Todo 2026-07-02 DCA Risk Audit V0
+
+Статус: `WAIT_USER_REVIEW_DCA_RISK_AUDIT_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| `DCA_RISK_AUDIT_V0` script | done | Использовать для W18-W20 risk review | `GOOD_1PCT` pool |
+| W18-W20 run | done | Показать summary/top-day PNG и таблицу классов | script |
+| User review risk classes | current_next | Решить, что допускаем в будущий датасет: `A_FAST_CLEAN`, часть `B_DCA_SURVIVABLE`, или что-то еще | PNG/CSV |
+| Full-history knife map | blocked | Только после фикса правил на W18-W20 | user review |
+| ML/export/training | blocked | Только после approved-ledger и отдельного `APPROVED_FOR_ML` | future approval |
+| Optuna/scorer/target-lock/API | blocked | DCA audit не дает права запускать эти этапы | risk review |
+## Todo 2026-07-02 Significant Low Calibration V0
+
+Статус: `WAIT_USER_REVIEW_SIGNIFICANT_LOW_CALIBRATION_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| `SIGNIFICANT_LOW_CALIBRATION_V0` script | done | Использовать для отсечения микролоев и дублей | DCA closeup feedback |
+| Run `2026-05-02` | done | Показать пользователю PNG/CSV run | script |
+| Зеленые `KEEP_SIGNIFICANT_LOW_V0` | current_next | Проверить глазами: оставить как positive или ослабить/ужесточить фильтр | user review |
+| Желтые `USER_SHIFT_PENDING_REANCHOR` | current_next | Делать отдельный zoom и точный перенос anchor/entry, не считать готовой сделкой | user review |
+| V1 параметры significant-low | blocked | Только после ручного review V0 | green/yellow review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Только после approved-ledger и отдельного `APPROVED_FOR_ML` | future approval |
+
+### Актуальный user layer 2026-05-02
+
+Статус: `WAIT_USER_REVIEW_SIGNIFICANT_LOW_USER_ACTUAL_V1C3`.
+
+Актуальный run: `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_20260502_user_actual_v1c3_20260702_190227`.
+
+Следующий шаг:
+
+- проверить `6` green keep: `LA002`, `LA015`, `LA018`, `LA021`, `LA040`, `LA050`;
+- отдельно решить `2` yellow reanchor: `LA007`, `LA028`;
+- считать `LA048` и соседний `LA049` отклоненными; `LA051` не брать как good, он отфильтрован как duplicate-basin;
+- не возвращаться к полному списку `54` как к списку хороших входов.
+
+### Reanchor zoom для стрелок пользователя
+
+Статус: `WAIT_USER_REVIEW_REANCHOR_APPLIED_V1`.
+
+Рабочий PNG: `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_zoom_v0_20260702_191450/SIGNIFICANT_LOW_REANCHOR_ZOOM_V0_20260502.png`.
+
+Примененный run: `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v1_20260703_060258`.
+
+Сделано:
+
+- `RA001_FROM_LA007`: signal `03:14`, entry `03:15`;
+- `RA003_SHIFT_LEFT_LA050`: visual marker `22:25` на low, execution `entry_open=84.06000000`, `entry +5bps=84.10203000`;
+- `LA028` оставлен pending, потому что на последнем скрине нет отдельной новой стрелки.
+
+Следующий шаг:
+
+- получить user review по `SIGNIFICANT_LOW_REANCHOR_APPLIED_V1_20260502_ZOOM.png`;
+- если `LA028` тоже надо двигать, попросить отдельную стрелку/подтверждение;
+- после `норм` собрать следующий слой significant-low V1 без ML/Optuna/scorer/API.
+
+### User new entry zoom 20:45-21:05
+
+Статус: `WAIT_USER_ARROW_ON_USER_NEW_ENTRY_ZOOM_V0`.
+
+Рабочий PNG: `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_user_new_entry_zoom_v0_20260703_060806/SIGNIFICANT_LOW_USER_NEW_ENTRY_ZOOM_V0_20260502_2045_2105.png`.
+
+Следующий шаг:
+
+- пользователь ставит стрелку на точный low/entry в этом zoom;
+- после стрелки создать новый applied layer с `signal_time_utc`, `entry_time_utc`, `entry_open`, `entry +5bps`;
+- не считать этот zoom ML-label до ручного подтверждения.
+
+### Reanchor Applied V2 RA004
+
+Статус: `WAIT_USER_REVIEW_REANCHOR_APPLIED_V2_RA004`.
+
+Сделано:
+
+- добавлена ручная точка `RA004_USER_ENTRY_2049`;
+- signal `20:48`, entry `20:49`;
+- `entry_open=84.09000000`, `entry +5bps=84.13204500`;
+- создан close-zoom без растягивания шкалы до `+1%`.
+
+Следующий шаг:
+
+- показать пользователю `SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502_CLOSE_ZOOM_RA004.png`;
+- если `норм`, оставить `RA004` в applied V2;
+- если фикс, двигать только `RA004`, не трогая старые `RA001/RA003`;
+- `RA002/LA028` остается pending до отдельной стрелки.
+
+Запрещено: ML/export/training/scorer/target-lock/Optuna/API.
+
+### Manual Reanchors V0 Source Of Truth
+
+Статус: `WAIT_USER_REVIEW_MANUAL_REANCHORS_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| JSON source-of-truth для ручных reanchor-точек | done | Использовать как единственный источник при перерисовке | user arrows |
+| Renderer `visual_entry_manual_reanchor_review_v0.py` | done | Перегенерировать PNG после каждой правки JSON | config |
+| Clean confirmed overview | done | Показать пользователю без старых DCA/GOOD сделок | renderer |
+| Review sheet + close zoom RA003/RA004 | done | Получить `норм / фиксить` | user review |
+| `RA002_PENDING_FROM_LA028` | pending | Нужна отдельная стрелка/подтверждение, пока не good | user arrow |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Запрещено без отдельного решения | guardrails |
+
+Актуальный run: `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936`.
+
+### STAS1 GOOD_1PCT anchor-next-open V0
+
+Статус: `WAIT_USER_REVIEW_STAS1_20260502_ANCHOR_NEXT_OPEN_FIX_V0`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Исправить `entry` строго на следующую свечу после low | done | Использовать этот контракт как базовый для STAS1 | code fix |
+| Регрессионный тест на `anchor_idx + 1` | done | Запускать при следующих правках low selector | pytest |
+| Новый run `2026-05-02` | done | Пользователь смотрит overview/closeups | STAS1 |
+| Ручная чистка шума после фикса entry | pending | Отметить слабые/дубли/неправильные low на новых PNG | user review |
+| Дальнейшая настройка значимости low | pending | Менять фильтры только после user feedback по новому run | user review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать | guardrails |
+
+Актуальный run: `STAS1_GOOD_LOW_REVIEW/runs/stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034`.
+
+### Codex/VS Code load audit 2026-07-07
+
+Статус: `LOCAL_FIX_APPLIED_WAIT_UI_RELOAD`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Найти источник нагрузки CPU/RAM/disk | done | Не считать это проблемой GitHub-веток без новых признаков | process audit |
+| Остановить зависший `git add -A` | done | Следить, чтобы он не появлялся снова на тяжелых папках | process audit |
+| Исключить STAS run-артефакты из Git | done | Не добавлять `runs` вручную | `.gitignore` |
+| Исключить тяжелые папки из VS Code watcher/search/Pylance | done | Перезагрузить окно VS Code для применения | `.vscode/settings.json` |
+| Проверить нагрузку после reload VS Code | done | Git-процессов нет, VS Code почти idle, остаточная нагрузка идет от активного Codex-чата | user machine |
+### STAS4 combo strategies 2026-05-10..2026-05-12
+
+Статус: `WAIT_USER_REVIEW_STAS4_COMBO_4_STRATEGIES_3D`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Прогнать `structure_ta+trend_momentum` на 3 днях | done | Пользователь смотрит PNG глазами | STAS2 run |
+| Прогнать `structure_ta+volume_flow` на 3 днях | done | Пользователь смотрит PNG глазами | STAS2 run |
+| Прогнать `pattern+structure_ta` на 3 днях | done | Пользователь смотрит PNG глазами | STAS2 run |
+| Прогнать `density_profile+structure_ta` на 3 днях | done | Пользователь смотрит PNG глазами | STAS2 run |
+| Выбрать слой для первого рабочего фильтра шума | pending | Сравнить глазами: жесткий бан `structure_ta+volume_flow` против сильного фильтра `structure_ta+trend_momentum` | user review |
+| ML/export/training/scorer/target-lock/Optuna/API | blocked | Не запускать до согласования признаков и архитектуры | STAS4 ТЗ |
+
+Главный отчет: `STAS4_FEATURE_HYPOTHESIS_REVIEW/STAS4_COMBO_4_STRATEGIES_3D_SUMMARY_20260709_RU.md`.
+## Todo 2026-07-11 Codex Startup Disk Load Audit
+
+Статус: `CODEX_STARTUP_DISK_LOAD_AUDIT_READY_NO_DELETE_NO_CODE_CHANGE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить текущие процессы Codex/Git/VS Code | done | Зависшего `git add -A` нет; краткие Git-команды быстрые | process audit |
+| Проверить размеры проекта и `.codex` | done | Использовать отчет `docs/codex/CODEX_STARTUP_DISK_LOAD_AUDIT_20260711_RU.md` | size audit |
+| Перенести `_codex_offload_20260530` из рабочей папки | pending | Только после подтверждения пользователя; лучше в отдельный архив вне `MLbotNav` | user approval |
+| Разобрать старые `.codex` backup/archived-сессии | pending | Только после отдельного решения пользователя; без ручного удаления вслепую | user approval |
+| Проверить поведение после следующей перезагрузки | pending | Сразу после старта снять процессы и `Get-Counter` по диску | next reboot |
+
+## Todo 2026-07-14 STAS5 V4 Group Ranker
+
+Статус: `V4_OFFLINE_REVIEW_DONE__V4L_LIVE_SAFE_NEXT`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Собрать V4 train dataset `2026-05-01..25` | done | Использовать manifest `STAS5_ML_CORE/artifacts/v4/features/STAS5_V4_GROUP_RANK_TRAIN_DATASET_20260501_20260525.manifest.json` как контроль | V2 snapshot + V4 ledger |
+| Подтвердить, что `2026-05-15` входит в train/review | done | Больше не считать 15 мая карантинным днем в V4 train `01..25` | user correction |
+| Проверить join исправленного ledger `15..25` | done | `738/738`, missing `0`, duplicate keys `0` | forward CSV |
+| Обучить V4 group ranker | done | Модель `STAS5_ML_CORE/artifacts/v4/model/runs/stas5_v4_train_20260714_163911/stas5_v4_group_ranker_20260501_20260525_v0.joblib` | dataset PASS |
+| Прогнать blind forward `2026-05-26..30` | done | Смотреть PNG/CSV в `STAS5_ML_CORE/artifacts/v4/forward/runs/stas5_v4_forward_20260526_20260530_20260714_164144` | V4 model |
+| Пометить текущий V4 как offline review, не live-safe | done | Не использовать `stas5_v4_train_20260714_163911` как production/live model | no-future audit |
+| Зафиксировать V4L live-safe план | done | Использовать `STAS5_ML_CORE/08_STAS5_V4L_LIVE_SAFE_GROUP_RANKER_PLAN_RU.md` | agents audit |
+| Создать V4L live replay dataset builder | pending | Считать только `v4l_*_so_far`, labels брать из V4 ledger, future/full-group признаки audit-only | V4L plan |
+| Создать V4L leakage guard | pending | `LIVE_SAFE_FEATURE_ALLOWLIST`, banned columns, `feature_available_time_utc <= entry_time_utc`, `prefix invariance` | V4L plan |
+| Обучить V4L live-safe model | pending | Только после V4L guard `PASS`; старый full-group V4 не переиспользовать как live | V4L dataset |
+| Прогнать V4L forward `2026-05-26..30` | pending | Sequential replay, решение доступно не позже `entry_time_utc`; сравнить с offline review | V4L model |
+| Сравнить offline V4 и live-safe V4L | pending | `ENTER_set_jaccard`, decision flip matrix, missed winners, bad early enters, entries per day by regime | V4L forward |
+
+## Todo 2026-07-14 STAS5 V4L Live-Safe Group Ranker
+
+Статус: `V4L_LIVE_SAFE_TRAIN_FORWARD_READY__USER_REVIEW_NEXT`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Создать V4L live replay dataset builder | done | Использовать `STAS5_ML_CORE/artifacts/v4l/features/STAS5_V4L_LIVE_SAFE_TRAIN_DATASET_20260501_20260525.manifest.json` как guard source | V4 ledger |
+| Создать V4L leakage guard | done | Prefix-invariance `1710/1710`, forbidden features `{}`; full-group V4 columns отсутствуют в dataset | V4L dataset |
+| Обучить V4L live-safe model | done | Model `STAS5_ML_CORE/artifacts/v4l/model/runs/stas5_v4l_train_20260714_181635` | dataset PASS |
+| Прогнать V4L forward `2026-05-26..30` | done | Смотреть PNG/CSV в `STAS5_ML_CORE/artifacts/v4l/forward/runs/stas5_v4l_forward_20260526_20260530_20260714_181635` | V4L model |
+| Дать пользователю одну команду на повтор полного цикла | done | `.\STAS5_ML_CORE\run_stas5_v4l_live_safe_train_forward.ps1` | wrapper |
+| Сравнить offline V4 и live-safe V4L глазами на PNG | pending | Проверить, какие красивые offline-входы потерялись без будущего, и какие live-входы слишком ранние | user review |
+| Калибровать V4L thresholds/decision policy | pending | Менять только после просмотра forward PNG; не возвращать day-end top-N и full-group признаки | user review |
+
+## Todo 2026-07-15 STAS5 V5 Row-Level Corrected Labels
+
+Статус: `V5_ROW_LABEL_PREP_AFTER_V4_V4L_REJECTION`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Заморозить V4/V4L как нерабочую финальную стратегию | done | Не использовать group-rank/one-entry-group как следующий production-контур | user decision |
+| Разобрать новый day23 pre-knife скрин по оригинальным CSV/OHLCV | done | Использовать отчет `STAS5_V4_GROUP_RANK_REVIEW_20260523_USER_CORRECTED_V2_PRE_KNIFE_RU.md` | 2026-05-23 artifacts |
+| Создать day23 corrected V2 pre-knife ledger | done | Для следующей сборки labels брать `USER_CORRECTED_V2_PRE_KNIFE`, а не day23 `V1` | user red rectangle |
+| Собрать V5 row-level label-source `2026-05-15..25` | done | Использовать `STAS5_ML_CORE/artifacts/v5/labels/STAS5_V5_ROW_LABEL_SOURCE_20260515_20260525_WITH_DAY23_PRE_KNIFE_V1.csv`; day23 уже заменен на V2 | corrected ledgers |
+| Собрать V5 row-level training dataset `2026-05-01..25` | pending | `01..14` legacy labels + V5 label-source `15..25`; `BEST_GOOD` и пользовательские `GOOD_ALT` считать positive, `BAD_IN_GROUP/NO_TRADE_GROUP` negative | V5 label-source |
+| Проверить no-future feature list для V5 | pending | Запретить postfact/future/TP/Stas3/exit/old ML decision/score/group winner/full-group future columns; разрешить только causal признаки на `entry_time_utc` | leakage guard |
+| Обучить V5 row-level ML без поверхностного group policy | pending | Модель должна сама давать высокий score нужным входам и низкий score верхним/ранним bad examples | V5 dataset PASS |
+| Сделать blind forward `2026-05-26..30` | pending | Без ручного подсмотра, без ограничений min/max входов в день; оценить графики глазами | V5 model |
+## Todo 2026-07-15 Codex CPU Load Check
+
+Статус: `CODEX_CPU_LOAD_CHECK_READY_NO_KILL_NO_DELETE_NO_CODE_CHANGE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить текущий CPU по процессам | done | Codex суммарно `5.3%..9.2% CPU`; общий CPU `22.8%..44.4%` | process sample |
+| Проверить Git-процессы | done | Найден повторяющийся `git diff --find-renames --numstat -z` от `Codex.exe`; `git add -A` нет | process audit |
+| Проверить размер dirty worktree | done | `1574` untracked files, `424.8 MB`; основной источник `STAS5_ML_CORE` | git ls-files |
+| Уменьшить dirty worktree | pending | Отдельным решением: коммит/стейдж source files или `.gitignore` для generated artifacts | user decision |
+| Перезагрузить Codex/VS Code после стабилизации файлов | optional | Только когда нет важного незавершенного действия | user timing |
+## Todo 2026-07-16 Codex Unload Applied
+
+Статус: `CODEX_UNLOAD_APPLIED_NO_DELETE_NO_PROCESS_KILL_CODEX`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Понизить приоритет Codex | done | Процессы `Codex`/`codex` выставлены в `BelowNormal` | user request |
+| Убрать STAS5 generated/run из Git scan-поверхности | done | `.gitignore`: `STAS5_ML_CORE/artifacts/`, `STAS5_ML_CORE/runs/` | source/run split |
+| Убрать STAS5 generated/run из VS Code watcher/search/Pylance | done | `.vscode/settings.json` валиден, добавлены excludes | local UI |
+| Проверить эффект | done | Untracked: `1574/424.8 MB` -> `381/41.6 MB`; активных `git.exe` нет | diagnostics |
+| Дополнительно разгрузить STAS4/STAS5 | pending | Только после решения, какие оставшиеся файлы source-of-truth, а какие generated | user decision |
+
+## Todo 2026-07-16 Codex Idle Relief
+
+Статус: `CODEX_IDLE_RELIEF_APPLIED_NO_DELETE_NO_STAS_TOUCH`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Остановить фоновый read-only Git | done | `git status --porcelain` остановлен; активных `git.exe` нет | user request |
+| Понизить приоритет Codex/VS Code | done | `Codex`/`codex`/`Code` выставлены в `Idle` | current session |
+| Остановить лишний VS Code Codex extension server | done | Остановлен `openai.chatgpt...\codex.exe app-server`; расширение не удалялось | VS Code |
+| Проверить источник дискового всплеска | done | Главный источник в коротком окне - `MsMpEng` (Microsoft Defender) | process counters |
+| Решить вопрос с Defender exclusion | optional | Только отдельным решением пользователя; это системная настройка безопасности | user approval |
+| Проверить после перезагрузки | pending | Снять I/O-счетчики в первые 1-2 минуты после старта | next reboot |
+## 2026-07-20 STAS5 V5C Review Overlay
+
+Статус: `done`.
+
+`*_ANNOTATED.png` теперь является рабочим графиком для проверки продиктованной review-команды: поверх цены видны `GOOD/BAD/RISK BAD`, а нижние полосы `Fon/LONG/SHORT/WAVE` сохранены. `*_ALL_ENTRIES.png` остается чистой копией V5C visual review без overlay.
+
+## Todo 2026-07-22 Codex Update Load Audit
+
+Статус: `CODEX_UPDATE_LOAD_AUDIT_RELIEF_APPLIED_NO_DELETE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Проверить версию Codex после обновления | done | `OpenAI.Codex_26.715.10079.0` | appx audit |
+| Учесть новое имя UI-процессов | done | Главный UI теперь `ChatGPT.exe`, его тоже нужно прижимать | process audit |
+| Остановить VS Code Codex extension server | done | Текущий `openai.chatgpt-26.715.31925...\codex.exe app-server` остановлен; расширение не удалялось | VS Code |
+| Понизить приоритет Codex/ChatGPT/VS Code | done | `ChatGPT`/`codex`/`Code`/`node_repl` выставлены в `Idle` | current session |
+| Проверить Git | done | Активных `git.exe` нет, `.git/index.lock` нет, `git status ~52 ms` | repo state |
+| Сделать постоянное отключение VS Code OpenAI extension | optional | Только отдельным решением пользователя, без удаления файлов | user approval |
+
+## Todo 2026-07-23 Codex VS Code Fix
+
+Статус: `CODEX_VSCODE_EXTENSION_RESTARTED_NO_DELETE`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Восстановить панель Codex в VS Code | done | Сервер расширения перезапущен штатной кнопкой | VS Code UI |
+| Не ломать VS Code Codex разгрузкой | done | Не останавливать extension server, если панель нужна рабочей | process policy |
+| Держать Codex легким | done | `ChatGPT`/`codex` выставлены в `Idle`; watcher/search/Pylance исключения уже есть | current session |
+| Проверить после следующей перезагрузки | pending | Снять срез CPU/I/O в первые 1-2 минуты после старта | next reboot |
+
+## Todo 2026-07-23 STAS9 Shortcut And CPU Fix
+
+Статус: `STAS9_VSCODE_SHORTCUT_FIXED`.
+
+| Task | Status | Next Action | Depends On |
+|---|---|---|---|
+| Убрать терминал из пользовательского запуска STAS9 | done | Оба ярлыка ведут в VS Code workspace | desktop shortcuts |
+| Остановить ошибочный terminal launcher | done | Точное дерево процессов остановлено | current session |
+| Снизить фоновое чтение при открытии | done | Лёгкая активация и исключения Git/Pylance включены | workspace settings |
+| Проверить старый по имени ярлык | done | Открылось окно VS Code, терминал отсутствует | smoke test |
+| Контроль после перезагрузки Windows | optional | Если шум вернётся, проверить первые 1–2 минуты без AIDA64 и Диспетчера задач | next reboot |

@@ -1,0 +1,31 @@
+schema_version: "1.0"
+agent_id: "STAS9_MODEL_MANAGER"
+display_name: "STAS9 Менеджер моделей"
+role: "Анализ моделей, версий и указателей"
+enabled: true
+startup_mode: "ON_DEMAND"
+default_mode: "READ_ONLY"
+coordinator: "STAS9_SENTINEL"
+
+functions:
+  - "ANALYZE_MODEL_REGISTRY"
+  - "CHECK_MODEL_VERSIONS"
+  - "CHECK_MODEL_FEATURE_LINKS"
+  - "ANALYZE_MODEL_METRICS"
+  - "ANALYZE_CHAMPION_STATUS"
+  - "ANALYZE_LEGACY_MODELS"
+  - "CHECK_MODEL_LINEAGE"
+
+inputs:
+  model_registry: "../../MODEL_REGISTRY.yaml"
+  archive_policy: "../../ARCHIVE_POLICY.md"
+
+outputs:
+  reports_directory: "../../REPORTS"
+  activity_log: "../../LOGS/agent_activity.log"
+
+automation:
+  modify_models: false
+  promote_champion: false
+  fix_broken_pointer: false
+  train_models: false

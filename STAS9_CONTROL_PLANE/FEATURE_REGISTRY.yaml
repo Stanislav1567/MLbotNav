@@ -1,0 +1,196 @@
+schema_version: "1.0"
+registry_id: "STAS9_FEATURE_REGISTRY_20260723"
+status: "AUDIT_BASELINE_READY"
+language: "ru"
+
+rules:
+  canonical_name_source: "Точный список признаков берется из указанного allowlist/manifest или из константы кода."
+  count_rule: "Количество относится только к model features X; targets, labels, audit и идентификаторы не включаются."
+  no_future: "Любой live-признак должен быть доступен не позже entry_time_utc."
+  deny_live_sources:
+    - "STAS3 post-entry поля"
+    - "future_*"
+    - "postfact_*"
+    - "hit_*"
+    - "mfe/mae/time_to/tp/exit"
+    - "manual/review labels"
+    - "full-group признаки, использующие будущих кандидатов"
+
+feature_sets:
+  - id: "BASELINE_X4"
+    count: 4
+    source:
+      path: "src/mlbotnav/train_baseline.py"
+      definition: "features = [ret_1, ret_3, hl_spread, vol_chg]"
+    used_by:
+      - "baseline trainer; модельных файлов в models/baseline на дату аудита нет"
+    status: "DECLARED_NO_MODEL_ARTIFACTS"
+
+  - id: "LEGACY_PIPELINE_X83"
+    count: 83
+    source:
+      path: "src/mlbotnav/dataset.py"
+      definition: "FEATURE_COLUMNS"
+    groups:
+      price_volatility: 8
+      trend_momentum: 10
+      volume_flow: 6
+      density_profile: 10
+      structure_ta: 18
+      pattern: 31
+    used_by:
+      - "models/pipeline/champion_candidate_logreg_*"
+      - "models/pipeline/champion_candidate_lightgbm_*"
+      - "models/pipeline/champion_candidate_xgboost_*"
+    status: "LEGACY_ARCHIVE_FEATURE_CONTRACT"
+
+  - id: "STAS5_V1_X111"
+    count: 111
+    source:
+      path: "STAS5_ML_CORE/artifacts/features/stas5_feature_snapshot_20260501_20260514_v0.manifest.json"
+      builders:
+        - "src/mlbotnav/stas5_feature_snapshot_builder.py"
+    used_by:
+      - "STAS5 V1 entry ranker"
+    status: "SUPERSEDED_AUDIT_REFERENCE"
+
+  - id: "STAS5_V2_SELECTED_X126"
+    count: 126
+    source:
+      path: "STAS5_ML_CORE/artifacts/v2/model/runs/stas5_v2_run_20260713_191122/stas5_v2_entry_ranker_20260501_20260514_v0.manifest.json"
+      definition: "selected subset v1_plus_risk_gate"
+    used_by:
+      - "STAS5 V2 root controlled model"
+      - "STAS5 V2 run 20260713_190743"
+      - "STAS5 V2 run 20260713_191122"
+    status: "SUPERSEDED_CONTROLLED_REFERENCE"
+
+  - id: "STAS5_V2_V3_X274"
+    count: 274
+    source:
+      path: "STAS5_ML_CORE/artifacts/v2/features/stas5_v2_feature_snapshot_20260501_20260514_v0.manifest.json"
+      composition:
+        stas1_stas2_base: 111
+        stas4_combo_causal: 163
+      builders:
+        - "src/mlbotnav/stas5_v2_combo_feature_exporter.py"
+        - "src/mlbotnav/stas5_v2_feature_snapshot_builder.py"
+    used_by:
+      - "STAS5 V2 full274 model"
+      - "STAS5 V3 entry ranker"
+      - "base context of STAS5 V4/V4L/V5"
+    status: "VALID_CAUSAL_BASE_SUPERSEDED_BY_LARGER_CONTRACTS"
+
+  - id: "STAS5_V4_OFFLINE_X287"
+    count: 287
+    source:
+      path: "STAS5_ML_CORE/artifacts/v4/features/STAS5_V4_GROUP_RANK_TRAIN_DATASET_20260501_20260525.manifest.json"
+      composition:
+        causal_base: 274
+        offline_full_group: 13
+    used_by:
+      - "STAS5 V4 offline group ranker"
+    status: "OFFLINE_ONLY_NOT_LIVE_SAFE"
+
+  - id: "STAS5_V4L_X289"
+    count: 289
+    source:
+      path: "STAS5_ML_CORE/artifacts/v4l/features/STAS5_V4L_LIVE_SAFE_TRAIN_DATASET_20260501_20260525.manifest.json"
+      composition:
+        causal_base: 274
+        live_prefix_group: 15
+    used_by:
+      - "STAS5 V4L live-safe group ranker"
+    status: "LIVE_SAFE_GUARD_PASS_NOT_SELECTED_FOR_PRODUCTION"
+
+  - id: "STAS5_V5_X439"
+    count: 439
+    source:
+      path: "STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_FEATURE_ALLOWLIST_439F_V1.json"
+      composition:
+        old_causal: 274
+        cs_causal_structure: 81
+        fcs_full_causal_structure: 84
+      builders:
+        - "src/mlbotnav/stas5_v5_causal_structure_builder.py"
+        - "src/mlbotnav/stas5_v5_full_causal_structure_builder.py"
+        - "src/mlbotnav/stas5_v5_batch_dataset_builder.py"
+    used_by:
+      - "STAS5 V5/V5C ENTRY_BASELINE_ML"
+      - "STAS5 V5/V5C MARKET_PHASE_STATE_ML"
+      - "STAS5 V5/V5C ENTRY_ML"
+      - "STAS5 V5C RiskGate до R4BB"
+    status: "VALID_HISTORICAL_CAUSAL_CONTRACT"
+
+  - id: "STAS5_V5C_X463"
+    count: 463
+    source:
+      path: "STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_FEATURE_ALLOWLIST_463F_V1.json"
+      composition:
+        x439: 439
+        bb20_bollinger: 24
+      builders:
+        - "src/mlbotnav/stas5_v5c_bollinger_layer.py"
+        - "src/mlbotnav/stas5_v5_batch_dataset_builder.py"
+        - "src/mlbotnav/stas5_v5c_train_dataset_builder.py"
+    used_by:
+      - "stas5_v5c_r4bb_train_20260127_20260320 ENTRY baseline"
+      - "stas5_v5c_r4bb_train_20260127_20260320 MARKET_PHASE_STATE"
+      - "stas5_v5c_r4bb_train_20260127_20260320 ENTRY two-block"
+      - "stas5_v5c_r4bb_train_20260127_20260320 RiskGate"
+      - "R5 no-risk forward и STAS8 audit-preview как source features"
+    status: "CURRENT_STAS5_LATEST_FEATURE_CONTRACT"
+
+  - id: "STAS8_LIVE_CONTEXT_SUBSET_V1"
+    count: 24
+    source:
+      path: "STAS5_ML_CORE/10_STAS8_MOVE_CAPACITY_GRID_TZ_RU.md"
+      definition: "Плановый причинный subset X439/X463; live phase/state predictions добавляются отдельно и имеют динамическое число колонок."
+    used_by:
+      - "STAS8 rule-based audit-preview"
+      - "планируемая MOVE_EDGE_ML, которой пока нет"
+    status: "PLANNED_OR_PREVIEW_ONLY_NOT_TRAINED"
+
+source_groups:
+  - id: "STAS1_STAS2_CAUSAL_BASE"
+    count_in_x274: 111
+    source:
+      - "STAS1 candidate snapshot"
+      - "STAS2 pre-entry windows, session/day context"
+    used_by:
+      - "STAS5 V1+"
+
+  - id: "STAS4_COMBO_CAUSAL"
+    count_in_x274: 163
+    source:
+      - "STAS4 logic recalculated causally by STAS5 V2 exporter"
+    used_by:
+      - "STAS5 V2+"
+
+  - id: "CS_CAUSAL_STRUCTURE"
+    count_in_x439: 81
+    source:
+      - "STAS5 V5 causal structure builder"
+    used_by:
+      - "STAS5 V5/V5C models"
+
+  - id: "FCS_FULL_CAUSAL_STRUCTURE"
+    count_in_x439: 84
+    source:
+      - "STAS5 V5 full causal structure builder"
+    used_by:
+      - "STAS5 V5/V5C models"
+
+  - id: "BB20_BOLLINGER"
+    count_in_x463: 24
+    source:
+      - "STAS5 V5C Bollinger Layer V1"
+    used_by:
+      - "STAS5 V5C R4BB models"
+      - "STAS8 preview source context"
+
+audit_findings:
+  - "X439 и X463 одновременно существуют в артефактах; выбор по имени latest-файла без allowlist запрещен."
+  - "STAS5 V4 X287 содержит offline full-group признаки и не является live-safe."
+  - "STAS3/WAVE hindsight и teacher-grid должны оставаться вне live X."
+  - "Точный список признаков уже хранится в allowlist/manifest; STAS9 не дублирует 463 имени и тем самым не создает второй расходящийся источник истины."

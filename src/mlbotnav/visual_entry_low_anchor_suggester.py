@@ -59,6 +59,8 @@ def _load_ohlcv(path: Path) -> pd.DataFrame:
 
 
 def _load_targets(path: Path) -> list[ManualTarget]:
+    if not path.exists():
+        return []
     payload = json.loads(path.read_text(encoding="utf-8"))
     out: list[ManualTarget] = []
     for item in payload.get("targets", []):
@@ -199,23 +201,34 @@ def build_candidates(
         if score < min_score:
             continue
 
-        signal_time = pd.Timestamp(row["open_time_utc"])
-        entry_row = df.iloc[idx + 1]
+        signal_idx = anchor_idx
+        entry_idx = anchor_idx + 1
+        if entry_idx >= len(df):
+            continue
+
+        signal_time = pd.Timestamp(anchor["open_time_utc"])
+        confirmation_time = pd.Timestamp(row["open_time_utc"])
+        entry_row = df.iloc[entry_idx]
         entry_open = _safe_float(entry_row["open"])
+        entry_price_plus_5bps = entry_open * (1.0 + float(slippage_bps) / 10000.0)
         target, diff = _nearest_target(signal_time, targets)
         raw.append(
             {
-                "signal_idx": idx,
+                "signal_idx": signal_idx,
                 "anchor_idx": anchor_idx,
-                "entry_idx": idx + 1,
+                "confirmation_idx": idx,
+                "entry_idx": entry_idx,
                 "anchor_age_bars": int(anchor_age),
+                "execution_delay_bars_from_anchor": 1,
                 "score": round(float(score), 6),
                 "anchor_time_utc": _fmt_ts(pd.Timestamp(anchor["open_time_utc"])),
                 "anchor_low_price": _safe_float(anchor["low"]),
                 "signal_time_utc": _fmt_ts(signal_time),
+                "confirmation_time_utc": _fmt_ts(confirmation_time),
                 "entry_time_utc": _fmt_ts(pd.Timestamp(entry_row["open_time_utc"])),
                 "entry_open_price": entry_open,
-                "entry_price_plus_5bps": entry_open * (1.0 + float(slippage_bps) / 10000.0),
+                "entry_price_plus_5bps": entry_price_plus_5bps,
+                "target_1pct_price": entry_price_plus_5bps * 1.01,
                 "slippage_bps": float(slippage_bps),
                 "suggested_type": _suggested_type(row),
                 "candidate_reason": "recent_local_low_anchor_with_reclaim_or_absorption",
@@ -376,8 +389,9 @@ def render_full_day(
     start = pd.Timestamp(f"{day} 00:00:00")
     end = start + pd.Timedelta(days=1)
     ax_price.set_xlim(start.to_pydatetime(), end.to_pydatetime())
+    legend_text = "green=near M target | cyan=extra" if targets else "cyan=entry next open | red=anchor low"
     ax_price.set_title(
-        f"{symbol} {timeframe} {day} | LOW_ANCHOR_ENTRY_SUGGESTER_V0 | green=near M target | cyan=extra | NO ML/OPTUNA",
+        f"{symbol} {timeframe} {day} | LOW_ANCHOR_ENTRY_SUGGESTER_V0 | {legend_text} | NO ML/OPTUNA",
         color="white",
         fontsize=14,
     )
@@ -406,6 +420,52 @@ def render_target_zoom_sheet(
     fig, axes = plt.subplots(rows, cols, figsize=(22, 18), sharex=False)
     fig.patch.set_facecolor("#101418")
     flat = list(axes.flatten())
+    if not targets:
+        selected = sorted(candidates, key=lambda item: float(item["score"]), reverse=True)[: len(flat)]
+        for ax, candidate in zip(flat, selected):
+            _style_axis(ax)
+            center = pd.Timestamp(candidate["signal_time_utc"])
+            start = center - pd.Timedelta(minutes=22)
+            end = center + pd.Timedelta(minutes=34)
+            win = df[(df["open_time_utc"] >= start) & (df["open_time_utc"] <= end)].reset_index(drop=True)
+            _draw_candles(ax, win, timeframe, linewidth=0.55)
+            anchor_time = pd.Timestamp(candidate["anchor_time_utc"]).tz_convert(None)
+            signal_time = pd.Timestamp(candidate["signal_time_utc"]).tz_convert(None)
+            entry_time = pd.Timestamp(candidate["entry_time_utc"]).tz_convert(None)
+            anchor_low = float(candidate["anchor_low_price"])
+            entry_price = float(candidate["entry_price_plus_5bps"])
+            ax.axvline(signal_time, color="#26c6da", linewidth=1.0, alpha=0.65)
+            ax.scatter([anchor_time], [anchor_low], s=70, color="#ff5252", edgecolors="#0b0f12", zorder=5)
+            ax.scatter([entry_time], [entry_price], marker="^", s=110, color="#26c6da", edgecolors="#0b0f12", zorder=6)
+            ax.annotate(
+                f"{candidate['candidate_id']} entry {_fmt_minute(pd.Timestamp(candidate['entry_time_utc']))}",
+                xy=(entry_time, entry_price),
+                xytext=(6, 10),
+                textcoords="offset points",
+                color="#26c6da",
+                fontsize=8,
+                arrowprops={"arrowstyle": "->", "color": "#26c6da", "linewidth": 1.0},
+            )
+            ax.set_title(
+                f"{candidate['candidate_id']} {candidate['suggested_type']} | score {float(candidate['score']):.2f}",
+                color="white",
+                fontsize=9,
+            )
+            ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+            ax.tick_params(axis="x", labelrotation=25)
+        for ax in flat[len(selected) :]:
+            ax.axis("off")
+            ax.set_facecolor("#101418")
+        fig.suptitle(
+            f"{symbol} {timeframe} {day} | top low-anchor candidates | red=anchor low, cyan=entry next open | NO ML/OPTUNA",
+            color="white",
+            fontsize=15,
+        )
+        fig.tight_layout(rect=[0, 0, 1, 0.975])
+        fig.savefig(out_path, dpi=150, facecolor=fig.get_facecolor())
+        plt.close(fig)
+        return
+
     by_target = _match_summary(candidates, targets)["per_target"]
     candidate_by_id = {item["candidate_id"]: item for item in candidates}
     for ax, target_info in zip(flat, by_target):
@@ -462,6 +522,7 @@ def write_csv(path: Path, candidates: list[dict[str, Any]]) -> None:
         "entry_time_utc",
         "entry_open_price",
         "entry_price_plus_5bps",
+        "target_1pct_price",
         "score",
         "suggested_type",
         "nearest_manual_target",
@@ -529,14 +590,14 @@ def main() -> int:
     parser.add_argument("--max-anchor-age", type=int, default=3)
     parser.add_argument("--cooldown-minutes", type=int, default=4)
     parser.add_argument("--min-score", type=float, default=2.5)
-    parser.add_argument("--target-ledger", default="reports/final_review/visual_entry_v3/fresh_target_led/target_ledger_SOLUSDT_1m_2026-05-14_M01_M19.json")
+    parser.add_argument("--target-ledger", default="")
     parser.add_argument("--out-dir", default="reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_suggester_v0")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[2]
     source = _source_csv(root, args.day, args.timeframe, args.symbol)
     df = _add_features(_load_ohlcv(source))
-    targets = _load_targets(root / args.target_ledger)
+    targets = _load_targets(root / args.target_ledger) if args.target_ledger else []
     candidates = build_candidates(
         df,
         targets=targets,
@@ -549,11 +610,12 @@ def main() -> int:
 
     out_dir = root / args.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
-    json_path = out_dir / "LOW_ANCHOR_ENTRY_SUGGESTER_V0_20260514.json"
-    csv_path = out_dir / "LOW_ANCHOR_ENTRY_SUGGESTER_V0_20260514.csv"
-    report_path = out_dir / "LOW_ANCHOR_ENTRY_SUGGESTER_V0_20260514_RU.md"
-    full_day_png = out_dir / "LOW_ANCHOR_ENTRY_SUGGESTER_V0_full_day_20260514.png"
-    target_zoom_png = out_dir / "LOW_ANCHOR_ENTRY_SUGGESTER_V0_target_nearest_zoom_20260514.png"
+    day_compact = args.day.replace("-", "")
+    json_path = out_dir / f"LOW_ANCHOR_ENTRY_SUGGESTER_V0_{day_compact}.json"
+    csv_path = out_dir / f"LOW_ANCHOR_ENTRY_SUGGESTER_V0_{day_compact}.csv"
+    report_path = out_dir / f"LOW_ANCHOR_ENTRY_SUGGESTER_V0_{day_compact}_RU.md"
+    full_day_png = out_dir / f"LOW_ANCHOR_ENTRY_SUGGESTER_V0_full_day_{day_compact}.png"
+    target_zoom_png = out_dir / f"LOW_ANCHOR_ENTRY_SUGGESTER_V0_zoom_sheet_{day_compact}.png"
 
     summary = _match_summary(candidates, targets)
     payload = {
@@ -565,7 +627,7 @@ def main() -> int:
         "timeframe": args.timeframe,
         "day_utc": args.day,
         "source_csv": str(source.relative_to(root)).replace("\\", "/"),
-        "manual_target_ledger": args.target_ledger.replace("\\", "/"),
+        "manual_target_ledger": args.target_ledger.replace("\\", "/") if args.target_ledger else "",
         "params": {
             "slippage_bps": args.slippage_bps,
             "anchor_lookback": args.anchor_lookback,

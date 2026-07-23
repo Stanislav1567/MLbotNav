@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "STAS5_V4_GROUP_RANK_LEDGER.schema.json",
+  "title": "STAS5 V4 Group Rank Ledger Row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "day",
+    "symbol",
+    "timeframe",
+    "group_id",
+    "candidate_id",
+    "record_id",
+    "entry_time_utc",
+    "entry_price_5bps",
+    "rank_label",
+    "is_group_winner",
+    "primary_reason_code",
+    "secondary_reason_codes",
+    "label_status",
+    "source_review_file",
+    "notes"
+  ],
+  "properties": {
+    "day": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "symbol": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timeframe": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entry_time_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "entry_price_5bps": {
+      "type": ["number", "string"]
+    },
+    "rank_label": {
+      "type": "string",
+      "enum": [
+        "BEST_GOOD",
+        "GOOD_ALT",
+        "BAD_IN_GROUP",
+        "NO_TRADE_GROUP",
+        "REVIEW_ONLY",
+        "EXCLUDED"
+      ]
+    },
+    "is_group_winner": {
+      "type": ["boolean", "integer", "string"]
+    },
+    "primary_reason_code": {
+      "type": "string"
+    },
+    "secondary_reason_codes": {
+      "type": "string"
+    },
+    "label_status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "APPROVED",
+        "NEEDS_REVIEW",
+        "EXCLUDED"
+      ]
+    },
+    "source_review_file": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "x-rank-labels": [
+    "BEST_GOOD",
+    "GOOD_ALT",
+    "BAD_IN_GROUP",
+    "NO_TRADE_GROUP",
+    "REVIEW_ONLY",
+    "EXCLUDED"
+  ],
+  "x-good-reason-codes": [
+    "GOOD_FIRST_LOCAL_LOW",
+    "GOOD_LOW_ZONE",
+    "GOOD_DEEPER_LOCAL_LOW",
+    "GOOD_BEST_DEEP_LOW_AFTER_KNIFE",
+    "GOOD_PULLBACK_LOW_AFTER_REACTION",
+    "GOOD_DEEP_LOW_AFTER_STRONG_SELL_IMPULSE",
+    "GOOD_FINAL_LOW",
+    "GOOD_SECOND_LOW_IN_SAME_ZONE",
+    "GOOD_BEST_RETEST_LOW_AFTER_BASE",
+    "GOOD_BEST_LOCAL_LOW",
+    "GOOD_DEEP_LOW_AFTER_KNIFE",
+    "GOOD_PULLBACK_LOW",
+    "GOOD_CHANNEL_LOWER_TOUCH",
+    "GOOD_SUPPORT_RETEST",
+    "GOOD_FIRST_LOW_AFTER_FLUSH",
+    "GOOD_RETEST_LOW_AFTER_BASE"
+  ],
+  "x-bad-reason-codes": [
+    "BAD_TOO_EARLY",
+    "BAD_TOO_HIGH",
+    "BAD_NOT_LOWEST",
+    "BAD_NOT_SELECTED",
+    "BAD_HIGHER_THAN_NEEDED",
+    "BAD_CHOP_OR_TOO_LATE",
+    "BAD_TOO_EARLY_IN_KNIFE",
+    "BAD_TOO_EARLY_BEFORE_DEEP_LOW",
+    "BAD_TOO_EARLY_BEFORE_BEST_LOW",
+    "BAD_AFTER_BOUNCE_NOT_BEST",
+    "BAD_NOT_BEST_LOW",
+    "BAD_SIDEWAYS_NO_EDGE",
+    "BAD_TOO_EARLY_BEFORE_LOW",
+    "BAD_TOO_HIGH_IN_DROP",
+    "BAD_BEFORE_FINAL_LOW",
+    "BAD_DUPLICATE_NOT_LOWEST",
+    "BAD_MID_CHANNEL",
+    "BAD_CHOP_NO_CLEAR_LOW",
+    "BAD_AFTER_BOUNCE_TOO_HIGH",
+    "BAD_FALLING_KNIFE",
+    "BAD_NO_REVERSAL"
+  ],
+  "x-required-group-features": [
+    "group_size",
+    "group_duration_min",
+    "group_price_range_pct",
+    "candidate_rank_by_price_in_group",
+    "is_lowest_in_group",
+    "distance_to_group_low_pct",
+    "distance_to_best_low_pct",
+    "minutes_from_group_start",
+    "minutes_to_best_low",
+    "is_before_best_low",
+    "is_after_best_low",
+    "prior_candidate_better_low",
+    "post_candidate_lower_low_exists",
+    "same_basin_duplicate_count"
+  ],
+  "x-forbidden-feature-patterns": [
+    "ML_KEEP_SCORE_V2",
+    "ML_KEEP_SCORE_V3",
+    "ML_DECISION_V2",
+    "ML_DECISION_V3",
+    "current_ml_score",
+    "current_ml_decision",
+    "yellow_x",
+    "postfact",
+    "hit_*",
+    "future",
+    "TP",
+    "Stas3",
+    "exit"
+  ]
+}

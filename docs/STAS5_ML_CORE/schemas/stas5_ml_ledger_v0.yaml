@@ -1,0 +1,56 @@
+schema_id: stas5_ml_ledger_v0
+status: draft_no_ml_no_optuna
+language_note: "Технические ключи оставлены на английском; человекочитаемые пояснения в RU-документах."
+primary_key:
+  - day
+  - candidate_id
+required_columns:
+  day:
+    type: date
+    description_ru: "День входа."
+  candidate_id:
+    type: string
+    description_ru: "LAxxx."
+  record_id:
+    type: string
+    description_ru: "Стабильный ID строки источника."
+  entry_time:
+    type: timestamp_utc
+    description_ru: "Время входа."
+  entry_price:
+    type: float
+    description_ru: "Цена входа или execution reference."
+  human_label:
+    type: enum
+    allowed:
+      - KEEP_DRAFT
+      - CUT_DRAFT
+      - KEEP_APPROVED
+      - CUT_APPROVED
+      - REVIEW_ONLY
+      - EXCLUDED
+  label_status:
+    type: enum
+    allowed:
+      - DRAFT
+      - APPROVED
+      - REVIEW_ONLY
+      - EXCLUDED
+  yellow_x:
+    type: int
+    allowed:
+      - 0
+      - 1
+  yellow_x_role:
+    type: enum
+    allowed:
+      - AUDIT_ONLY
+  yellow_x_conflict:
+    type: int
+    allowed:
+      - 0
+      - 1
+guards:
+  keep_yellow_x_must_survive_join: true
+  cut_draft_not_final_negative: true
+  human_keep_priority_over_strategy_vote: true

@@ -1,0 +1,116 @@
+schema_version: "1.0"
+router_id: "STAS9_SENTINEL_COMMAND_ROUTER"
+language: "ru"
+default_mode: "SAFE"
+fallback_agent: "STAS9_SENTINEL"
+
+routes:
+  - command_id: "AUDIT_PROJECT"
+    examples:
+      - "Проверь проект"
+      - "Проведи аудит структуры"
+      - "Найди проблемы и дубли"
+    agent: "STAS9_AUDITOR"
+    mode: "SAFE"
+
+  - command_id: "AUDIT_BROKEN_POINTER"
+    examples:
+      - "Найди сломанные указатели моделей"
+      - "Проверь broken pointer"
+      - "Проверь ссылки champion"
+    agent: "STAS9_AUDITOR"
+    supporting_agent: "STAS9_MODEL_MANAGER"
+    mode: "SAFE"
+    auto_fix: false
+
+  - command_id: "ANALYZE_MODELS"
+    examples:
+      - "Проверь модели"
+      - "Сравни версии моделей"
+      - "Покажи champion и legacy"
+    agent: "STAS9_MODEL_MANAGER"
+    mode: "SAFE"
+
+  - command_id: "ANALYZE_SOL_MARKET"
+    examples:
+      - "Изучи свечи SOL"
+      - "Найди закономерности движения SOL"
+      - "Проанализируй рыночные ситуации SOL"
+    agent: "STAS9_MARKET_RESEARCH"
+    mode: "SAFE"
+    symbol_scope:
+      - "SOL"
+    data_scope: "EXISTING_EXPORTED_CANDLES_READ_ONLY"
+    forbidden_symbols:
+      - "BTC"
+
+  - command_id: "CREATE_SOL_EVENT_RECORD"
+    examples:
+      - "Сохрани событие SOL"
+      - "Разметь хороший вход SOL"
+      - "Зафиксируй ложный сигнал SOL"
+    agent: "STAS9_MARKET_RESEARCH"
+    supporting_agent: "STAS9_VALIDATOR"
+    mode: "DEVELOPMENT"
+    requires_mode_confirmation: true
+    write_scope: "STAS9_CONTROL_PLANE/MARKET_KNOWLEDGE/**"
+    training_allowed: false
+
+  - command_id: "ANALYZE_FEATURES"
+    examples:
+      - "Проверь признаки"
+      - "Сверь feature contracts"
+      - "Проверь X463"
+    agent: "STAS9_FEATURE_MANAGER"
+    mode: "SAFE"
+
+  - command_id: "CREATE_FEATURE_CONTRACT"
+    examples:
+      - "Создай признаки"
+      - "Преврати события SOL в признаки"
+      - "Подготовь feature contract"
+    agent: "STAS9_FEATURE_MANAGER"
+    supporting_agent: "STAS9_VALIDATOR"
+    mode: "DEVELOPMENT"
+    requires_mode_confirmation: true
+    training_allowed: false
+
+  - command_id: "ANALYZE_EXPERIMENT"
+    examples:
+      - "Сравни эксперименты"
+      - "Подготовь гипотезу"
+      - "Проанализируй бэктест"
+    agent: "STAS9_LAB"
+    mode: "EXPERIMENT"
+    requires_mode_confirmation: true
+
+  - command_id: "VALIDATE_CHANGE"
+    examples:
+      - "Проверь изменения"
+      - "Запусти тесты"
+      - "Проверь целостность"
+    agent: "STAS9_VALIDATOR"
+    mode: "DEVELOPMENT"
+    requires_mode_confirmation: true
+
+  - command_id: "VALIDATE_MODEL_QUALITY"
+    examples:
+      - "Проверь качество модели"
+      - "Проверь переобучение"
+      - "Сравни результаты экспериментов"
+    agent: "STAS9_VALIDATOR"
+    supporting_agent: "STAS9_MODEL_MANAGER"
+    mode: "SAFE"
+    modify_models: false
+
+  - command_id: "SECURITY_CHECK"
+    examples:
+      - "Проверь права"
+      - "Можно ли удалить файл"
+      - "Проверь безопасность изменения"
+    agent: "STAS9_GUARDIAN"
+    mode: "SAFE"
+
+unknown_command:
+  action: "ASK_ONE_CLARIFYING_QUESTION"
+  execute_actions: false

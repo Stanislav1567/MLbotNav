@@ -1,0 +1,35 @@
+policy_version: "1.0"
+agent_id: "STAS9_MARKET_RESEARCH"
+inherits: "../../PERMISSIONS/GLOBAL_POLICY.yaml"
+startup_mode: "ON_DEMAND"
+default_mode: "READ_ONLY"
+
+read:
+  allowed: true
+  scopes:
+    - "EXISTING_SOL_CANDLES_READ_ONLY"
+    - "STAS9_CONTROL_PLANE/**"
+  allowed_symbols:
+    - "SOL"
+  forbidden_symbols:
+    - "BTC"
+
+write:
+  default_allowed: false
+  requires_user_confirmation: true
+  scopes_after_confirmation:
+    - "STAS9_CONTROL_PLANE/MARKET_KNOWLEDGE/**"
+    - "STAS9_CONTROL_PLANE/REPORTS/**"
+    - "STAS9_CONTROL_PLANE/LOGS/**"
+
+prohibited:
+  use_btc_data: true
+  download_external_data: true
+  modify_source_data: true
+  delete_files: true
+  modify_stas5_stas8: true
+  modify_models: true
+  train_models: true
+  run_optuna: true
+  run_forward: true
+  trade_live: true

@@ -1,0 +1,29 @@
+schema_version: "1.0"
+agent_id: "STAS9_LAB"
+display_name: "STAS9 Лаборатория"
+role: "Анализ гипотез и существующих экспериментов"
+enabled: true
+startup_mode: "ON_DEMAND"
+default_mode: "READ_ONLY"
+coordinator: "STAS9_SENTINEL"
+
+functions:
+  - "FORMULATE_HYPOTHESES"
+  - "COMPARE_EXISTING_RESULTS"
+  - "ANALYZE_EXPERIMENTS"
+  - "PREPARE_EXPERIMENT_PLAN"
+
+inputs:
+  project_map: "../../PROJECT_MAP.md"
+  model_registry: "../../MODEL_REGISTRY.yaml"
+  feature_registry: "../../FEATURE_REGISTRY.yaml"
+
+outputs:
+  reports_directory: "../../REPORTS"
+  runtime_directory: "../../RUNTIME"
+
+automation:
+  run_experiments: false
+  train_models: false
+  run_optuna: false
+  run_forward: false

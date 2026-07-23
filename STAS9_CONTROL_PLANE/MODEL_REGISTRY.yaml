@@ -1,0 +1,318 @@
+schema_version: "1.0"
+registry_id: "STAS9_MODEL_REGISTRY_20260723"
+status: "AUDIT_BASELINE_READY"
+language: "ru"
+
+coverage:
+  audit_date: "2026-07-23"
+  physical_model_files:
+    legacy_pipeline_joblib: 6043
+    stas5_joblib: 37
+    baseline_joblib: 0
+    total_joblib_in_audited_model_roots: 6080
+  rule: "Массовый legacy pipeline зарегистрирован полными коллекциями по glob; все 37 STAS5 joblib зарегистрированы поштучно."
+
+registry_audit:
+  legacy_candidates_jsonl_records: 6496
+  legacy_unique_model_references: 6236
+  legacy_duplicate_registry_records: 260
+  legacy_existing_unique_references: 6043
+  legacy_missing_unique_references: 193
+  legacy_unregistered_existing_files: 0
+  active_model_pointer_status: "BROKEN_POINTER"
+  champion_pointer_status: "BROKEN_POINTER"
+  broken_pointer_target: "models/pipeline/champion_candidate_logreg_SOLUSDT_1m_20260521T131603Z.joblib"
+  stas5_latest_pointer: "STAS5_ML_CORE/artifacts/v5c/model/STAS5_V5C_LATEST_TWO_BLOCK_MODEL_RUN.json"
+  stas5_latest_run_id: "stas5_v5c_r4bb_train_20260127_20260320"
+
+model_collections:
+  - name: "Legacy Pipeline LogisticRegression Candidates"
+    path: "models/pipeline/champion_candidate_logreg_SOLUSDT_1m_*.joblib"
+    purpose: "Старый общий pipeline: классификация target_up для SOLUSDT 1m."
+    version: "20260522T164852Z..20260625T065113Z"
+    status: "LEGACY_ARCHIVE_NOT_STAS9_ACTIVE"
+    artifact_count: 4381
+
+  - name: "Legacy Pipeline LightGBM Candidates"
+    path: "models/pipeline/champion_candidate_lightgbm_SOLUSDT_1m_*.joblib"
+    purpose: "Старый общий pipeline: кандидат градиентного бустинга для target_up."
+    version: "20260522T190647Z..20260624T195132Z"
+    status: "LEGACY_ARCHIVE_NOT_STAS9_ACTIVE"
+    artifact_count: 775
+
+  - name: "Legacy Pipeline XGBoost Candidates"
+    path: "models/pipeline/champion_candidate_xgboost_SOLUSDT_1m_*.joblib"
+    purpose: "Старый общий pipeline: кандидат XGBoost для target_up."
+    version: "20260522T171903Z..20260625T073749Z"
+    status: "LEGACY_ARCHIVE_NOT_STAS9_ACTIVE"
+    artifact_count: 887
+
+logical_pointers:
+  - name: "Legacy Active Model Pointer"
+    path: "models/registry/active_model.json"
+    purpose: "Старый указатель активной модели общего pipeline."
+    version: "run_20260521T131603Z"
+    status: "BROKEN_POINTER_TARGET_MISSING"
+
+  - name: "Legacy Champion Pointer"
+    path: "models/registry/champion.json"
+    purpose: "Старый champion общего pipeline и его метрики."
+    version: "run_20260521T131603Z"
+    status: "BROKEN_POINTER_TARGET_MISSING"
+
+  - name: "STAS5 V5C Latest Two-Block Pointer"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/STAS5_V5C_LATEST_TWO_BLOCK_MODEL_RUN.json"
+    purpose: "Указатель последнего проверенного STAS5 V5C training run."
+    version: "stas5_v5c_r4bb_train_20260127_20260320"
+    status: "VALID_INTERNAL_POINTER_NO_PROJECT_PRODUCTION_PROMOTION"
+
+models:
+  - name: "STAS5 V1 Entry Ranker"
+    path: "STAS5_ML_CORE/artifacts/model/stas5_entry_ranker_20260501_20260514_v0.joblib"
+    purpose: "Повторять human KEEP/CUT по X111; controlled baseline."
+    version: "STAS5_V1_20260501_20260514_v0"
+    status: "SUPERSEDED_AUDIT_REFERENCE"
+
+  - name: "STAS5 V2 Entry Ranker Root"
+    path: "STAS5_ML_CORE/artifacts/v2/model/stas5_v2_entry_ranker_20260501_20260514_v0.joblib"
+    purpose: "Controlled V2 entry ranker на выбранном X126 subset."
+    version: "STAS5_V2_ROOT_X126_v0"
+    status: "SUPERSEDED_CONTROLLED_REFERENCE"
+
+  - name: "STAS5 V2 Entry Ranker Run 190743"
+    path: "STAS5_ML_CORE/artifacts/v2/model/runs/stas5_v2_run_20260713_190743/stas5_v2_entry_ranker_20260501_20260514_v0.joblib"
+    purpose: "Изолированный controlled V2 run на X126."
+    version: "stas5_v2_run_20260713_190743"
+    status: "SUPERSEDED_RUN_REFERENCE"
+
+  - name: "STAS5 V2 Entry Ranker Run 191122"
+    path: "STAS5_ML_CORE/artifacts/v2/model/runs/stas5_v2_run_20260713_191122/stas5_v2_entry_ranker_20260501_20260514_v0.joblib"
+    purpose: "Изолированный controlled V2 run на X126."
+    version: "stas5_v2_run_20260713_191122"
+    status: "SUPERSEDED_RUN_REFERENCE"
+
+  - name: "STAS5 V2 Entry Ranker Full274"
+    path: "STAS5_ML_CORE/artifacts/v2/model/runs/stas5_v2_full274_20260713_203703/stas5_v2_entry_ranker_20260501_20260514_v0.joblib"
+    purpose: "Проверка полного causal X274."
+    version: "stas5_v2_full274_20260713_203703"
+    status: "REJECTED_VS_SELECTED_SUBSET_AUDIT_REFERENCE"
+
+  - name: "STAS5 V3 Entry Ranker Smoke"
+    path: "STAS5_ML_CORE/artifacts/v3/model/runs/stas5_v3_smoke_20260714/stas5_v3_entry_ranker_20260501_20260520_v0.joblib"
+    purpose: "Entry ranker X274 с добавленной approved review-разметкой."
+    version: "stas5_v3_smoke_20260714"
+    status: "SUPERSEDED_SMOKE_REFERENCE"
+
+  - name: "STAS5 V3 Entry Ranker Wrapper Smoke"
+    path: "STAS5_ML_CORE/artifacts/v3/model/runs/stas5_v3_wrapper_smoke_20260714/stas5_v3_entry_ranker_20260501_20260520_v0.joblib"
+    purpose: "Проверка wrapper V3."
+    version: "stas5_v3_wrapper_smoke_20260714"
+    status: "SUPERSEDED_SMOKE_REFERENCE"
+
+  - name: "STAS5 V3 Entry Ranker Wrapper Smoke2"
+    path: "STAS5_ML_CORE/artifacts/v3/model/runs/stas5_v3_wrapper_smoke2_20260714/stas5_v3_entry_ranker_20260501_20260520_v0.joblib"
+    purpose: "Проверенный V3 train/forward reference на X274."
+    version: "stas5_v3_wrapper_smoke2_20260714"
+    status: "SUPERSEDED_VERIFIED_REFERENCE"
+
+  - name: "STAS5 V4 Offline Group Ranker"
+    path: "STAS5_ML_CORE/artifacts/v4/model/runs/stas5_v4_train_20260714_163911/stas5_v4_group_ranker_20260501_20260525_v0.joblib"
+    purpose: "Pointwise scorer с full-group признаками для human-style group review."
+    version: "stas5_v4_train_20260714_163911_X287"
+    status: "OFFLINE_GROUP_REVIEW_NOT_LIVE_SAFE"
+
+  - name: "STAS5 V4L Live-Safe Group Ranker Smoke"
+    path: "STAS5_ML_CORE/artifacts/v4l/model/runs/stas5_v4l_train_smoke_20260714/stas5_v4l_live_safe_group_ranker_20260501_20260525_v0.joblib"
+    purpose: "Smoke-модель prefix/live-safe group ranker."
+    version: "stas5_v4l_train_smoke_20260714_X289"
+    status: "SMOKE_REFERENCE_NOT_SELECTED"
+
+  - name: "STAS5 V4L Live-Safe Group Ranker"
+    path: "STAS5_ML_CORE/artifacts/v4l/model/runs/stas5_v4l_train_20260714_181635/stas5_v4l_live_safe_group_ranker_20260501_20260525_v0.joblib"
+    purpose: "Live-safe group ranker с prefix invariance."
+    version: "stas5_v4l_train_20260714_181635_X289"
+    status: "GUARD_PASS_AUDIT_REFERENCE_NOT_PRODUCTION_SELECTED"
+
+  - name: "STAS5 V5 32d Entry Baseline"
+    path: "STAS5_ML_CORE/artifacts/v5/model/runs/stas5_v5_two_block_train_20260716_32d/STAS5_V5_ENTRY_BASELINE_MODEL.joblib"
+    purpose: "Прямая модель X439 -> entry_y."
+    version: "stas5_v5_two_block_train_20260716_32d"
+    status: "SUPERSEDED_TRAINED_REFERENCE"
+
+  - name: "STAS5 V5 32d Market Phase State"
+    path: "STAS5_ML_CORE/artifacts/v5/model/runs/stas5_v5_two_block_train_20260716_32d/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib"
+    purpose: "X439 -> phase/state; explainability/stacking."
+    version: "stas5_v5_two_block_train_20260716_32d"
+    status: "SUPERSEDED_TRAINED_REFERENCE"
+
+  - name: "STAS5 V5 32d Entry Two-Block"
+    path: "STAS5_ML_CORE/artifacts/v5/model/runs/stas5_v5_two_block_train_20260716_32d/STAS5_V5_ENTRY_ML_MODEL.joblib"
+    purpose: "X439 + OOF phase/state predictions -> entry_y."
+    version: "stas5_v5_two_block_train_20260716_32d"
+    status: "SUPERSEDED_NOT_SELECTED_VS_BASELINE"
+
+  - name: "STAS5 V5C Continuous Entry Baseline"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_continuous_train_20260716_154826/STAS5_V5_ENTRY_BASELINE_MODEL.joblib"
+    purpose: "Continuous V5C X439 entry baseline."
+    version: "stas5_v5c_continuous_train_20260716_154826"
+    status: "SUPERSEDED_TRAINED_REFERENCE"
+
+  - name: "STAS5 V5C Continuous Market Phase State"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_continuous_train_20260716_154826/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib"
+    purpose: "Continuous V5C phase/state predictor."
+    version: "stas5_v5c_continuous_train_20260716_154826"
+    status: "SUPERSEDED_TRAINED_REFERENCE"
+
+  - name: "STAS5 V5C Continuous Entry Two-Block"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_continuous_train_20260716_154826/STAS5_V5_ENTRY_ML_MODEL.joblib"
+    purpose: "Continuous V5C two-block entry model."
+    version: "stas5_v5c_continuous_train_20260716_154826"
+    status: "SUPERSEDED_NOT_SELECTED_VS_BASELINE"
+
+  - name: "STAS5 V5C R2 Entry Baseline"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r2_train_20260127_20260306/STAS5_V5_ENTRY_BASELINE_MODEL.joblib"
+    purpose: "R2 cumulative X439 entry baseline."
+    version: "stas5_v5c_r2_train_20260127_20260306"
+    status: "SUPERSEDED_CUMULATIVE_REFERENCE"
+
+  - name: "STAS5 V5C R2 Market Phase State"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r2_train_20260127_20260306/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib"
+    purpose: "R2 cumulative X439 phase/state predictor."
+    version: "stas5_v5c_r2_train_20260127_20260306"
+    status: "SUPERSEDED_CUMULATIVE_REFERENCE"
+
+  - name: "STAS5 V5C R2 Entry Two-Block"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r2_train_20260127_20260306/STAS5_V5_ENTRY_ML_MODEL.joblib"
+    purpose: "R2 cumulative two-block entry model."
+    version: "stas5_v5c_r2_train_20260127_20260306"
+    status: "SUPERSEDED_NOT_SELECTED_VS_BASELINE"
+
+  - name: "STAS5 V5C R2Q Entry Baseline"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r2q_train_20260127_20260306/STAS5_V5_ENTRY_BASELINE_MODEL.joblib"
+    purpose: "R2Q variant X439 entry baseline."
+    version: "stas5_v5c_r2q_train_20260127_20260306"
+    status: "SUPERSEDED_EXPERIMENT_REFERENCE"
+
+  - name: "STAS5 V5C R2Q Market Phase State"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r2q_train_20260127_20260306/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib"
+    purpose: "R2Q variant phase/state predictor."
+    version: "stas5_v5c_r2q_train_20260127_20260306"
+    status: "SUPERSEDED_EXPERIMENT_REFERENCE"
+
+  - name: "STAS5 V5C R2Q Entry Two-Block"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r2q_train_20260127_20260306/STAS5_V5_ENTRY_ML_MODEL.joblib"
+    purpose: "R2Q variant two-block entry model."
+    version: "stas5_v5c_r2q_train_20260127_20260306"
+    status: "SUPERSEDED_EXPERIMENT_REFERENCE"
+
+  - name: "STAS5 V5C R3 Entry Baseline"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r3_train_20260127_20260313/STAS5_V5_ENTRY_BASELINE_MODEL.joblib"
+    purpose: "R3 cumulative X439 entry baseline."
+    version: "stas5_v5c_r3_train_20260127_20260313"
+    status: "SUPERSEDED_CUMULATIVE_REFERENCE"
+
+  - name: "STAS5 V5C R3 Market Phase State"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r3_train_20260127_20260313/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib"
+    purpose: "R3 cumulative X439 phase/state predictor."
+    version: "stas5_v5c_r3_train_20260127_20260313"
+    status: "SUPERSEDED_CUMULATIVE_REFERENCE"
+
+  - name: "STAS5 V5C R3 Entry Two-Block"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r3_train_20260127_20260313/STAS5_V5_ENTRY_ML_MODEL.joblib"
+    purpose: "R3 cumulative two-block entry model."
+    version: "stas5_v5c_r3_train_20260127_20260313"
+    status: "SUPERSEDED_NOT_SELECTED_VS_BASELINE"
+
+  - name: "STAS5 V5C R4 Entry Baseline"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4_train_20260127_20260320/STAS5_V5_ENTRY_BASELINE_MODEL.joblib"
+    purpose: "R4 cumulative X439 entry baseline."
+    version: "stas5_v5c_r4_train_20260127_20260320"
+    status: "SUPERSEDED_BY_R4BB_X463"
+
+  - name: "STAS5 V5C R4 Market Phase State"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4_train_20260127_20260320/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib"
+    purpose: "R4 cumulative X439 phase/state predictor."
+    version: "stas5_v5c_r4_train_20260127_20260320"
+    status: "SUPERSEDED_BY_R4BB_X463"
+
+  - name: "STAS5 V5C R4 Entry Two-Block"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4_train_20260127_20260320/STAS5_V5_ENTRY_ML_MODEL.joblib"
+    purpose: "R4 cumulative X439 two-block entry model."
+    version: "stas5_v5c_r4_train_20260127_20260320"
+    status: "SUPERSEDED_NOT_SELECTED_VS_BASELINE"
+
+  - name: "STAS5 V5C R4 RiskGate"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4_train_20260127_20260320/STAS5_V5C_RISKGATE_ML_MODEL.joblib"
+    purpose: "X439 -> risk_bad_y."
+    version: "stas5_v5c_r4_train_20260127_20260320"
+    status: "SUPERSEDED_BY_R4BB_X463"
+
+  - name: "STAS5 V5C R4BB Entry Baseline"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5_ENTRY_BASELINE_MODEL.joblib"
+    purpose: "Текущий direct X463 -> entry_y baseline."
+    version: "stas5_v5c_r4bb_train_20260127_20260320"
+    status: "CURRENT_STAS5_SELECTED_BY_ENTRY_QUALITY_GATE_READY_FOR_FORWARD"
+
+  - name: "STAS5 V5C R4BB Market Phase State"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib"
+    purpose: "Текущий X463 -> phase/state predictor для explainability/stacking."
+    version: "stas5_v5c_r4bb_train_20260127_20260320"
+    status: "CURRENT_RUN_AUDIT_EXPLAINABILITY_COMPONENT"
+
+  - name: "STAS5 V5C R4BB Entry Two-Block"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5_ENTRY_ML_MODEL.joblib"
+    purpose: "X463 + OOF/live phase/state predictions -> entry_y."
+    version: "stas5_v5c_r4bb_train_20260127_20260320"
+    status: "TRAINED_REJECTED_BY_QUALITY_GATE_VS_BASELINE"
+
+  - name: "STAS5 V5C R4BB RiskGate"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5C_RISKGATE_ML_MODEL.joblib"
+    purpose: "X463 -> risk_bad_y; блокировка/понижение опасных long-входов."
+    version: "stas5_v5c_r4bb_train_20260127_20260320"
+    status: "TRAINED_GUARD_PASS_NOT_SELECTED_PENDING_THRESHOLD_AND_VISUAL_REVIEW"
+
+  - name: "STAS5 V5C R5 Entry-Only Baseline"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r5_entry_only_train_20260127_20260320/STAS5_V5_ENTRY_BASELINE_MODEL.joblib"
+    purpose: "Entry-only X439 experiment."
+    version: "stas5_v5c_r5_entry_only_train_20260127_20260320"
+    status: "SUPERSEDED_EXPERIMENT_REFERENCE"
+
+  - name: "STAS5 V5C R5 Entry-Only Market Phase State"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r5_entry_only_train_20260127_20260320/STAS5_V5_MARKET_PHASE_STATE_MODEL.joblib"
+    purpose: "Phase/state component entry-only X439 experiment."
+    version: "stas5_v5c_r5_entry_only_train_20260127_20260320"
+    status: "SUPERSEDED_EXPERIMENT_REFERENCE"
+
+  - name: "STAS5 V5C R5 Entry-Only Two-Block"
+    path: "STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r5_entry_only_train_20260127_20260320/STAS5_V5_ENTRY_ML_MODEL.joblib"
+    purpose: "Two-block component entry-only X439 experiment."
+    version: "stas5_v5c_r5_entry_only_train_20260127_20260320"
+    status: "SUPERSEDED_EXPERIMENT_NOT_SELECTED"
+
+declared_but_absent_models:
+  - name: "Baseline Trainer Output"
+    path: "models/baseline/*.joblib"
+    purpose: "Простой LogisticRegression baseline X4."
+    version: "не обнаружена"
+    status: "NO_MODEL_ARTIFACTS_FOUND"
+
+  - name: "STAS8 MOVE_EDGE_ML"
+    path: "не создан"
+    purpose: "Будущая оценка емкости long-хода по причинным признакам."
+    version: "STAS8_MOVE_CAPACITY_GRID_V1"
+    status: "PLANNED_NOT_TRAINED"
+
+policy:
+  production_selection: "STAS9 не объявляет production-модель автоматически."
+  broken_pointer_handling: "Только отчет; исправление или переключение требует отдельного разрешения."
+  legacy_collections: "Каждый glob охватывает все физические joblib этой семьи на дату аудита."
+  required_fields_for_new_models:
+    - "name"
+    - "path"
+    - "purpose"
+    - "version"
+    - "status"
+    - "manifest_path"
+    - "feature_contract"
+    - "train_window"
+    - "guard_status"

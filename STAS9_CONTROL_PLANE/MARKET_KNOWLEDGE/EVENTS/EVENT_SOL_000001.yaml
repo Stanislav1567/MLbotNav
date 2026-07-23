@@ -1,0 +1,26 @@
+schema_version: "1.0"
+event_id: EVENT_SOL_000001
+record_status: TEMPLATE_NOT_OBSERVED
+is_observation: false
+symbol: SOL
+timeframe:
+  - 1m
+event_type: LONG_SETUP
+features:
+  price_action:
+    local_low: true
+    breakout: true
+  volume:
+    spike: true
+  indicators:
+    ema:
+      status: ""
+result:
+  future_move:
+    candles: 15
+    outcome: unknown
+provenance:
+  source_id: ""
+  interval_start: ""
+  interval_end: ""
+notes: "Шаблон структуры. Реальное рыночное событие не наблюдалось и не подтверждалось."

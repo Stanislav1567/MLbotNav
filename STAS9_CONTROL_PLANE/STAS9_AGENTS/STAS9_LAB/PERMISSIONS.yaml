@@ -1,0 +1,27 @@
+policy_version: "1.0"
+agent_id: "STAS9_LAB"
+inherits: "../../PERMISSIONS/GLOBAL_POLICY.yaml"
+default_mode: "READ_ONLY"
+
+read:
+  allowed: true
+  scopes:
+    - "EXISTING_EXPERIMENT_ARTIFACTS_READ_ONLY"
+    - "STAS9_CONTROL_PLANE/**"
+
+write:
+  default_allowed: false
+  requires_user_confirmation: true
+  scopes_after_confirmation:
+    - "STAS9_CONTROL_PLANE/REPORTS/**"
+    - "STAS9_CONTROL_PLANE/RUNTIME/**"
+    - "STAS9_CONTROL_PLANE/LOGS/**"
+
+prohibited:
+  run_training: true
+  run_optuna: true
+  run_forward: true
+  modify_models: true
+  modify_legacy: true
+  modify_stas5_stas8: true
+  trade_live: true

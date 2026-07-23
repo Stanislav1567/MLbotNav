@@ -1,5 +1,586 @@
 # Current Status: калибровочный узел
 
+## STAS3 V2 Reset TZ 2026-07-09
+
+Статус: `STAS3_V1_ARCHIVED_STAS3_V2_TZ_DRAFT_READY_NO_ML_NO_OPTUNA`.
+
+По решению пользователя текущий Stas3 обнулен концептуально: старые runs не удаляются, но Stas3 V1 больше не является чистым source-of-truth для следующей работы.
+
+Новое ТЗ:
+
+`STAS3_PERCENT_LADDER_REVIEW/TZ_STAS3_V2_RESET_RU.md`
+
+Причина reset: `MFE MAX`, big-move pages и `reasonable TP` стали визуально/смыслово выглядеть как стратегия выхода и подсмотр будущего. Stas3 V2 должен вернуться к исходной задаче: процентная лестница движения и TP-audit по фазам, без превращения в торговую стратегию.
+
+Граница: код V2 еще не реализован. ML/export/training, Optuna, scorer, target-lock и API не запускались.
+
+## STAS3 Rebuild From Latest STAS2 2026-07-09
+
+Статус: `STAS3_REBUILT_FROM_STAS2_SHORT_LABELS_V1_NO_ML_NO_OPTUNA_POST_ENTRY_AUDIT`.
+
+После обновления Stas2-графиков Stas3 пересобран поверх актуального источника:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260508_20260512_short_labels_v1_20260709_083138`
+
+Новый Stas3 run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260508_20260512_from_stas2_short_labels_v1_20260709_084730`
+
+Итог: `214` rows, `0` skipped, `157` hit 1%, `93` reasonable TP, `89` mismatch к 1% TP, `46` noise, `9` fast clean, `68` late-pump dependent, `53` PNG, пустых PNG нет. Workbook читается, tests pass.
+
+Ограничение: `STAS2_MACRO_WAVES.csv` и `STAS2_CONTINUOUS_WAVES.csv` пока не вшиты в `STAS2_RECORDS.csv`, поэтому Stas3 использует новый источник entry-context, но не показывает WAVE-context как отдельные entry-колонки. Возможный следующий шаг - review-only join WAVE/GAP по `entry_time_utc`.
+
+Граница: Stas3 post-entry audit только для анализа TP/percent ladder. ML/export/training, Optuna, scorer, target-lock и API не запускались.
+
+## STAS2 Background And LONG Wave Visual Fix 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_BG_LONG_WAVE_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+В Stas2 исправлена визуальная каша между слабым фоном и реальным ходом цены вверх. Теперь на overview есть две отдельные полосы:
+
+1. `Фон` - общий range/volatility/path закрытого часа;
+2. `LONG` - направленная LONG-волна `low -> subsequent high` внутри часа.
+
+В entry context добавлены pre-entry поля:
+
+1. `pre_*_background_phase`;
+2. `pre_*_long_wave_up_from_low_pct`;
+3. `pre_*_long_wave_pullback_from_high_pct`;
+4. `pre_*_window_low_time_utc`;
+5. `pre_*_post_low_high_time_utc`.
+
+Контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_bg_long_wave_v0_20260706_131201`
+
+Итог: `110` entry rows, `78` Stas1 GOOD, `32` Stas1 BAD, `43` PNG, `0` пустых PNG, `bad_context_before_entry=0`, Excel читается, CSV BOM `EF-BB-BF`.
+
+Граница: Stas2 остается pre-entry only. Stas1 не менялся. TP/exit/percent ladder/MFE/MAE/5m post-entry blocks не добавлялись; это Stas3. ML/Optuna/scorer/target-lock/API не запускались.
+
+## STAS2 Market Phase Visual Review 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+По текущему Stas 2-5 процессу создан отдельный Stas2 visual review-контур:
+
+1. `STAS2_MARKET_PHASE_REVIEW/`;
+2. `src/mlbotnav/visual_entry_stas2_market_phase_review.py`;
+3. wrappers: `run_day.ps1`, `run_range.ps1`, `open_last_run.ps1`;
+4. артефакты: PNG overview, PNG entry context, `BROWSE_BY_DAY/`, CSV, JSON, `.xlsx`, RU-report.
+
+Полный контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_market_phase_review_v0_20260706_124134`
+
+Сводка: `110` entry rows, `78` Stas1 GOOD, `32` Stas1 BAD, `43` PNG, `0` пустых PNG, Excel читается, `bad_context_before_entry=0`.
+
+Важно: Stas2 рисует только pre-entry контекст. Все после входа, включая 5m-блоки, TP/exit, MFE/MAE и percent ladder, переносится в Stas3. ML/Optuna/scorer/target-lock/API не запускались.
+
+## STAS2 Excel Export Fix 2026-07-06
+
+Статус: `STAS2_EXCEL_EXPORT_UTF8_BOM_XLSX_READY_NO_ML_NO_OPTUNA`.
+
+Исправлена проблема просмотра Stas 2 таблиц в Excel:
+
+1. CSV теперь сохраняются в `utf-8-sig`, поэтому русский текст не должен превращаться в кракозябры.
+2. Пустые summary CSV получают заголовки, а не пустой файл.
+3. В каждый Stas2 run добавлен `STAS2_MARKET_PHASE_TABLES.xlsx` для нормального открытия в Excel.
+
+Проверочный run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260503_excel_xlsx_fix_20260706_112616`
+
+Открывать в Excel:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260503_excel_xlsx_fix_20260706_112616/STAS2_MARKET_PHASE_TABLES.xlsx`
+
+Граница: ML/Optuna/scorer/target-lock/API не запускались.
+
+## STAS2 Market Phase Session Audit 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_SESSION_AUDIT_READY_NO_ML_NO_OPTUNA`.
+
+По ТЗ `STAS 2-5 MARKET PHASE / PERCENT LADDER / ML CONTROL` выполнены первые два этапа строгого порядка:
+
+1. `STAS 1 inventory`: Stas 1 не переписан, зафиксирован как текущая база `STAS1_GOOD_LOW_REVIEW/`.
+2. `STAS 2 market phases and sessions`: построены фазы рынка по часам, сессиям, weekday/weekend и контексту перед Stas1 entry.
+
+Новый скрипт:
+
+`src/mlbotnav/visual_entry_stas2_market_phase_audit.py`
+
+Финальный run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260508_session6_daytype_v4_20260706_110942`
+
+Главный отчет:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260508_session6_daytype_v4_20260706_110942/STAS2_MARKET_PHASE_AUDIT_RU.md`
+
+Сводка: принято делать не `7` смешанных сессий, а `6` UTC-корзин времени плюс отдельный `day_type=weekday/weekend`. Weekend слабее weekday (`avg_phase_rank 1.48` против `2.87`), самая активная будняя UTC-корзина на срезе - `Пересечение Лондон/Нью-Йорк` (`avg_phase_rank 4.30`). Для входов отдельный файл `STAS2_STAS1_ENTRY_PHASE_CONTEXT.csv` считает фазу только по свечам до входа.
+
+Граница: ML/export/training/scorer/target-lock/Optuna/API не запускались. Следующий этап - только `STAS 3 percent ladder and entry/TP validation`, после принятия Stas 2.
+
+## STAS1 Block 1 Locked 2026-07-06
+
+Статус: `STAS1_BLOCK_1_RUN_POOL_LOCKED_NO_ML_NO_OPTUNA`.
+
+Пользователь зафиксировал: первый рабочий блок STAS1 считается собранным и рабочим.
+
+Что умеет Блок 1:
+
+1. запускать прогон по одному дню или диапазону дней;
+2. из прогона получать все low-кандидаты входа;
+3. сохранять полный набор артефактов: overview PNG, closeup PNG, `BROWSE_BY_DAY/`, CSV, JSON, RU-отчет;
+4. менять процент цели движения цены:
+   - `+1%` через `run_day_1pct.ps1`;
+   - `+0.5%` через `run_day_0p5.ps1`;
+   - другое значение через Python-параметр `--target-pct`, если понадобится отдельный wrapper;
+5. видеть, что при меньшем проценте обычно закрывается больше сделок и появляется больше кандидатов для review;
+6. проверять outcome после полуночи через `-OutcomeLookaheadHours`, не создавая новых входов за пределами выбранного периода.
+
+Граница: Блок 1 - это генератор visual review/outcome-пула. Это не ML/export/training, не scorer, не target-lock, не Optuna и не API.
+
+Следующий чат должен не пересобирать Блок 1, а продолжать от него: чистка шума low, ручной feedback, настройка фильтра значимого low.
+
+## STAS1 Carry Outcome 2026-07-06
+
+Статус: `STAS1_CARRY_OUTCOME_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+STAS1 теперь умеет разделять период входов и период проверки outcome:
+
+1. входы создаются только внутри выбранного `-Day .. -EndDay`;
+2. сделки до стартового дня не подтягиваются;
+3. новые входы после `-EndDay` не создаются;
+4. достижение `+1%` можно проверять после полуночи через `-OutcomeLookaheadHours`;
+5. future используется только как offline outcome label, не как сигнал и не как ML-фича.
+
+В `GOOD_1PCT_REVIEW_POOL_RECORDS.csv` добавлены поля `outcome_lookahead_hours`, `outcome_check_end_time_utc`, `hit_day_utc`, `hold_minutes_to_target`, `carried_overnight`, `outcome_status`.
+
+Smoke-run: `STAS1_GOOD_LOW_REVIEW/runs/stas1_smoke_carry48_20260507_20260508_v0_20260706_081637`.
+
+Сводка smoke-run: `2` дня, `148` кандидатов, `80` `GOOD_SAME_DAY`, `68` `GOOD_CARRIED_OVERNIGHT`, хвостов `python.exe` после запуска нет.
+
+Команда для пользовательской проверки:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-07 -EndDay 2026-05-08 -OutcomeLookaheadHours 48 -RunLabel stas1_20260507_20260508_carry48_v0 -RenderGoodLimit 0
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+```
+
+Граница: это review/outcome слой. ML/export/training/scorer/target-lock/Optuna/API не запускались.
+
+## STAS1 Browse By Day 2026-07-06
+
+Статус: `STAS1_BROWSE_BY_DAY_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+По запросу пользователя исправлен порядок просмотра STAS1 run: больше не нужно открывать десятки PNG отдельными окнами. Каждый новый run создает папку:
+
+`BROWSE_BY_DAY/`
+
+Внутри:
+
+1. `00_RUN_INDEX.png` - краткий индекс run по дням;
+2. `00_RUN_INDEX_RU.md` - текстовый индекс;
+3. отдельная папка на каждый день, например `2026-05-04/`;
+4. внутри дня `00_YYYYMMDD_OVERVIEW.png`, затем `01/02/..._ALL_CLOSEUPS_PAGE_*.png` строго по `entry_time_utc`;
+5. дневной `YYYYMMDD_RECORDS.csv`.
+
+Команды:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open index
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-04
+```
+
+Полный контрольный run: `STAS1_GOOD_LOW_REVIEW/runs/stas1_20260504_20260506_browse_by_day_v0_20260706_063954`.
+
+Сводка: `202` кандидата, `98` GOOD, `104` BAD, `3` дня обработано. Дневные папки: `2026-05-04`, `2026-05-05`, `2026-05-06`.
+
+Граница: это только визуальный review/outcome слой. ML/export/training/scorer/target-lock/Optuna/API не запускались.
+
+## STAS1 ALL Closeups GOOD+BAD 2026-07-06
+
+Статус: `STAS1_ALL_CLOSEUPS_BAD_X_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+По запросу пользователя в STAS1 добавлен отдельный визуальный слой, где на closeup-страницы попадают все кандидаты, а не только GOOD:
+
+1. `GOOD` остается зеленым треугольником;
+2. `BAD` показывается красным полупрозрачным крестом;
+3. старые `GOOD_1PCT_REVIEW_POOL_GOOD_CLOSEUPS_PAGE_*.png` сохранены и остаются страницами только хороших входов;
+4. новые `GOOD_1PCT_REVIEW_POOL_ALL_CLOSEUPS_PAGE_*.png` нужны для ручной чистки шума и будущих отрицательных примеров;
+5. это review-layer, не ML/export/training, не scorer, не target-lock, не Optuna и не API.
+
+Контрольный run `2026-05-03`:
+
+`STAS1_GOOD_LOW_REVIEW/runs/stas1_20260503_all_closeups_bad_x_v0_20260706_060244`
+
+Сводка: `58` кандидатов, `36` GOOD, `22` BAD, `8` страниц ALL closeups.
+
+Открыть последние ALL closeups:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open allcloseups
+```
+
+## STAS1 Good Low Review 2026-07-03
+
+Статус: `STAS1_V0_BASELINE_MAIN_LOW_REVIEW_SCRIPT_NO_ML_NO_OPTUNA`.
+
+По решению пользователя текущий основной рабочий контур поиска long low-кандидатов зафиксирован как `STAS1`.
+
+Видная папка:
+
+`STAS1_GOOD_LOW_REVIEW/`
+
+Основной движок остается в исходном коде:
+
+`src/mlbotnav/visual_entry_good_1pct_review_pool.py`
+
+Главная будущая зона калибровки шума:
+
+`src/mlbotnav/visual_entry_low_anchor_suggester.py`
+
+Смысл: не создавать новый скрипт с нуля и не откатываться вслепую, а использовать уже рабочий `GOOD_1PCT_REVIEW_POOL` как baseline. Пользователь будет смотреть 1 день, затем 3-4 дня, отмечать плохие low/дубли/сдвиги, после чего будет калиброваться фильтр значимого low.
+
+Созданы удобные команды:
+
+1. `STAS1_GOOD_LOW_REVIEW/run_day_1pct.ps1`;
+2. `STAS1_GOOD_LOW_REVIEW/run_day_0p5.ps1`;
+3. `STAS1_GOOD_LOW_REVIEW/open_last_run.ps1`;
+4. `STAS1_GOOD_LOW_REVIEW/README_RU.md`;
+5. `STAS1_GOOD_LOW_REVIEW/feedback/README_RU.md`;
+6. `STAS1_GOOD_LOW_REVIEW/snapshots/README_RU.md`.
+
+Новые `STAS1` runs сохраняются ближе к корню проекта:
+
+`STAS1_GOOD_LOW_REVIEW/runs/`
+
+Граница: это review/outcome-контур. Не ML, не Optuna, не scorer, не target-lock и не API. `+1%`/`+0.5%` являются offline outcome label для глаз, а не causal feature.
+
+## Bybit Hedge Mode Note 2026-07-02
+
+Статус: `HEDGE_MODE_API_NOTE_LOCKED_FUTURE_HEDGE_SIM_NO_REAL_API`.
+
+Зафиксировано для памяти процесса: на Bybit V5 hedge/both-sides режим позволяет держать LONG и SHORT одновременно по одному символу, если позиционный режим переключен в hedge. Для `linear` USDT perpetual рабочая логика API такая: `mode=3`, LONG-ордера идут с `positionIdx=1`, SHORT-ордера с `positionIdx=2`.
+
+Граница: это не текущий торговый запуск, не ML, не scorer, не Optuna и не target-lock. Реальные API-ордера, ключи, изменение настроек аккаунта и боевое подключение не выполнять без отдельного явного решения пользователя.
+
+Как использовать дальше: после `DCA_RISK_AUDIT_V0` можно сделать отдельный симуляционный слой `HEDGE_SIM_V0`, который сравнит перегруженные LONG DCA-корзины с вариантом защитного SHORT-хеджа. До этого hedge остается только risk-идеей, а не входным сигналом.
+
+## Daily 10 Long Trades Target Phase Ladder 2026-07-02
+
+Статус: `DAILY_10_LONG_TRADES_PHASE_LADDER_LOCKED_FOR_DCA_AUDIT_NO_ML_NO_OPTUNA`.
+
+Зафиксировано уточнение пользователя: дневная идея не сводится к одному жесткому `+1%`. Цель процесса - изучить, какие фазы движения реально дает рынок в разные дни и сессии:
+
+1. фаза `0.3-0.5%`;
+2. фаза `0.9-1.0%`;
+3. фаза `1.5-2.0%`;
+4. фаза `2.2-4.0%+`;
+5. дополнительные диапазоны добавляются после фактического аудита рынка, дня и сессии.
+
+Рабочая трактовка: `10` сделок в день - это целевой лимит/план по качественным long-входам, но не приказ добирать плохие входы до числа `10`. Для каждого дня нужно отдельно понять, какую фазу он дает: короткий scalp, обычный `1%`, расширенный импульс или сильный трендовый/новостной ход.
+
+Следующий этап `DCA_RISK_AUDIT_V0` должен считать не только hit `+1%`, а лестницу outcome-фаз, время до фазы, просадку, число одновременных входов, сессию и риск DCA-корзины. Это все остается offline outcome/audit, не causal feature для входа.
+
+Граница: ML/export/training, Optuna, scorer, target-lock и реальные API-ордера запрещены.
+
+## DCA Risk And Knife Map Rails 2026-07-02
+
+Статус: `SHORT_RANGE_DCA_RISK_RAILS_LOCKED_NO_ML_NO_OPTUNA`.
+
+Зафиксировано решение: сначала работаем только на коротком диапазоне `W18-W20` (`2026-04-27..2026-05-17`, `21` день), run `W18_W20_learning_20260702_082819`. Полный `126`-дневный прогон откладывается.
+
+Причина: `+1% review-pool` полезен для поиска потенциальных входов, но в нем есть ножи, серии докупок, перегруз DCA-корзин и слабые `SOFT` входы. Эти строки нельзя напрямую считать ML-good.
+
+Следующий этап: `DCA_RISK_AUDIT_V0` на `21` дне. Нужно посчитать DCA-корзины, просадку, число докупок, среднюю цену, время в минусе, поддержку при `10x/20x/50x/100x`, затем разложить входы на классы:
+
+1. `GOOD_CLEAN_RECLAIM`;
+2. `GOOD_DCA_SURVIVABLE`;
+3. `BORDERLINE_SOFT`;
+4. `BAD_FALLING_KNIFE`;
+5. `BAD_CLUSTER_OVERLOAD`;
+6. `BAD_NO_ROOM`;
+7. `REJECT_VISUAL`.
+
+`FULL_HISTORY_KNIFE_MAP_V0` на все доступные дни разрешен только после того, как на коротком диапазоне будут понятны классы, кластеры, визуальные отчеты и баги.
+
+Граница: ML/export/training, Optuna, scorer и target-lock запрещены.
+
+## Fresh Target-Led Low Anchor Entry 1pct Label Review V1 13 May 2026-07-02
+
+Статус: `LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Пункт рельсов: по уточнению пользователя low-свеча считается signal, вход строго на следующей свече, а погрешность для обучения живет только в execution/slippage band: `0bps`, `5bps`, `10bps`.
+
+Правило:
+
+1. `signal_time_utc` = свеча со значимым low;
+2. `entry_time_utc` = следующая свеча;
+3. `entry_price_0bps` = next open;
+4. `entry_price_5bps` = next open + `5bps`;
+5. `entry_price_10bps` = next open + `10bps`;
+6. target = `entry_price * 1.01`.
+
+Сводка по `SOLUSDT 1m 2026-05-13`:
+
+1. кандидатов: `87`;
+2. `GOOD_STRONG_HIT_1PCT_AT_10BPS`: `4`;
+3. `GOOD_NORMAL_HIT_1PCT_AT_5BPS`: `0`;
+4. `GOOD_SOFT_HIT_1PCT_AT_0BPS`: `1`;
+5. `BAD_NO_1PCT_EVEN_0BPS`: `82`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_FULL_DAY_20260513.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_20260513.csv`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_20260513.json`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_20260513_RU.md`.
+
+Граница: это review/dataset-label слой, не ML, не scorer, не target-lock и не Optuna. Future hit/no-hit не использовать как causal feature.
+
+## Fresh Target-Led Low Anchor 1pct Label Review 13 May 2026-07-02
+
+Статус: `LOW_ANCHOR_1PCT_LABEL_REVIEW_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Пункт рельсов: по запросу пользователя для `SOLUSDT 1m 2026-05-13` построен full-day review, где каждый значимый low-anchor кандидат получает offline outcome label по правилу `anchor_low_price * 1.01`.
+
+Сводка:
+
+1. кандидатов: `87`;
+2. `GOOD_ANCHOR_1PCT_POTENTIAL`: `8`;
+3. `BAD_NO_ANCHOR_1PCT`: `79`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_1pct_label_review_v0_20260513/LOW_ANCHOR_1PCT_LABEL_REVIEW_FULL_DAY_20260513.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_1pct_label_review_v0_20260513/LOW_ANCHOR_1PCT_LABEL_REVIEW_V0_20260513.csv`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_1pct_label_review_v0_20260513/LOW_ANCHOR_1PCT_LABEL_REVIEW_V0_20260513.json`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_1pct_label_review_v0_20260513/LOW_ANCHOR_1PCT_LABEL_REVIEW_V0_20260513_RU.md`.
+
+Граница: future outcome `+1%` используется только как label/audit после low-кандидата. Это не ML, не scorer, не target-lock и не Optuna.
+
+## Fresh Target-Led Low Anchor Suggester 13 May 2026-07-02
+
+Статус: `LOW_ANCHOR_ENTRY_SUGGESTER_V0_20260513_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Пункт рельсов: применен low-anchor suggester к `SOLUSDT 1m 2026-05-13`, чтобы автоматически предложить значимые локальные low для визуального отбора.
+
+Сделано два слоя:
+
+1. полный слой `min_score=2.5`: `87` кандидатов;
+2. strict-слой `min_score=5.0`: `18` кандидатов для первого просмотра глазами.
+
+В CSV/JSON для каждой точки зафиксированы `entry_price_plus_5bps` и `target_1pct_price`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_suggester_v0_20260513/`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_suggester_v0_20260513_strict_score5/`.
+
+Граница: это candidate review, не ручной gold-ledger, не scorer, не target-lock, не Optuna и не ML.
+
+## Fresh Target-Led Target 1pct Price Fix V0 2026-07-02
+
+Статус: `TARGET_1PCT_PRICE_FIX_V0_READY_NO_ML_NO_OPTUNA_NO_SCORER`.
+
+Пункт рельсов: для уже подтвержденных ручных эталонов `2026-05-14 M01..M19` и `2026-05-15 T15L confirmed 7` зафиксированы цены цели `+1%` от execution-цены `entry + 5bps`.
+
+Правило: `target_1pct_price = entry_price_plus_5bps * 1.01`.
+
+Сводка:
+
+1. всего входов: `26`;
+2. `2026-05-14`: `19` входов, до `+1%` дошли `13/19`;
+3. `2026-05-15`: `7` входов, до `+1%` дошли `4/7`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/target_1pct_price_fix_v0/TARGET_1PCT_PRICE_FIX_V0_20260702.csv`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/target_1pct_price_fix_v0/TARGET_1PCT_PRICE_FIX_V0_20260702.json`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/target_1pct_price_fix_v0/TARGET_1PCT_PRICE_FIX_V0_20260702_RU.md`.
+
+Граница: это не ML, не scorer, не Optuna и не target-lock. Цена `+1%` используется как outcome/reference для ручной базы, а не как признак выбора входа.
+
+## Fresh Target-Led Dataset Base V0 2026-07-01
+
+Статус: `TARGET_LED_DATASET_BASE_V0_READY_NO_ML_EXPORT_NO_TRAINING_NO_OPTUNA`.
+
+Пункт рельсов: собрать ручную базу good/reject из уже размеченных `SOLUSDT 1m` дней `2026-05-14` и `2026-05-15`, не запуская ML.
+
+Собрано:
+
+1. `2026-05-14`: `19` good `M01..M19`, `51` reject, `15` unlabeled review;
+2. `2026-05-15`: `7` good `T15L02/T15L06/T15L07/T15L08/T15L11/T15L13/T15L16`, `15` reject;
+3. всего строк: `107`;
+4. размечено для будущего supervised ML: `92`;
+5. good `ml_label=1`: `26`;
+6. reject `ml_label=0`: `66`;
+7. unlabeled review: `15`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v0/TARGET_LED_DATASET_BASE_V0_20260701.csv`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v0/TARGET_LED_DATASET_BASE_V0_20260701.json`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v0/TARGET_LED_DATASET_BASE_V0_20260701_RU.md`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v0/TARGET_LED_DATASET_BASE_V0_SUMMARY_20260701.png`.
+
+Блоки для будущего ML:
+
+1. core: `B015`, `B017`, `B010`, `B013`, `B019`, `B020`;
+2. context-only: `B014`, `B018`, `B008`, `B024`;
+3. blocked as standalone ALLOW: `B009`, `B021`, `B022`, `B023`, `B026`, `B016`, `B025`.
+
+Граница: это dataset base, не ML-export и не обучение. Все признаки считаются на закрытой signal-свече или раньше; entry price сохранен только как execution/control.
+
+## Fresh Target-Led B018 BOS Repeat 14 May 2026-07-01
+
+Статус: `B018_BOS_STRATEGY_REVIEW_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Пункт рельсов: по запросу пользователя отдельно повторен BOS/CHOCH-блок `B018`, без смешивания с остальными паспортами.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_FULL_DAY_20260514.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_ZOOM_PAGE_01_20260514.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_ZOOM_PAGE_02_20260514.png`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_ZOOM_PAGE_03_20260514.png`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_ZOOM_PAGE_04_20260514.png`;
+6. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_ZOOM_PAGE_05_20260514.png`;
+7. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_20260514.csv`;
+8. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_20260514.json`;
+9. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_b018_bos_review/B018_BOS_REVIEW_20260514_RU.md`.
+
+Короткий аудит: за день найдено `41` `BOS_UP`, `42` `BOS_DOWN`, `8` `CHOCH-like`. Это слишком часто для самостоятельного entry-сигнала. Для лонга рабочая интерпретация: не `BOS_DOWN` как вход, а связка `down break -> reclaim/CHOCH -> локальный entry`, либо `BOS_UP` как подтверждение продолжения после уже найденного входа.
+
+Вывод: `B018` оставить как structure-context/evidence. В первый паспорт не брать как одиночный `ALLOW`.
+
+## Fresh Target-Led V2E Summary Matrix 14 May 2026-07-01
+
+Статус: `V2E_SUMMARY_MATRIX_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Пункт рельсов: свести все уже сделанные слои `V2A/V2B/V2C/V2D` по ручному эталону `SOLUSDT 1m 2026-05-14 M01..M19`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_summary_v2e/V2E_SUMMARY_MATRIX_20260514.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_summary_v2e/V2E_SUMMARY_MATRIX_20260514.csv`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_summary_v2e/V2E_BLOCK_SUMMARY_20260514.csv`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_summary_v2e/V2E_SUMMARY_MATRIX_20260514.json`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_summary_v2e/V2E_SUMMARY_MATRIX_20260514_RU.md`.
+
+Короткий аудит:
+
+1. Слишком широкие context-блоки: `B014`, `B018`, `B009`, `B021`, `B022`, `B023`. Они объясняют слишком много входов и не могут быть самостоятельным entry-фильтром.
+2. Кандидаты evidence для первого паспорта: `B015`, `B017`, `B010`, `B013`, `B019`, `B020`.
+3. `B026_VWAP_DISTANCE` конфликтует `8/19`, поэтому его нельзя брать как простой allow-фильтр.
+
+Следующий подпункт: user review по V2E-скрину, затем выбрать первый рабочий кластер/паспорт-кандидат на 14 мая. Scorer, target-lock, Optuna и ML/export/promotion не запускались и остаются запрещены.
+
+## Fresh Target-Led V2D Pattern 14 May 2026-07-01
+
+Статус: `V2D_PATTERN_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Пункт рельсов: закрываем `SOLUSDT 1m 2026-05-14 M01..M19` по следующему паспортному слою, не переходя на `T15/2026-05-15`.
+
+Сделан pattern-подслой:
+
+1. `B019_CANDLE_PATTERNS`;
+2. `B020_DIVERGENCE_PATTERNS`;
+3. `B021_PATTERN_QUALITY`;
+4. `B022_CHART_PATTERNS`;
+5. `B023_PATTERN_CONFIRMATION`;
+6. `B024_PATTERN_COMPOSITE_ENTRY`.
+
+`B025_PATTERN_TRADE_CONTEXT` не использовался как active layer.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2d_patterns/V2D_PATTERN_FULL_DAY_20260514.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2d_patterns/V2D_PATTERN_ZOOM_PAGE_01_20260514.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2d_patterns/V2D_PATTERN_ZOOM_PAGE_02_20260514.png`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2d_patterns/V2D_PATTERN_ZOOM_PAGE_03_20260514.png`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2d_patterns/V2D_PATTERN_ZOOM_PAGE_04_20260514.png`;
+6. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2d_patterns/V2D_PATTERN_OVERLAY_20260514.json`;
+7. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2d_patterns/V2D_PATTERN_OVERLAY_20260514.csv`;
+8. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2d_patterns/V2D_PATTERN_OVERLAY_20260514_RU.md`.
+
+Короткий аудит: `B019` support `15/19`, conflict `1/19`; `B020` support `9/19`; `B021` support `19/19`; `B022` support `19/19`; `B023` support `17/19`; `B024` support `16/19`. Значит pattern-слой полезен как evidence, но `B021/B022` слишком широкие и не могут быть самостоятельным фильтром входа.
+
+Следующий подпункт: `V2E_SUMMARY_MATRIX` по 14 мая, где свести `M01..M19 -> V2A/V2B/V2C/V2D support/conflict/silent`. Scorer, target-lock, Optuna и ML/export/promotion не запускались и остаются запрещены.
+
+## Fresh Target-Led V2C ADX/Stochastic 14 May 2026-07-01
+
+Статус: `V2C_ADX_STOCH_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Коррекция пользователя: `RSI`, `MACD` и `EMA` уже смотрели раньше, поэтому на текущем проходе они не повторялись. Вместо них наложен momentum-подслой:
+
+1. `B008_ADX14` / `F016_ADX14_ALLOW`;
+2. `B009_STOCH14` / `F017_F018_STOCH14_ALLOW`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2c_adx_stoch/V2C_ADX_STOCH_FULL_DAY_20260514.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2c_adx_stoch/V2C_ADX_STOCH_ZOOM_PAGE_01_20260514.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2c_adx_stoch/V2C_ADX_STOCH_ZOOM_PAGE_02_20260514.png`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2c_adx_stoch/V2C_ADX_STOCH_ZOOM_PAGE_03_20260514.png`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2c_adx_stoch/V2C_ADX_STOCH_ZOOM_PAGE_04_20260514.png`;
+6. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2c_adx_stoch/V2C_ADX_STOCH_OVERLAY_20260514.json`;
+7. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2c_adx_stoch/V2C_ADX_STOCH_OVERLAY_20260514.csv`;
+8. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2c_adx_stoch/V2C_ADX_STOCH_OVERLAY_20260514_RU.md`.
+
+Короткий аудит: `B008_ADX14` поддержал `16/19`, conflict `1/19`; `B009_STOCH14` поддержал `19/19`, conflict `0/19`. Значит Stochastic в текущей трактовке слишком широкий и не может быть самостоятельным entry-фильтром. ADX тоже скорее режим/контекст силы движения, а не направление.
+
+Правильный следующий подпункт после пользовательского visual review: `V2D_PATTERN_LAYER` на 14 мая (`B019-B024`). `B025` не брать active без отдельного решения. Scorer, target-lock, Optuna и ML/export/promotion не запускались и остаются запрещены.
+
+## Fresh Target-Led V2B Flow/Density 14 May 2026-07-01
+
+Статус: `V2B_FLOW_DENSITY_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Коррекция рельсов: пользователь справедливо остановил преждевременный переход к `T15/2026-05-15`. День `SOLUSDT 1m 2026-05-14 M01..M19` еще не закрыт по всем паспортным блокам, поэтому перенос на 15 мая временно отложен.
+
+Сделан слой `V2B_FLOW_DENSITY_LAYER` для 14 мая:
+
+1. `B010_VOLUME_FLOW`: volume change, volume z-score, delta volume;
+2. `B013_DENSITY_VPOC`: VPOC 60/240, bin/share/cluster context, VPOC drift;
+3. `B026_VWAP_DISTANCE`: session VWAP distance.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2b/V2B_FLOW_DENSITY_FULL_DAY_20260514.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2b/V2B_FLOW_DENSITY_ZOOM_PAGE_01_20260514.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2b/V2B_FLOW_DENSITY_ZOOM_PAGE_02_20260514.png`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2b/V2B_FLOW_DENSITY_OVERLAY_20260514.json`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2b/V2B_FLOW_DENSITY_OVERLAY_20260514.csv`;
+6. `reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2b/V2B_FLOW_DENSITY_OVERLAY_20260514_RU.md`.
+
+Короткий аудит по `M01..M19`: `B010` поддержал `13/19`, `B013` поддержал `12/19`, `B026` поддержал `8/19` и часто конфликтует. Это evidence/context слой, не готовый сигнал.
+
+Правильный следующий подпункт: `V2C_MOMENTUM_LAYER` на 14 мая (`B006 RSI`, `B007 MACD`). `B005 EMA` пока не трогаем как active condition. Scorer, target-lock, Optuna и ML/export/promotion не запускались и остаются запрещены.
+
+## Fresh Target-Led V2A Structure User Review Audit 2026-07-01
+
+Статус: `V2A_STRUCTURE_20260514_VISUAL_AUDIT_DONE_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Пункт рельсов: `V2A_STRUCTURE_LAYER`.
+
+По текущему запросу пользователя “поехали” выполнен короткий visual-аудит уже собранного V2A-слоя по `SOLUSDT 1m 2026-05-14 M01..M19`.
+
+Аудит:
+`reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_USER_REVIEW_AUDIT_20260701_RU.md`.
+
+Вывод:
+
+1. `B014_LEVEL_RANGE_CHANNEL` поддерживает `18/19`, поэтому это широкий structural context, не самостоятельный фильтр входа.
+2. `B018_MARKET_STRUCTURE` поддерживает `17/19`, поэтому это тоже context/evidence, не `ALLOW`.
+3. `B017_BREAKOUT_RETEST` выглядит полезнее для retest/reclaim, но требует локального окна.
+4. `B015_FIBONACCI_GRID` полезен точечно, но остается `context_only`, пока нет правила свежести Fibo-ноги.
+
+Эта прежняя строка superseded пользовательской правкой: не переносить `V2A_STRUCTURE_LAYER` на `2026-05-15` как следующий шаг. Сначала закрыть 14 мая по `V2B/V2C/V2D/V2E`. Scorer, target-lock, Optuna и ML/export/promotion остаются запрещены.
+
 ## Fresh Target-Led V2A Structure Overlay 14 May 2026-07-01
 
 Статус: `V2A_STRUCTURE_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
@@ -48,7 +629,7 @@ src/mlbotnav/visual_entry_strategy_passport_overlay_v2a.py
 
 На них видны pivot `A`, pivot `B`, линия `A -> B`, direction, signal, entry и уровни сетки. Предварительный вывод: Fibo полезен как контекст, но не должен быть главным сигналом без правила свежести/валидности ноги, потому что часть натяжек далеко от текущего входа.
 
-Следующий шаг: пользователь смотрит PNG и говорит `норм / фиксить / шумно`; после этого либо править визуальный слой 14 мая, либо тем же V2A наложить `2026-05-15` на 7 входов.
+Следующий шаг superseded: пользовательская правка зафиксировала, что после V2A надо закрывать остальные блоки 14 мая, а не переносить слой на `2026-05-15`.
 
 ## Fresh Target-Led Existing Passport Reconciliation 2026-07-01
 
@@ -82,7 +663,7 @@ Manifest-сверка:
 Активные рельсы обновлены:
 `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_RAILS_RU.md`.
 
-Следующий конкретный шаг: `V2A_STRUCTURE_LAYER` по двум эталонам `M01..M19` за `2026-05-14` и 7 входам T15 за `2026-05-15`.
+Следующий конкретный шаг superseded: сначала завершить паспортные слои по `M01..M19` за `2026-05-14`; `T15` остается справочным вторым эталоном на потом.
 
 Граница: scorer, target-lock, Optuna, ML/export/promotion запрещены. Ручные входы `19+7` не менять без нового решения пользователя.
 
@@ -7621,3 +8202,546 @@ Seed-аудит на `C02E01..C02E16`: проходят только `C02E03`, `
 Следующий подпункт: `8.3.1_USER_VISUAL_REVIEW_C02A_RULES_V0_BEFORE_SCORER`.
 
 До пользовательского visual review запрещены scorer, target-lock, multi-day, Optuna и ML/export/promotion.
+## Fresh Target-Led Dataset Base V1 After Unlabeled15 Feedback 2026-07-01
+
+Статус: `TARGET_LED_DATASET_BASE_V1_AFTER_UNLABELED15_FEEDBACK_READY_NO_ML_EXPORT_NO_TRAINING_NO_OPTUNA`.
+
+Пользователь проверил график `15 unlabeled review candidates` по `SOLUSDT 1m 2026-05-14` и уточнил разметку:
+
+- `LA018`, `LA020` — нормальные входы, приняты как дополнительные positive/gold для будущего supervised-dataset;
+- остальные `13` текущих авто-точек из этого листа — отклонены как слабые, некорректные или мимо;
+- `LA026`, `LA048`, `LA057`, `LA059`, `LA062` имеют пользовательские красные стрелки: текущая авто-точка отклонена, а новая точка по стрелке остается `arrow_shift_pending` и не добавлена как gold без отдельного zoom/time.
+
+Итог счетчиков V1 по текущим точкам: всего `107`, positive `28`, negative `79`, unlabeled `0`. Это только база разметки, не ML/export/training/scorer/Optuna.
+
+Артефакты:
+1. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v1_after_unlabeled15_feedback_v1/TARGET_LED_UNLABELED15_USER_FEEDBACK_V1_20260701.csv`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v1_after_unlabeled15_feedback_v1/TARGET_LED_DATASET_BASE_V1_AFTER_UNLABELED15_FEEDBACK_20260701.csv`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v1_after_unlabeled15_feedback_v1/TARGET_LED_DATASET_BASE_V1_AFTER_UNLABELED15_FEEDBACK_20260701_RU.md`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v1_after_unlabeled15_feedback_v1/TARGET_LED_UNLABELED15_USER_FEEDBACK_V1_ON_CHART_20260701.png`.
+
+Следующий шаг по рельсам: не запускать ML. Сначала разобрать `arrow_shift_pending` только через отдельный zoom/time или перейти к аудиту блоков/фичей по уже размеченным `28/79`.
+## Fresh Target-Led Dataset Quality Audit V0 2026-07-01
+
+Статус: `TARGET_LED_DATASET_QUALITY_AUDIT_V0_READY_NO_ML_EXPORT_NO_TRAINING_NO_OPTUNA`.
+
+По базе V1 (`28` positive / `79` negative) выполнен no-ML аудит блоков и типов. Главный вывод: простая сумма совпавших блоков не работает как сигнал входа. `safe_core_hit_count=5/6` часто шумит, поэтому правило "больше блоков = лучше вход" запрещено.
+
+Первые кандидаты для узкого паспорта: `SUPPORT_RETEST_LOW` и `TREND_DIP_CONTINUATION`. `LOW_ANCHOR_RECLAIM` в текущем виде блокируется как самостоятельный allow (`0/16` positive). `B013_density_support`, `B020_divergence_support`, `bull_divergence_recent8` и широкие формы `B015/B017` нельзя отдавать как standalone allow.
+
+Артефакты:
+1. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_quality_audit_v0/TARGET_LED_DATASET_QUALITY_AUDIT_V0_20260701_RU.md`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_quality_audit_v0/TARGET_LED_DATASET_QUALITY_AUDIT_V0_20260701.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_quality_audit_v0/TARGET_LED_DATASET_QUALITY_AUDIT_V0_FEATURE_BLOCKS_20260701.csv`.
+
+Следующий пункт: собрать `V1_RULE_CANDIDATE` не для ML, а для визуального паспорта первого узкого типа.
+## Fresh Target-Led ML Dataset Ladder 2026-07-01
+
+Статус: `FRESH_TARGET_LED_ML_DATASET_LADDER_LOCKED_NO_ML_NO_OPTUNA`.
+
+Зафиксирована лестница работы от ручной разметки к будущему ML без перепрыгивания шагов:
+
+`docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_ML_DATASET_LADDER_RU.md`.
+
+Главное:
+
+- текущая база V1: `28` good, `79` bad, `0` unlabeled;
+- ML/export/training/Optuna запрещены без отдельных этапов;
+- следующий подпункт строго один: `2.1_SUPPORT_RETEST_LOW_REVIEW_SHEET_9_GOOD_16_BAD_NO_ML_NO_OPTUNA`;
+- после review-sheet идет только draft-паспорт `SUPPORT_RETEST_LOW`, не ML.
+## Fresh Target-Led SUPPORT_RETEST_LOW Review Sheet V0 2026-07-01
+
+Статус: `SUPPORT_RETEST_LOW_REVIEW_SHEET_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Выполнен пункт лестницы `2.1_SUPPORT_RETEST_LOW_REVIEW_SHEET_9_GOOD_16_BAD_NO_ML_NO_OPTUNA`.
+
+Собран review-sheet по `SUPPORT_RETEST_LOW`: `25` примеров, из них `9` good и `16` bad. Это визуальный разбор и feature-audit, не ML и не scorer.
+
+Первичный вывод: голый всплеск объема, простая сумма core-блоков, `retest_near_signal`, `bos_down_now` и `choch_like_near_signal` не отделяют good от bad как standalone allow. Для draft-паспорта нужно описывать структуру low/reclaim и запрет на вход в продолжающемся проливе.
+
+Артефакты:
+1. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_review_sheet_v0/SUPPORT_RETEST_LOW_REVIEW_SHEET_V0_20260701_RU.md`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_review_sheet_v0/SUPPORT_RETEST_LOW_REVIEW_SHEET_V0_9GOOD_16BAD_20260701.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_review_sheet_v0/SUPPORT_RETEST_LOW_REVIEW_SHEET_V0_ROWS_20260701.csv`.
+
+Следующий шаг только после user review `норм / фиксить`: draft-паспорт `SUPPORT_RETEST_LOW`.
+## Fresh Target-Led SUPPORT_RETEST_LOW Passport Draft V0 2026-07-01
+
+Статус: `SUPPORT_RETEST_LOW_PASSPORT_DRAFT_V0_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Выполнен пункт лестницы `3.1_DRAFT_PASSPORT_SUPPORT_RETEST_LOW_AFTER_REVIEW_SHEET_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Создан draft-паспорт для `SUPPORT_RETEST_LOW` после подтвержденного review-sheet `9 good / 16 bad`.
+
+Ключевые решения паспорта:
+
+- core logic: локальный low/support + reclaim/return после продавливания + entry next open;
+- reject guards: продолжающийся пролив, запоздалый вход, volume-spike как единственная причина, middle-range noise, allow по простой сумме блоков;
+- RSI/MACD/ADX/Stoch, BOS/CHOCH, Fibo, density/VPOC, candle/wick — context-only/evidence, не standalone allow;
+- candidate guards: `volume_ratio20 < 4.5`, `range_pos_60 0.02..0.43`, `room_to_high_60_bps >= 28`, `dist_from_low_60_bps <= 24`;
+- good, которые паспорт обязан сохранить: `M03`, `M04`, `M16`, `M17`, `M18`, `M19`, `T15L02`, `T15L08`, `T15L16`.
+
+Артефакты:
+1. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_passport_draft_v0/SUPPORT_RETEST_LOW_PASSPORT_DRAFT_V0_20260701_RU.md`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_passport_draft_v0/SUPPORT_RETEST_LOW_PASSPORT_DRAFT_V0_20260701.json`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_passport_draft_v0/SUPPORT_RETEST_LOW_PASSPORT_DRAFT_V0_CARD_20260701.png`.
+
+Следующий шаг только после user review `норм / фиксить`: entry-only PNG/scorer seed-check по `SUPPORT_RETEST_LOW`. ML/export/training/Optuna/target-lock запрещены.
+## Fresh Target-Led SUPPORT_RETEST_LOW Entry-Only Scorer V0 2026-07-02
+
+Статус: `SUPPORT_RETEST_LOW_ENTRY_ONLY_SCORER_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_TARGET_LOCK`.
+
+Выполнен пункт `4.1_ENTRY_ONLY_SCORER_SEED_CHECK_SUPPORT_RETEST_LOW_NO_TARGET_LOCK_NO_ML_NO_OPTUNA` после user `ок` по draft-паспорту.
+
+Seed-check применил candidate numeric guards паспорта к `25` размеченным примерам `SUPPORT_RETEST_LOW`.
+
+Результат:
+
+- good kept: `9/9`;
+- good missed: `0`;
+- bad rejected: `8/16`;
+- bad accepted / false entries: `8/16`;
+- visual status: `SEED_MUST_KEEP_PASS_FALSE_ENTRIES_TOO_MANY`.
+
+Вывод: V0 не теряет хорошие входы, но слишком грязный для lock. Следующий шаг: `V1_REJECT_GUARDS` по 8 оранжевым false-positive (`LA033`, `LA034`, `LA041`, `LA048`, `LA065`, `T15L17`, `T15L18`, `T15L20`) без потери `9` good.
+
+Артефакты:
+1. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_entry_only_scorer_v0/SUPPORT_RETEST_LOW_ENTRY_ONLY_SCORER_V0_20260702_RU.md`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_entry_only_scorer_v0/SUPPORT_RETEST_LOW_ENTRY_ONLY_SCORER_V0_SEED_CHECK_20260702.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_entry_only_scorer_v0/SUPPORT_RETEST_LOW_ENTRY_ONLY_SCORER_V0_RESULTS_20260702.csv`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_entry_only_scorer_v0/SUPPORT_RETEST_LOW_ENTRY_ONLY_SCORER_V0_20260702.json`.
+
+Target-lock, multi-day, Optuna и ML/export/training запрещены.
+
+## Fresh Target-Led Outcome Low Miner V0 2026-07-02
+
+Статус: `OUTCOME_LOW_MINER_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_SCORER`.
+
+По предложению пользователя сделан отдельный тестовый outcome-miner, не ломающий паспортную цепочку: искать low-кандидаты causal/past-only способом, вход считать на `open` следующей свечи с `+5 bps`, а будущий ход `+1.5%` использовать только как offline-метку исхода.
+
+Границы:
+
+- это не ML/export/training;
+- это не scorer;
+- это не target-lock;
+- это не Optuna;
+- future `+1.5%` запрещен как признак выбора входа и используется только как outcome-label для ручного review.
+
+Параметры V0: `SOLUSDT 1m`, дни `2026-05-14` и `2026-05-15`, target `entry_price_plus_5bps * 1.015`, окно исхода `360` минут.
+
+Счетчики:
+
+- `2026-05-14`: `14` кандидатов, `5` дошли до `+1.5%`, `9` не дошли;
+- `2026-05-15`: `12` кандидатов, `1` дошел до `+1.5%`, `11` не дошли.
+
+Вывод: как ускоритель поиска сильных low-кандидатов идея полезна, но порог `+1.5%` слишком строгий как единственный способ собрать все хорошие ручные входы. После user review можно сделать соседний outcome-тест `+0.8%/+1.0%` или отдельный `room/path` label, не включая ML.
+
+Артефакты:
+
+1. `src/mlbotnav/visual_entry_outcome_low_miner_v0.py`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_20260702_RU.md`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_CANDIDATES_20260702.csv`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260514_20260702.png`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260515_20260702.png`;
+6. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_FULL_DAY_20260514_20260702.png`;
+7. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_FULL_DAY_20260515_20260702.png`.
+
+Следующий шаг: показать пользователю hit zoom PNG и получить `норм / фиксить / нужен тест меньшего порога`. Паспортная цепочка `SUPPORT_RETEST_LOW V1_REJECT_GUARDS` остается не отмененной, но сейчас не продолжается автоматически.
+
+## Fresh Target-Led Outcome Low Miner 1pct Comparison 2026-07-02
+
+Статус: `OUTCOME_LOW_MINER_V0_TARGET_1PCT_COMPARISON_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_SCORER`.
+
+По просьбе пользователя выполнен такой же outcome-miner тест, но с target `+1.0%` вместо `+1.5%`. Логика выбора low-кандидата не менялась; изменена только offline-метка исхода.
+
+Счетчики `+1.0%`:
+
+- `2026-05-14`: `14` кандидатов, `7` дошли до `+1.0%`, `7` не дошли;
+- `2026-05-15`: `12` кандидатов, `3` дошли до `+1.0%`, `9` не дошли.
+
+Сравнение с `+1.5%`: порог `+1.0%` дает больше рабочих кандидатов, особенно на слабом/падающем `2026-05-15`, и выглядит полезнее для ускоренного сбора review-примеров. Это все еще не ML/export/training/scorer/target-lock.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0_target_1pct/OUTCOME_LOW_MINER_V0_20260702_RU.md`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0_target_1pct/OUTCOME_LOW_MINER_V0_CANDIDATES_20260702.csv`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0_target_1pct/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260514_20260702.png`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0_target_1pct/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260515_20260702.png`.
+
+## Fresh Target-Led Outcome Miner Correction 2026-07-02
+
+Статус: `OUTCOME_MINER_WIDE_SWEEP_MARKED_DIAGNOSTIC_ONLY_RETURN_TO_SIGNIFICANT_LEVELS_NO_ML_NO_OPTUNA`.
+
+После замечания пользователя перечитаны рельсы. В `FRESH_TARGET_LED_RAILS_RU.md` явно зафиксировано, что `cooldown-сетки` запрещены как замена логике входа. Поэтому широкий sweep `cooldown 5 / min_score 0` нельзя считать рабочим путем.
+
+Коррекция:
+
+- широкий `outcome_low_miner_v0_wide_sweep_0p8pct` остается только диагностическим артефактом, показывающим, что узкий фильтр пропускал часть зон;
+- рабочий путь возвращается к ручной target-led логике: значимый локальный low/уровень, left-context, signal close, entry next open;
+- outcome `+0.8%/+1.0%/+1.5%` может быть только offline-меткой для review, не сигналом и не способом выбирать вход;
+- cooldown можно использовать только как техническую дедупликацию после найденного значимого уровня, но не как главный инструмент поиска.
+
+Следующий правильный шаг: построить не перебор микролоев, а `SIGNIFICANT_LEVEL_LOW_REVIEW_V0`: локальные значимые уровни/low по уже изученной логике, затем показать пользователю entry/target outcome на этих уровнях.
+## 2026-07-02 Good 1pct Review Pool
+
+Статус: `GOOD_1PCT_REVIEW_POOL_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Создан быстрый сборщик review-пула для значимых low-кандидатов: `src/mlbotnav/visual_entry_good_1pct_review_pool.py`.
+
+Рабочее правило: low-кандидат ищется past-only, `signal` = свеча low, `entry` = следующая свеча `open`, execution-аудит = `0/5/10bps`, основной расчет = `entry open + 5bps`, цель = `+1%` от execution-цены.
+
+Smoke-запуск на `2026-05-13` дал `87` кандидатов: `5` GOOD и `82` BAD. Артефакты лежат в `reports/final_review/visual_entry_v3/fresh_target_led/good_1pct_review_pool/smoke_20260513_20260702_080455`.
+
+Mini-run W20 `2026-05-13..2026-05-15` дал `261` кандидат: `73` GOOD и `188` BAD. Артефакты лежат в `reports/final_review/visual_entry_v3/fresh_target_led/good_1pct_review_pool/W20_mini_zoomfix_20260702_081003`.
+
+Вывод: `+1%` outcome полезен как ускоренный review-pool, но не является gold-разметкой без ручного просмотра.
+
+Добавлена VS Code задача `Visual Entry: Good 1pct Review Pool (NO ML/OPTUNA)`.
+
+Граница: это не ML/export/training, не scorer, не target-lock и не Optuna. Outcome `+1%` используется только как offline label для ручного review.
+
+## Fresh Target-Led DCA Risk Audit V0 2026-07-02
+
+Статус: `DCA_RISK_AUDIT_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_API`.
+
+Выполнен следующий разрешенный шаг после обсуждения DCA/ножей/перегруза: поверх уже готового `GOOD_1PCT` learning pool `W18-W20` построен risk-audit, который не ищет новые входы и не запускает ML. Он считает, сколько long-сделок висит одновременно, сколько времени сделка ждет `+1%`, какая просадка до цели/конца дня и какие входы зависят от позднего пампа.
+
+Команда:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_dca_risk_audit_v0 --pool-run-dir reports\final_review\visual_entry_v3\fresh_target_led\good_1pct_review_pool\W18_W20_learning_20260702_082819 --run-label W18_W20_dca_risk --selected-limit-per-day 10 --late-hold-minutes 360 --overload-open-count 10 --render-top-days 3
+```
+
+Результат:
+
+- дней обработано: `21`;
+- записей пула: `1528`;
+- GOOD из пула: `573`;
+- BAD из пула: `955`;
+- если брать все GOOD, максимум одновременно открыто: `44`;
+- если брать первые `10` GOOD-сигналов в день, максимум одновременно открыто: `10`;
+- худшая basket-просадка по all GOOD: `-2.685835%`;
+- selected10 классы: `A_FAST_CLEAN=41`, `B_DCA_SURVIVABLE=52`, `C_LATE_PUMP_DEPENDENT=77`, `E_FALLING_KNIFE_NO_1PCT=7`, `E_FALLING_KNIFE_DEEP_DD=10`, `F_NO_1PCT_ROOM=2`.
+
+Главный вывод: `+1% hit` сам по себе не равен good-сделке для ML. Дни `2026-05-02`, `2026-05-14`, `2026-05-11`, `2026-05-08`, `2026-05-03` показывают перегруз: много сделок может висеть до позднего пампа. Эти режимы надо отделять как risk class / hard-negative / отдельную DCA-политику, а не отдавать в ML как чистый long-сигнал.
+
+Артефакты:
+
+1. `src/mlbotnav/visual_entry_dca_risk_audit_v0.py`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_REPORT_RU.md`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_TRADES.csv`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_DAYS.csv`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_BASKETS.csv`;
+6. `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_SUMMARY.png`;
+7. `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_TOP_DAY_20260502.png`.
+
+Следующий шаг: пользователь смотрит summary/top-day PNG и подтверждает, какие классы считать допустимыми для будущего датасета. До этого запрещено расширяться на full-history, запускать ML/export/training/scorer/target-lock/Optuna/API.
+
+### DCA Risk Audit V0 Entry Marker Visual Fix 2026-07-02
+
+После замечания пользователя исправлена визуализация entry на top-day PNG: треугольник теперь рисуется на фактическом `entry_open_price`, а расчетное исполнение `entry +5bps` показывается отдельной короткой белой меткой. Метрики риска не изменились.
+
+Исправленный run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_entryopen_fix_20260702_161630`.
+
+Главный PNG для проверки:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_entryopen_fix_20260702_161630/DCA_RISK_AUDIT_V0_TOP_DAY_20260502.png`.
+
+### DCA Risk Audit V0 2026-05-02 Closeup Pages 2026-07-02
+
+После замечания пользователя, что full-day обзор непригоден для ручной правки входов, добавлен closeup-режим: `--closeup-day 2026-05-02 --closeup-per-page 9`.
+
+Новый run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260502_closeups_20260702_162715`.
+
+Проверено: в closeup-листы попали все `44` GOOD-сделки дня `2026-05-02`, по `9` панелей на страницу. Треугольник = `entry_open_price`, белая черта = `entry +5bps`, красная точка/линия = low/signal.
+## 2026-07-02 Significant Low Calibration V0
+
+Статус: `SIGNIFICANT_LOW_CALIBRATION_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+По замечанию пользователя, что нельзя брать все low подряд, добавлен отдельный слой калибровки значимого low: `src/mlbotnav/visual_entry_significant_low_calibration_v0.py`.
+
+Смысл слоя:
+
+1. пользовательский крест = `USER_REJECT_CURRENT_ENTRY`;
+2. пользовательская стрелка/сдвиг = `USER_SHIFT_PENDING_REANCHOR`, это не готовая сделка, а место для отдельного zoom-переякоря;
+3. без ручного reject low должен быть новым low в 60/180m контексте и иметь достаточное падение от prior high;
+4. повтор внутри одного basin режется как дубль, если нет свежего более низкого low;
+5. outcome `+1%` остается offline label, не causal feature.
+
+Run по `2026-05-02`:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_20260502_v0_20260702_181433`
+
+Итог:
+
+- строк дня: `54`;
+- `KEEP_SIGNIFICANT_LOW_V0`: `10`;
+- `USER_SHIFT_PENDING_REANCHOR`: `10`;
+- `USER_REJECT_CURRENT_ENTRY`: `24`;
+- `REJECT_NOT_SIGNIFICANT_LOW_V0`: `6`;
+- `REJECT_DUPLICATE_BASIN_LOW_V0`: `4`.
+
+Главный вывод: текущий `GOOD_1PCT` pool нельзя отдавать в ML как есть. Новый слой уже отделяет значимые low от микролоев, дублей, ручных rejects и мест, где нужно переякорить вход ниже. Следующий ручной шаг: посмотреть 10 зеленых `KEEP_SIGNIFICANT_LOW_V0` и 10 желтых `USER_SHIFT_PENDING_REANCHOR`, затем решить параметры V1.
+
+Границы: ML/export/training/scorer/target-lock/Optuna/API не запускались и остаются запрещены без отдельного разрешения.
+
+### 2026-07-02 User Actual Overview V1B
+
+Пользователь прислал актуальную разметку поверх overview. Перечеркнутые `LA001`, `LA004`, `LA005`, `LA006`, `LA008`, `LA025`, `LA027`, `LA034`, `LA036`, `LA047`, `LA050`, `LA053`, `LA054` перенесены в `USER_REJECT_CURRENT_ENTRY`.
+
+Актуальный run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_20260502_user_actual_v1b_20260702_185032`
+
+Итог актуального слоя:
+
+- `KEEP_SIGNIFICANT_LOW_V0`: `7` (`LA002`, `LA015`, `LA018`, `LA021`, `LA040`, `LA048`, `LA051`);
+- `USER_SHIFT_PENDING_REANCHOR`: `2` (`LA007`, `LA028`);
+- `USER_REJECT_CURRENT_ENTRY`: `37`;
+- `REJECT_NOT_SIGNIFICANT_LOW_V0`: `6`;
+- `REJECT_DUPLICATE_BASIN_LOW_V0`: `2`.
+
+Рабочий вывод: на этом дне после актуального ручного feedback остается `7` потенциально хороших значимых low и `2` точки для отдельного переякоря. Это еще не ML-датасет, а ручной review layer.
+
+### 2026-07-02 User Actual Overview V1C3
+
+Статус: `SIGNIFICANT_LOW_USER_ACTUAL_V1C3_READY_FOR_REVIEW_NO_ML_NO_OPTUNA`.
+
+По уточнению пользователя после просмотра правого участка overview:
+
+1. `LA048` не подходит и перенесен в `USER_REJECT_CURRENT_ENTRY`;
+2. соседний автоматический `LA049` также принудительно отклонен, чтобы он не заменял ошибочный `LA048`;
+3. хорошая нижняя точка `LA050` принята как `USER_APPROVE_CURRENT_ENTRY` и оставлена в `KEEP_SIGNIFICANT_LOW_V0`;
+4. красные reject-кресты и линии сделаны менее агрессивными по прозрачности.
+
+Актуальный run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_20260502_user_actual_v1c3_20260702_190227`
+
+Итог актуального слоя:
+
+- `KEEP_SIGNIFICANT_LOW_V0`: `6` (`LA002`, `LA015`, `LA018`, `LA021`, `LA040`, `LA050`);
+- `USER_SHIFT_PENDING_REANCHOR`: `2` (`LA007`, `LA028`);
+- `USER_REJECT_CURRENT_ENTRY`: `38`;
+- `REJECT_NOT_SIGNIFICANT_LOW_V0`: `6`;
+- `REJECT_DUPLICATE_BASIN_LOW_V0`: `2`.
+
+Контроль по спорному месту: `LA048` = reject, `LA049` = reject, `LA050` = keep/approve, `LA051` = duplicate-basin reject.
+
+Граница: это только ручной significant-low review layer. ML/export/training/scorer/target-lock/Optuna/API не запускались.
+
+### 2026-07-03 Reanchor Zoom V0 For User Arrows
+
+Статус: `SIGNIFICANT_LOW_REANCHOR_ZOOM_V0_READY_FOR_USER_ARROWS_NO_ML_NO_OPTUNA`.
+
+По новому скриншоту пользователя три красных блока вынесены в отдельный крупный zoom-лист для точного ручного указания low стрелкой:
+
+1. `RB01_LA007_REANCHOR`: текущий `LA007` желтый, это только placeholder для переякоря;
+2. `RB02_LA028_REANCHOR`: текущий `LA028` желтый, это только placeholder для переякоря;
+3. `RB03_LA050_AREA`: `LA048/LA049` reject, `LA050` текущий keep; пользователь может подтвердить или показать точнее.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_zoom_v0_20260702_191450/SIGNIFICANT_LOW_REANCHOR_ZOOM_V0_20260502.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_zoom_v0_20260702_191450/SIGNIFICANT_LOW_REANCHOR_ZOOM_V0_20260502.json`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_zoom_v0_20260702_191450/SIGNIFICANT_LOW_REANCHOR_ZOOM_V0_20260502_RU.md`.
+
+Граница: это не новая стратегия и не готовый ML-label. Это рабочий zoom для пользовательских стрелок и последующего точного переноса low/entry.
+
+### 2026-07-03 Reanchor Applied V0
+
+Статус: `SIGNIFICANT_LOW_REANCHOR_APPLIED_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+По скриншоту со стрелками применена ручная правка:
+
+1. `RA001_FROM_LA007`: стрелка пользователя указывает low-свечу `2026-05-02T03:14:00Z`; вход по рельсам = next open `2026-05-02T03:15:00Z`, `entry_open=83.72000000`, `entry +5bps=83.76186000`;
+2. `RA002_PENDING_FROM_LA028`: в последнем скриншоте нет новой стрелки, поэтому `LA028` остается `pending reanchor`, без самовольного переноса;
+3. `RA003_CONFIRM_LA050`: стрелка пользователя подтверждает текущий `LA050`; signal `2026-05-02T22:25:00Z`, entry `2026-05-02T22:26:00Z`, `entry_open=84.22000000`, `entry +5bps=84.26211000`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v0_20260702_192103/SIGNIFICANT_LOW_REANCHOR_APPLIED_V0_20260502_OVERVIEW.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v0_20260702_192103/SIGNIFICANT_LOW_REANCHOR_APPLIED_V0_20260502_ZOOM.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v0_20260702_192103/SIGNIFICANT_LOW_REANCHOR_APPLIED_V0_20260502.csv`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v0_20260702_192103/SIGNIFICANT_LOW_REANCHOR_APPLIED_V0_20260502.json`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v0_20260702_192103/SIGNIFICANT_LOW_REANCHOR_APPLIED_V0_20260502_RU.md`.
+
+Граница: это ручной reanchor review layer. ML/export/training/scorer/target-lock/Optuna/API не запускались.
+
+### 2026-07-03 Reanchor Applied V1
+
+Статус: `SIGNIFICANT_LOW_REANCHOR_APPLIED_V1_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+По уточнению пользователя `LA050` сдвинут на одну свечу влево и визуальный маркер поставлен на low-зону:
+
+1. `RA001_FROM_LA007` без изменений: signal `2026-05-02T03:14:00Z`, entry `2026-05-02T03:15:00Z`, `entry +5bps=83.76186000`;
+2. `RA002_PENDING_FROM_LA028` остается pending: в последнем скрине нет новой стрелки по этому блоку;
+3. `RA003_SHIFT_LEFT_LA050`: визуальный marker `2026-05-02T22:25:00Z` на low `84.02000000`; отдельно сохранены execution fields: `entry_open=84.06000000`, `entry +5bps=84.10203000`.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v1_20260703_060258/SIGNIFICANT_LOW_REANCHOR_APPLIED_V1_20260502_OVERVIEW.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v1_20260703_060258/SIGNIFICANT_LOW_REANCHOR_APPLIED_V1_20260502_ZOOM.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v1_20260703_060258/SIGNIFICANT_LOW_REANCHOR_APPLIED_V1_20260502.csv`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v1_20260703_060258/SIGNIFICANT_LOW_REANCHOR_APPLIED_V1_20260502.json`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v1_20260703_060258/SIGNIFICANT_LOW_REANCHOR_APPLIED_V1_20260502_RU.md`.
+
+Важно: `RA003_SHIFT_LEFT_LA050` содержит визуальный low marker и отдельную execution-цену. Это сделано явно, чтобы не потерять различие между ручной визуальной точкой и боевым `entry +5bps`.
+
+Граница: ML/export/training/scorer/target-lock/Optuna/API не запускались.
+
+### 2026-07-03 User New Entry Zoom V0
+
+Статус: `SIGNIFICANT_LOW_USER_NEW_ENTRY_ZOOM_V0_READY_FOR_USER_ARROW_NO_ML_NO_OPTUNA`.
+
+По скриншоту пользователя подготовлен отдельный zoom участка перед вечерним импульсом, где пользователь хочет показать новую точку входа.
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_user_new_entry_zoom_v0_20260703_060806/SIGNIFICANT_LOW_USER_NEW_ENTRY_ZOOM_V0_20260502_2045_2105.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_user_new_entry_zoom_v0_20260703_060806/SIGNIFICANT_LOW_USER_NEW_ENTRY_ZOOM_V0_20260502.json`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_user_new_entry_zoom_v0_20260703_060806/SIGNIFICANT_LOW_USER_NEW_ENTRY_ZOOM_V0_20260502_RU.md`.
+
+Граница: это только zoom для ручной стрелки, не новая разметка. После стрелки нужно создать отдельный applied/reanchor layer.
+
+### 2026-07-03 Reanchor Applied V2 User Entry 20:49
+
+Статус: `SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+После стрелки пользователя на zoom-участке `20:45-21:05 UTC` добавлена новая ручная точка:
+
+1. `RA004_USER_ENTRY_2049`: пользовательская стрелка трактуется как вход на свече `2026-05-02T20:49:00Z`;
+2. signal по рельсам сохранен как предыдущая закрытая свеча `2026-05-02T20:48:00Z`;
+3. low свечи: `84.05000000`;
+4. `entry_open`: `84.09000000`;
+5. `entry +5bps`: `84.13204500`.
+
+Актуальный run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904`
+
+Артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502_CLOSE_ZOOM_RA004.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502_OVERVIEW.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502.csv`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502.json`.
+
+Важно: close-zoom сделан без растягивания шкалы до `+1%` target, чтобы глазами было видно саму точку входа. Это ручной applied/reanchor слой, не ML-label. ML/export/training/scorer/target-lock/Optuna/API не запускались.
+
+### 2026-07-03 Manual Reanchors V0 Source Of Truth
+
+Статус: `SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+После сбоя/перезапуска зафиксирована причина каши: старые applied V1/V2 и DCA/GOOD-графики могли смешивать ручные точки, pending reanchor и старые outcome-сделки. Для точной добивки входов создан отдельный воспроизводимый источник правды:
+
+`configs/visual_entry/manual_reanchors/SOLUSDT_1m_2026-05-02_SIGNIFICANT_LOW_MANUAL_REANCHORS_V0.json`
+
+Правило нового слоя:
+
+1. `signal_time_utc` и `entry_time_utc` - контракт исполнения;
+2. `visual_marker_time_utc` и `visual_marker_price` - только визуальная точка для глаз;
+3. pending-точки не попадают в clean overview;
+4. старые `GOOD_1PCT`, DCA rows, rejected/soft и автоматические 44 сделки не подтягиваются.
+
+Новый скрипт:
+
+`src/mlbotnav/visual_entry_manual_reanchor_review_v0.py`
+
+Актуальный run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936`
+
+Итог run:
+
+1. всего строк: `4`;
+2. clean confirmed overview: `3` (`RA001_FROM_LA007`, `RA003_SHIFT_LEFT_LA050`, `RA004_USER_ENTRY_2049`);
+3. pending review: `1` (`RA002_PENDING_FROM_LA028`);
+4. хвостов `python.exe` после запуска нет.
+
+Главные артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936/SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_20260502_CONFIRMED_OVERVIEW.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936/SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_20260502_REVIEW_SHEET.png`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936/SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_20260502_RA003_SHIFT_LEFT_LA050_CLOSE_ZOOM.png`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936/SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_20260502_RA004_USER_ENTRY_2049_CLOSE_ZOOM.png`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936/SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_20260502.csv`.
+
+Текущий следующий шаг: пользователь смотрит новый `REVIEW_SHEET` и close-zoom по `RA003/RA004`. Если нужно двигать точку - править только JSON source-of-truth и заново запускать renderer. ML/export/training/scorer/target-lock/Optuna/API запрещены.
+
+### 2026-07-03 STAS1 GOOD_1PCT anchor-next-open fix
+
+Статус: `STAS1_GOOD_1PCT_ANCHOR_NEXT_OPEN_FIX_V0_VERIFIED_NO_ML_NO_OPTUNA`.
+
+По просьбе пользователя перепроверены `44` GOOD-сделки старого прогона `2026-05-02`. Найдена причина смещения входов: `build_candidates()` искал фактический `anchor_idx` как low, но `signal_time_utc` и `entry_idx` ставил от более поздней confirmation-свечи. Из-за этого часть входов уходила через 2-4 свечи после low.
+
+Старый контроль по `GOOD_1PCT_REVIEW_POOL_RECORDS.csv`:
+
+1. всего строк: `54`;
+2. GOOD: `44`;
+3. нарушений `entry_time_utc != anchor_time_utc + 1 minute` среди GOOD: `12`.
+
+Исправлено в `src/mlbotnav/visual_entry_low_anchor_suggester.py`:
+
+1. `signal_idx = anchor_idx`;
+2. `entry_idx = anchor_idx + 1`;
+3. `entry_time_utc` теперь строго следующая свеча после low;
+4. `confirmation_idx` и `confirmation_time_utc` сохранены отдельно как справочный контекст;
+5. в CSV `GOOD_1PCT` добавлены индексы `anchor_idx`, `signal_idx`, `confirmation_idx`, `entry_idx`, `execution_delay_bars_from_anchor`.
+
+Контрольный run:
+
+`STAS1_GOOD_LOW_REVIEW/runs/stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034`
+
+Итог нового run:
+
+1. всего строк: `52`;
+2. GOOD: `42`;
+3. BAD: `10`;
+4. нарушений `entry_time_utc != anchor_time_utc + 1 minute`: `0`;
+5. хвостов `python.exe` после проверки нет.
+
+Проверки:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_low_anchor_suggester.py src\mlbotnav\visual_entry_good_1pct_review_pool.py tests\test_visual_entry_low_anchor_suggester.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_low_anchor_suggester.py -q
+$env:PYTHONPATH='src'; .\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-02 -RunLabel stas1_20260502_1pct_anchor_next_open_fix_v0
+```
+
+Граница: это только STAS1 visual review/candidate pool. ML/export/training/scorer/target-lock/Optuna/API не запускались.
+
+### 2026-07-03 STAS1 EndDay wrapper fix
+
+Статус: `STAS1_WRAPPER_ENDDAY_FIX_VERIFIED_NO_ML_NO_OPTUNA`.
+
+После проверки пользователем обнаружено, что команда с `-EndDay` запускала только один день: `run_day_1pct.ps1` и `run_day_0p5.ps1` принимали только `-Day` и внутри передавали `--end-day $Day`.
+
+Исправлено:
+
+1. `STAS1_GOOD_LOW_REVIEW/run_day_1pct.ps1` поддерживает `-EndDay`;
+2. `STAS1_GOOD_LOW_REVIEW/run_day_0p5.ps1` поддерживает `-EndDay`;
+3. если `-EndDay` не задан, поведение прежнее: один день;
+4. README STAS1 обновлен командами для диапазона дней.
+
+Smoke-run:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-03 -EndDay 2026-05-04 -RunLabel stas1_smoke_20260503_20260504_endday_fix_v0 -RenderGoodLimit 0
+```
+
+Результат:
+
+1. `days_requested=2`;
+2. `days_processed=2`;
+3. `records_total=132`;
+4. `bad_anchor_to_entry=0`;
+5. хвостов `python.exe` нет.
+
+Run: `STAS1_GOOD_LOW_REVIEW/runs/stas1_smoke_20260503_20260504_endday_fix_v0_20260703_173534`.

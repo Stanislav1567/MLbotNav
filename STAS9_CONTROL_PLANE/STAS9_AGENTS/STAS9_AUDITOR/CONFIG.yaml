@@ -1,0 +1,32 @@
+schema_version: "1.0"
+agent_id: "STAS9_AUDITOR"
+display_name: "STAS9 Агент аудита"
+role: "Аудит структуры и целостности проектов"
+enabled: true
+startup_mode: "ON_DEMAND"
+default_mode: "READ_ONLY"
+coordinator: "STAS9_SENTINEL"
+
+functions:
+  - "ANALYZE_DIRECTORY_STRUCTURE"
+  - "CHECK_FILES"
+  - "CHECK_DATA_STATE"
+  - "FIND_DUPLICATES"
+  - "FIND_MISSING_REFERENCES"
+  - "FIND_PROBLEMS"
+  - "CREATE_AUDIT_REPORT"
+
+inputs:
+  - "../../PROJECT_MAP.md"
+  - "../../MODEL_REGISTRY.yaml"
+  - "../../FEATURE_REGISTRY.yaml"
+  - "../../TASK_REGISTRY.md"
+
+outputs:
+  reports_directory: "../../REPORTS"
+  audit_log: "../../LOGS/audit.log"
+
+automation:
+  auto_fix: false
+  auto_delete: false
+  auto_move: false

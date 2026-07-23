@@ -1,0 +1,33 @@
+policy_version: "1.0"
+agent_id: "STAS9_VALIDATOR"
+inherits: "../../PERMISSIONS/GLOBAL_POLICY.yaml"
+default_mode: "READ_ONLY"
+
+read:
+  allowed: true
+  scopes:
+    - "PROJECT_FILES_READ_ONLY"
+    - "STAS9_CONTROL_PLANE/**"
+
+execute:
+  allowed_safe_checks:
+    - "YAML_PARSE"
+    - "PATH_EXISTENCE"
+    - "SHA256"
+    - "GIT_DIFF_READ_ONLY"
+    - "NON_TRAINING_TESTS"
+
+write:
+  default_allowed: false
+  requires_user_confirmation: true
+  scopes_after_confirmation:
+    - "STAS9_CONTROL_PLANE/REPORTS/**"
+    - "STAS9_CONTROL_PLANE/LOGS/**"
+
+prohibited:
+  auto_fix: true
+  destructive_tests: true
+  train_models: true
+  run_optuna: true
+  run_forward: true
+  trade_live: true

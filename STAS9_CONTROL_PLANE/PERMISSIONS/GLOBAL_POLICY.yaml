@@ -1,0 +1,87 @@
+schema_version: "1.1"
+policy_id: "STAS9_GLOBAL_POLICY"
+language: "ru"
+status: "ENFORCED_BY_AGENT_CONFIG_VSCODE_AND_TECHNICAL_LAUNCHER"
+
+defaults:
+  interaction_mode: "SAFE"
+  read_only: true
+  deny_unlisted_actions: true
+  user_confirmation_required_for_dangerous_actions: true
+
+permissions:
+  read_project:
+    allowed: true
+  write_control_plane:
+    allowed: true
+    safe_scopes:
+      - "STAS9_CONTROL_PLANE/LOGS/agent_activity.log"
+      - "STAS9_CONTROL_PLANE/LOGS/audit.log"
+      - "STAS9_CONTROL_PLANE/LOGS/conversations/**"
+      - "STAS9_CONTROL_PLANE/STAS9_INTERFACE/CHAT/conversations/**"
+    requires_user_confirmation_outside_safe_scopes: true
+  delete:
+    allowed: false
+    requires_user_confirmation: true
+  move_files:
+    allowed: false
+    requires_user_confirmation: true
+  modify_configurations:
+    allowed: false
+    requires_user_confirmation: true
+  modify_models:
+    allowed: false
+    requires_user_confirmation: true
+  train_models:
+    allowed: false
+    requires_user_confirmation: true
+  run_optuna:
+    allowed: false
+    requires_user_confirmation: true
+  trade_live:
+    allowed: false
+    requires_user_confirmation: true
+
+protected_scopes:
+  - "STAS5_ML_CORE/**"
+  - "STAS6/**"
+  - "STAS7/**"
+  - "STAS8/**"
+  - "models/**"
+  - "legacy/**"
+
+interaction_modes:
+  config: "../CONFIG/INTERACTION_MODES.yaml"
+  implicit_escalation: false
+  development_requires_user_confirmation: true
+  experiment_requires_user_confirmation: true
+  return_to_safe_after_task: true
+
+absolute_prohibitions_for_current_assignment:
+  - "Не переносить MLbotNav"
+  - "Не создавать новый проект"
+  - "Не копировать STAS5"
+  - "Не исправлять BROKEN_POINTER"
+  - "Не запускать обучение"
+  - "Не запускать Optuna"
+  - "Не изменять модели"
+  - "Не удалять legacy"
+  - "Не выполнять внешние торговые операции"
+
+approval:
+  authority: "USER"
+  rule: "До подтверждения опасное действие не выполняется."
+  confirmation_must_include:
+    - "точное действие"
+    - "точные пути"
+    - "ожидаемый эффект"
+    - "способ проверки"
+
+logging:
+  required: true
+  fields:
+    - "time"
+    - "agent"
+    - "command"
+    - "result"
+    - "changed_files"

@@ -1,0 +1,130 @@
+schema_version: "1.1"
+memory_id: "STAS9_PROJECT_MEMORY"
+language: "ru"
+last_audit:
+  date: "2026-07-23"
+  status: "AUDIT_COMPLETE_CONTROL_MAP_READY"
+  source: "../PROJECT_MAP.md"
+
+project_state:
+  root: "C:/Users/007/Desktop/MLbotNav"
+  control_plane: "STAS9_CONTROL_PLANE"
+  status: "SOL_EVENT_SCHEMA_DRY_RUN_SAFE_READY"
+  default_mode: "SAFE"
+  default_access: "READ_ONLY"
+  primary_agent: "STAS9_SENTINEL"
+  agent_mode: "CODEX_ROLE"
+  execution_mode: "ON_DEMAND"
+  execution_trigger: "USER_COMMAND_ONLY"
+  idle_action: "NONE"
+  background_process_enabled: false
+  watcher_enabled: false
+  folder_scan_enabled: false
+  specialists_startup: "ON_DEMAND"
+  agent_count: 8
+  specialist_count: 7
+  market_research_scope: "BYBIT_LINEAR_SOLUSDT_1M_CANONICAL_CORE_ONLY"
+  canonical_sol_source: "C:/Users/007/Desktop/MLbotNav/data/core/bybit_ohlcv"
+  canonical_sol_source_contract: "ohlcv_v1"
+  event_pipeline_stage: "SCHEMA_DRY_RUN_READY_NO_EVENTS"
+  event_schema: "../MARKET_KNOWLEDGE/EVENT_SCHEMA_RU.md"
+  event_records_created: 0
+  datasets_created: 0
+  training_stage: "NOT_STARTED"
+  primary_interface: "VSCODE_CODEX"
+  workspace: "MLbotNav_STAS9.code-workspace"
+  workspace_shortcut: "C:/Users/007/Desktop/🤖 STAS9 Workspace.lnk"
+  technical_launcher_role: "DIAGNOSTIC_FALLBACK_ONLY"
+  desktop_shortcuts_target: "VSCODE_WORKSPACE"
+  lightweight_activation: true
+  voice_input: "WINDOWS_SPEECH_TO_TEXT_RU"
+  text_response: true
+  codex_cli_version: "0.145.0"
+  sentinel_model: "gpt-5.6-sol"
+  sentinel_model_smoke_status: "PASS"
+  training_started: false
+  optuna_started: false
+  live_trading_used: false
+  protected_versions_modified: false
+
+found_problems:
+  - id: "OLD_DESKTOP_SHORTCUT_TERMINAL_LAUNCH"
+    status: "RESOLVED"
+    description: "Старый ярлык STAS9 Главный агент открывал terminal launcher; теперь оба пользовательских ярлыка открывают workspace в VS Code."
+  - id: "LEGACY_ACTIVE_MODEL_BROKEN_POINTER"
+    status: "KNOWN_NOT_FIXED"
+    description: "Старые active_model.json и champion.json указывают на отсутствующий model artifact."
+    source: "../MODEL_REGISTRY.yaml"
+  - id: "MISSING_STAS6_DEFINITION"
+    status: "KNOWN"
+    description: "Самостоятельный проект или контракт STAS6 не найден."
+  - id: "MISSING_STAS7_DEFINITION"
+    status: "KNOWN"
+    description: "Самостоятельный проект или контракт STAS7 не найден."
+  - id: "STAS8_PREVIEW_TOO_STRICT"
+    status: "DISABLED_AUDIT_PREVIEW"
+    description: "STAS8 вложен в STAS5 и не разрешён как production-контур."
+  - id: "LEGACY_REGISTRY_MISSING_REFERENCES"
+    status: "KNOWN_ARCHIVE_ISSUE"
+    description: "В legacy candidates registry выявлены 193 уникальные ссылки на отсутствующие файлы."
+
+active_versions:
+  stas9_control_plane:
+    version: "1.2"
+    status: "SOL_EVENT_SCHEMA_DRY_RUN_SAFE_READY"
+  stas5:
+    version: "stas5_v5c_r4bb_train_20260127_20260320"
+    feature_contract: "STAS5_V5C_X463"
+    status: "VALID_INTERNAL_POINTER_NO_PROJECT_PRODUCTION_PROMOTION"
+  stas6:
+    version: null
+    status: "MISSING_VERSION_DEFINITION"
+  stas7:
+    version: null
+    status: "MISSING_VERSION_DEFINITION"
+  stas8:
+    version: "STAS8_SOFT_CAPACITY_V2"
+    status: "DISABLED_AUDIT_PREVIEW"
+
+change_history:
+  - time: "2026-07-23T15:40:03+05:00"
+    agent: "STAS9_SENTINEL"
+    change: "Созданы SOL event contract и пустой EVENTS/SOL; in-memory dry-run проверил source gate и event schema без записи событий или dataset."
+    result: "PASS_DRY_RUN_NO_EVENT_RECORDS"
+    protected_versions_modified: false
+  - time: "2026-07-23T15:27:50+05:00"
+    agent: "STAS9_SENTINEL"
+    change: "Основной интерфейс закреплён как VS Code + Codex; Sentinel переведён на CODEX_ROLE/ON_DEMAND/USER_COMMAND_ONLY, создан ярлык STAS9 Workspace, фоновый процесс и сканирование отключены."
+    result: "PASS"
+    protected_versions_modified: false
+  - time: "2026-07-23T14:46:39+05:00"
+    agent: "STAS9_SENTINEL"
+    change: "Созданы роли агентов, новый STAS9_MARKET_RESEARCH, маршрутизатор задач, память обязанностей и безопасный контур SOL EVENTS -> FEATURES -> LABELS -> DATASET без обучения."
+    result: "PASS"
+    protected_versions_modified: false
+  - time: "2026-07-23T14:03:29+05:00"
+    agent: "STAS9_SENTINEL"
+    change: "Остановлен ошибочный terminal launcher, оба ярлыка STAS9 перенаправлены в VS Code, включена лёгкая активация и усилены фоновые исключения VS Code."
+    result: "PASS"
+    protected_versions_modified: false
+  - time: "2026-07-23T13:45:10+05:00"
+    agent: "CODEX_SETUP"
+    change: "Создан интерфейс VS Code/Codex, workspace, голосовой ввод через Windows, режимы, формат ответа, журнал диалогов и ярлык STAS9 Assistant."
+    result: "PASS"
+    protected_versions_modified: false
+  - time: "2026-07-23T13:07:12+05:00"
+    agent: "CODEX_SETUP"
+    change: "Глобальный Codex CLI обновлён с 0.142.5 до 0.145.0; read-only smoke-проверка gpt-5.6-sol вернула STAS9_MODEL_OK."
+    result: "PASS"
+    protected_versions_modified: false
+  - time: "2026-07-23T12:37:49+05:00"
+    agent: "CODEX_SETUP"
+    change: "Создан безопасный многоагентный слой STAS9 с главным агентом и шестью специализированными агентами."
+    result: "PASS"
+    protected_versions_modified: false
+
+memory_rules:
+  append_history_only: true
+  preserve_known_problems: true
+  never_store_secrets: true
+  user_confirmation_required_for_updates: true

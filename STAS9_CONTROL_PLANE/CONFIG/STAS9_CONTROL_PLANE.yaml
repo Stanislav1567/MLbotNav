@@ -1,0 +1,97 @@
+schema_version: "1.2"
+system_id: "STAS9_CONTROL_PLANE"
+display_name: "STAS9 Многоагентная управляющая система"
+language: "ru"
+status: "VSCODE_CODEX_ON_DEMAND_SAFE_READY"
+project_root: "../.."
+
+interface:
+  primary: "VSCODE_CODEX"
+  workspace: "../../MLbotNav_STAS9.code-workspace"
+  codex_extension: "openai.chatgpt"
+  codex_open_on_startup: true
+  voice_input: "WINDOWS_SPEECH_TO_TEXT"
+  voice_language: "ru-RU"
+  text_response: true
+  terminal_fallback: "../START/start_STAS9.bat"
+
+agent_mode:
+  type: "CODEX_ROLE"
+  persistent_process: false
+
+execution:
+  mode: "ON_DEMAND"
+  trigger: "USER_COMMAND_ONLY"
+  idle_action: "NONE"
+
+default_permission:
+  SAFE_READ_ONLY: true
+
+background_process:
+  enabled: false
+  watcher: false
+  folder_scan: false
+
+startup:
+  primary_agent: "STAS9_SENTINEL"
+  primary_workspace: "../../MLbotNav_STAS9.code-workspace"
+  technical_launcher: "../START/start_STAS9.bat"
+  autostart_agents: []
+  sentinel_activation: "USER_COMMAND_ONLY"
+  start_specialists_on_demand: true
+  start_all_agents: false
+
+agents_root: "../STAS9_AGENTS"
+agents:
+  - id: "STAS9_SENTINEL"
+    startup: "PRIMARY"
+  - id: "STAS9_AUDITOR"
+    startup: "ON_DEMAND"
+  - id: "STAS9_MARKET_RESEARCH"
+    startup: "ON_DEMAND"
+  - id: "STAS9_MODEL_MANAGER"
+    startup: "ON_DEMAND"
+  - id: "STAS9_FEATURE_MANAGER"
+    startup: "ON_DEMAND"
+  - id: "STAS9_LAB"
+    startup: "ON_DEMAND"
+  - id: "STAS9_VALIDATOR"
+    startup: "ON_DEMAND"
+  - id: "STAS9_GUARDIAN"
+    startup: "ON_DEMAND"
+
+paths:
+  interface: "../STAS9_INTERFACE"
+  codex_instructions: "../CODEX_INSTRUCTIONS_RU.md"
+  interaction_modes: "../CONFIG/INTERACTION_MODES.yaml"
+  memory: "../MEMORY/PROJECT_MEMORY.yaml"
+  operational_state: "../MEMORY/STAS9_STATE.md"
+  agent_responsibilities: "../MEMORY/AGENT_RESPONSIBILITIES.yaml"
+  task_router: "../TASK_ROUTER_RU.md"
+  market_knowledge: "../MARKET_KNOWLEDGE"
+  dataset_builder: "../DATASET_BUILDER"
+  reports: "../REPORTS"
+  runtime: "../RUNTIME"
+  global_policy: "../PERMISSIONS/GLOBAL_POLICY.yaml"
+  activity_log: "../LOGS/agent_activity.log"
+  changes_log: "../LOGS/changes.log"
+  audit_log: "../LOGS/audit.log"
+  conversation_logs: "../LOGS/conversations"
+
+safety:
+  default_mode: "SAFE"
+  default_read_only: true
+  user_confirmation_for_dangerous_actions: true
+  protected_versions:
+    - "STAS5"
+    - "STAS6"
+    - "STAS7"
+    - "STAS8"
+  forbidden_operations:
+    - "DELETE"
+    - "MOVE_LEGACY"
+    - "MODIFY_MODELS"
+    - "TRAIN"
+    - "OPTUNA"
+    - "LIVE_TRADE"
+    - "FIX_BROKEN_POINTER"

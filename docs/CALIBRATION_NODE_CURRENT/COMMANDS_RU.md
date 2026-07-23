@@ -1,5 +1,269 @@
 # Commands: калибровочный узел
 
+## STAS3 V2 Reset TZ 2026-07-09
+
+Открыть новое ТЗ:
+
+```powershell
+ii .\STAS3_PERCENT_LADDER_REVIEW\TZ_STAS3_V2_RESET_RU.md
+```
+
+Проверить архивные Stas3 runs:
+
+```powershell
+Get-ChildItem .\STAS3_PERCENT_LADDER_REVIEW\runs -Directory | Sort-Object LastWriteTime -Descending | Select-Object -First 10 Name,LastWriteTime
+```
+
+## STAS3 Rebuild From Latest STAS2 2026-07-09
+
+Статус: `STAS3_REBUILT_FROM_STAS2_SHORT_LABELS_V1_NO_ML_NO_OPTUNA_POST_ENTRY_AUDIT`.
+
+Повторить:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-08 -EndDay 2026-05-12 -RunLabel stas3_20260508_20260512_from_stas2_short_labels_v1 -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260508_20260512_short_labels_v1_20260709_083138 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Открыть:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open browse
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open tp
+```
+
+Финальный run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260508_20260512_from_stas2_short_labels_v1_20260709_084730`
+
+## STAS2 Background And LONG Wave Visual Fix 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_BG_LONG_WAVE_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+Проверка:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Запуск диапазона:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-02 --end-day 2026-05-03 --run-label stas2_20260502_20260503_bg_long_wave_v0 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244
+```
+
+Открыть:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-02
+```
+
+Контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_bg_long_wave_v0_20260706_131201`
+
+Граница: Stas2 показывает только pre-entry `Фон` и `LONG`. Все после входа остается для Stas3; ML/Optuna/scorer/target-lock/API не запускать.
+
+## STAS2 Market Phase Visual Review 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+Запуск диапазона:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\run_range.ps1 -Day 2026-05-02 -EndDay 2026-05-03 -RunLabel stas2_20260502_20260503_market_phase_review_v0 -Stas1RunDir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034,STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244
+```
+
+Открыть:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-02
+```
+
+Проверить:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_market_phase_review_v0_20260706_124134`
+
+Граница: Stas2 только pre-entry. Stas3 отдельно будет отвечать за percent ladder, TP/exit и 5m-блоки после входа.
+
+## STAS2 Excel-Friendly Export 2026-07-06
+
+Статус: `STAS2_EXCEL_EXPORT_UTF8_BOM_XLSX_READY_NO_ML_NO_OPTUNA`.
+
+Команда:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_audit --start-day 2026-05-02 --end-day 2026-05-03 --run-label stas2_20260502_20260503_excel_xlsx_fix --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244
+```
+
+Открыть Excel:
+
+```powershell
+ii .\reports\final_review\visual_entry_v3\fresh_target_led\stas2_market_phase_percent_ladder\stas2_20260502_20260503_excel_xlsx_fix_20260706_112616\STAS2_MARKET_PHASE_TABLES.xlsx
+```
+
+CSV остаются рядом, но для ручного просмотра использовать `.xlsx`.
+
+## STAS2 Market Phase Session Audit 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_SESSION_AUDIT_READY_NO_ML_NO_OPTUNA`.
+
+Проверка:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_audit.py
+```
+
+Финальный run:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_audit --start-day 2026-05-02 --end-day 2026-05-08 --run-label stas2_20260502_20260508_session6_daytype_v4 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260504_20260506_browse_by_day_v0_20260706_063954 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260507_20260508_carry48_v0_20260706_084057
+```
+
+Отчет:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260508_session6_daytype_v4_20260706_110942/STAS2_MARKET_PHASE_AUDIT_RU.md`
+
+Схема: `6` UTC-корзин времени плюс отдельный `day_type`; не смешивать выходной `Лондон` с будним `Лондон`.
+
+Граница: это audit/report, не ML/export/training, не Optuna, не scorer, не target-lock и не API.
+
+## STAS1 Block 1 Locked 2026-07-06
+
+Статус: `STAS1_BLOCK_1_RUN_POOL_LOCKED_NO_ML_NO_OPTUNA`.
+
+Блок 1 уже рабочий: прогоняет день/диапазон, собирает low-кандидаты, сохраняет PNG/CSV/JSON/RU-отчет и раскладывает просмотр в `BROWSE_BY_DAY/`.
+
+`+1%`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-07 -EndDay 2026-05-08 -OutcomeLookaheadHours 48 -RunLabel stas1_review_v0 -RenderGoodLimit 0
+```
+
+`+0.5%`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_0p5.ps1 -Day 2026-05-07 -EndDay 2026-05-08 -OutcomeLookaheadHours 48 -RunLabel stas1_review_0p5_v0 -RenderGoodLimit 0
+```
+
+Открыть дневной просмотр:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+```
+
+## STAS1 Carry Outcome 2026-07-06
+
+Статус: `STAS1_CARRY_OUTCOME_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Два дня с созданием входов только внутри `2026-05-07..2026-05-08`, но с проверкой `+1%` до `48` часов после каждого входа:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-07 -EndDay 2026-05-08 -OutcomeLookaheadHours 48 -RunLabel stas1_20260507_20260508_carry48_v0 -RenderGoodLimit 0
+```
+
+Открыть дневной просмотр:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+```
+
+Проверить carry-счетчики:
+
+```powershell
+$run = Get-ChildItem STAS1_GOOD_LOW_REVIEW\runs -Directory | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+Import-Csv (Join-Path $run.FullName 'GOOD_1PCT_REVIEW_POOL_RECORDS.csv') | Group-Object outcome_status | Select-Object Count,Name
+```
+
+Граница: это offline outcome review. Не ML/export/training, не scorer, не target-lock, не Optuna, не API.
+
+## STAS1 Good Low Review 2026-07-03
+
+Статус: `STAS1_V0_BASELINE_MAIN_LOW_REVIEW_SCRIPT_NO_ML_NO_OPTUNA`.
+
+Один день `+1%`:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-02
+```
+
+Один день `+0.5%`:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\run_day_0p5.ps1 -Day 2026-05-02
+```
+
+Открыть последний `STAS1` overview:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1
+```
+
+Открыть все closeup-страницы последнего `STAS1` run:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open closeups
+```
+
+Открыть папку последнего `STAS1` run:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open folder
+```
+
+Проверить команды без открытия картинок:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -NoOpen
+```
+
+Граница: это удобная обвязка вокруг `src/mlbotnav/visual_entry_good_1pct_review_pool.py`. No ML/export/training, no Optuna, no scorer, no target-lock, no API.
+
+## Fresh Target-Led DCA Risk Audit V0 W18-W20 2026-07-02
+
+Статус: `DCA_RISK_AUDIT_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_API`.
+
+Проверить и собрать:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_dca_risk_audit_v0.py
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_dca_risk_audit_v0 --pool-run-dir reports\final_review\visual_entry_v3\fresh_target_led\good_1pct_review_pool\W18_W20_learning_20260702_082819 --run-label W18_W20_dca_risk --selected-limit-per-day 10 --late-hold-minutes 360 --overload-open-count 10 --render-top-days 3
+```
+
+Артефакты:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_REPORT_RU.md
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_TRADES.csv
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_DAYS.csv
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_BASKETS.csv
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_SUMMARY.png
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_TOP_DAY_20260502.png
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_TOP_DAY_20260514.png
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_TOP_DAY_20260511.png
+```
+
+Граница: audit only. No scorer, no target-lock, no ML/export/training, no Optuna, no API trading.
+
 ## Fresh Target-Led V2A Structure Overlay 14 May 2026-07-01
 
 Статус: `V2A_STRUCTURE_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
@@ -2847,3 +3111,68 @@ $env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.visual_entry_signa
 
 В ML ничего не передавать до ручного подтверждения v2.
 
+## Significant Low Calibration V0 2026-05-02
+
+Назначение: поверх `DCA_RISK_AUDIT_V0` и ручного feedback отсеять микролои, дубли, ручные rejects и выделить только значимые low-кандидаты для визуального review. Это не ML, не Optuna, не scorer, не target-lock и не API.
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_significant_low_calibration_v0 `
+  --dca-run-dir reports\final_review\visual_entry_v3\fresh_target_led\dca_risk_audit_v0\W18_W20_dca_risk_20260502_userfix_v0_20260702_180352 `
+  --feedback-csv reports\final_review\visual_entry_v3\fresh_target_led\dca_risk_audit_v0\W18_W20_dca_risk_20260502_closeups_20260702_162715\DCA_RISK_AUDIT_V0_20260502_USER_FEEDBACK_V0.csv `
+  --day 2026-05-02 `
+  --run-label siglow_20260502_v0
+```
+
+Результат последнего запуска:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_20260502_v0_20260702_181433`
+
+## Manual Reanchors V0 2026-05-02
+
+Назначение: воспроизводимо перерисовать только ручные точные входы из JSON source-of-truth, без DCA/GOOD_1PCT/старых rejected/soft сделок.
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_manual_reanchor_review_v0.py
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_manual_reanchor_review_v0 `
+  --config configs\visual_entry\manual_reanchors\SOLUSDT_1m_2026-05-02_SIGNIFICANT_LOW_MANUAL_REANCHORS_V0.json `
+  --run-label siglow_manual_reanchors_v0
+```
+
+Проверка хвостов:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*visual_entry*' -or $_.CommandLine -like '*Optuna*' -or $_.CommandLine -like '*APTuna*' } | Select-Object ProcessId,CommandLine
+```
+
+Последний результат:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936`
+
+Граница: `NO_ML`, `NO_OPTUNA`, `NO_SCORER`, `NO_TARGET_LOCK`, `NO_API`.
+
+## STAS1 GOOD_1PCT anchor-next-open check 2026-05-02
+
+Назначение: основной STAS1-прогон long low-кандидатов после фикса правила `signal=anchor low candle`, `entry=следующая свеча`, `entry +5bps`.
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-02 -RunLabel stas1_20260502_1pct_anchor_next_open_fix_v0
+```
+
+Проверка контракта CSV после run:
+
+```powershell
+@'
+import pandas as pd
+p = r'STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034\GOOD_1PCT_REVIEW_POOL_RECORDS.csv'
+df = pd.read_csv(p)
+for c in ['anchor_time_utc', 'entry_time_utc']:
+    df[c] = pd.to_datetime(df[c], utc=True)
+bad = df[(df['entry_time_utc'] - df['anchor_time_utc']).dt.total_seconds() != 60]
+print({'rows': len(df), 'bad_anchor_to_entry': len(bad)})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидаемый результат актуального run: `52` строки, `42` GOOD, `10` BAD, нарушений `entry != anchor + 1m` нет.

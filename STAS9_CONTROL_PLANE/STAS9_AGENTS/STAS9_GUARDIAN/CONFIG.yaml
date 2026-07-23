@@ -1,0 +1,32 @@
+schema_version: "1.0"
+agent_id: "STAS9_GUARDIAN"
+display_name: "STAS9 Страж безопасности"
+role: "Контроль опасных действий и доступов"
+enabled: true
+startup_mode: "ON_DEMAND"
+default_mode: "READ_ONLY"
+coordinator: "STAS9_SENTINEL"
+
+functions:
+  - "CHECK_GLOBAL_POLICY"
+  - "CHECK_DELETE_REQUEST"
+  - "CHECK_MOVE_REQUEST"
+  - "CHECK_CONFIGURATION_CHANGE"
+  - "CHECK_ACCESS_SCOPE"
+  - "BLOCK_UNAUTHORIZED_ACTION"
+
+decisions:
+  - "ALLOW"
+  - "DENY"
+  - "REQUIRE_USER_CONFIRMATION"
+
+inputs:
+  global_policy: "../../PERMISSIONS/GLOBAL_POLICY.yaml"
+
+outputs:
+  audit_log: "../../LOGS/audit.log"
+  reports_directory: "../../REPORTS"
+
+automation:
+  grant_permissions: false
+  execute_dangerous_actions: false

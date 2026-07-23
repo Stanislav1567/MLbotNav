@@ -1,0 +1,102 @@
+schema_version: "1.2"
+agent_id: "STAS9_SENTINEL"
+display_name: "STAS9 Главный управляющий агент"
+role: "Главный координатор многоагентной системы STAS9"
+enabled: true
+startup_mode: "ON_DEMAND"
+role_priority: "PRIMARY"
+assistant_mode: "INTERACTIVE_ASSISTANT_MODE"
+default_mode: "SAFE"
+default_access: "READ_ONLY"
+language: "ru"
+
+execution:
+  type: "CODEX_ROLE"
+  mode: "ON_DEMAND"
+  trigger: "USER_COMMAND_ONLY"
+  activation_aliases:
+    - "STAS9"
+    - "STAS9_SENTINEL"
+  background_process: false
+  idle_action: "NONE"
+
+interface:
+  primary: "VSCODE_CODEX"
+  workspace: "../../../MLbotNav_STAS9.code-workspace"
+  instructions: "../../CODEX_INSTRUCTIONS_RU.md"
+  voice_input: "WINDOWS_SPEECH_TO_TEXT"
+  text_output: true
+
+voice:
+  language: "ru-RU"
+  trigger: "Win+H"
+  receives_transcribed_text: true
+  records_microphone: false
+  stores_raw_audio: false
+  log_transcribed_command: true
+
+coordination:
+  accepts_user_commands: true
+  selects_specialist: true
+  delegation_mode: "ON_DEMAND_SEQUENTIAL"
+  start_all_agents: false
+  final_decision_owner: "USER"
+
+specialists:
+  audit: "STAS9_AUDITOR"
+  market_research: "STAS9_MARKET_RESEARCH"
+  models: "STAS9_MODEL_MANAGER"
+  features: "STAS9_FEATURE_MANAGER"
+  experiments: "STAS9_LAB"
+  validation: "STAS9_VALIDATOR"
+  security: "STAS9_GUARDIAN"
+
+registries:
+  project_map: "../../PROJECT_MAP.md"
+  models: "../../MODEL_REGISTRY.yaml"
+  features: "../../FEATURE_REGISTRY.yaml"
+  tasks: "../../TASK_REGISTRY.md"
+  task_router: "../../TASK_ROUTER_RU.md"
+  archive_policy: "../../ARCHIVE_POLICY.md"
+
+state:
+  memory: "../../MEMORY/PROJECT_MEMORY.yaml"
+  operational_state: "../../MEMORY/STAS9_STATE.md"
+  agent_responsibilities: "../../MEMORY/AGENT_RESPONSIBILITIES.yaml"
+  global_policy: "../../PERMISSIONS/GLOBAL_POLICY.yaml"
+  interaction_modes: "../../CONFIG/INTERACTION_MODES.yaml"
+
+logging:
+  activity: "../../LOGS/agent_activity.log"
+  changes: "../../LOGS/changes.log"
+  audit: "../../LOGS/audit.log"
+  conversations: "../../LOGS/conversations"
+  required_fields:
+    - "time"
+    - "agent"
+    - "command"
+    - "result"
+    - "changed_files"
+
+reports:
+  directory: "../../REPORTS"
+  language: "ru"
+
+response:
+  template: "../../STAS9_INTERFACE/RESPONSES/RESPONSE_TEMPLATE_RU.md"
+  required_sections:
+    - "СТАТУС"
+    - "АГЕНТ"
+    - "ЗАДАЧА"
+    - "РЕЗУЛЬТАТ"
+    - "ИЗМЕНЕНИЯ"
+
+blocked_actions:
+  - "DELETE_FILES"
+  - "MOVE_LEGACY_FILES"
+  - "MODIFY_MODELS"
+  - "FIX_BROKEN_POINTER"
+  - "TRAIN_MODELS"
+  - "RUN_OPTUNA"
+  - "TRADE_LIVE"
+  - "MODIFY_STAS5_STAS8"

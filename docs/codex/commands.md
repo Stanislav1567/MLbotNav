@@ -1,5 +1,5085 @@
 # Commands
 
+## STAS9 VS Code/Codex Interface 2026-07-23
+
+Открыть основной интерфейс:
+
+```powershell
+code .\MLbotNav_STAS9.code-workspace
+```
+
+Открыть панель Codex вручную, если она не сфокусировалась:
+
+```text
+Ctrl+Shift+P -> Open Codex Sidebar
+```
+
+Голосовой ввод:
+
+```text
+курсор в поле Codex -> Win+H -> произнести команду -> проверить текст -> Enter
+```
+
+Технический terminal fallback:
+
+```powershell
+& ".\STAS9_CONTROL_PLANE\START\start_STAS9.bat"
+```
+
+Открыть отчёт:
+
+```powershell
+ii .\STAS9_CONTROL_PLANE\REPORTS\STAS9_VSCODE_INTERFACE_SETUP_RU.md
+```
+
+## STAS9 Codex Runtime 2026-07-23
+
+Проверить версию:
+
+```powershell
+codex --version
+```
+
+Обновить глобальный npm-CLI:
+
+```powershell
+npm install -g @openai/codex@latest
+```
+
+Безопасная проверка модели:
+
+```powershell
+codex exec --ephemeral --model gpt-5.6-sol --config 'model_reasoning_effort="xhigh"' --sandbox read-only --cd . --color never "Ответь ровно одной строкой: STAS9_MODEL_OK"
+```
+
+## STAS9 Multi-Agent Control Layer 2026-07-23
+
+Безопасно проверить launcher без запуска Codex:
+
+```powershell
+cmd.exe /d /c call ".\STAS9_CONTROL_PLANE\START\start_STAS9.bat" --check
+```
+
+Запустить главный агент:
+
+```powershell
+& ".\STAS9_CONTROL_PLANE\START\start_STAS9.bat"
+```
+
+Открыть итоговый отчёт:
+
+```powershell
+ii .\STAS9_CONTROL_PLANE\REPORTS\STAS9_SETUP_REPORT_RU.md
+```
+
+## STAS9 Multi-Agent Structure 2026-07-23
+
+Показать созданное дерево каталогов:
+
+```powershell
+Get-ChildItem .\STAS9_CONTROL_PLANE -Directory -Recurse |
+  ForEach-Object { $_.FullName.Substring((Resolve-Path .\STAS9_CONTROL_PLANE).Path.Length + 1) } |
+  Sort-Object
+```
+
+Проверить, что отсутствующие корневые STAS6/STAS7 не появились:
+
+```powershell
+Test-Path .\STAS6
+Test-Path .\STAS7
+```
+
+## STAS9 Control Plane Audit 2026-07-23
+
+Открыть управляющий проект:
+
+```powershell
+ii .\STAS9_CONTROL_PLANE
+```
+
+Проверить YAML:
+
+```powershell
+@'
+from pathlib import Path
+import yaml
+for path in [
+    Path("STAS9_CONTROL_PLANE/MODEL_REGISTRY.yaml"),
+    Path("STAS9_CONTROL_PLANE/FEATURE_REGISTRY.yaml"),
+]:
+    yaml.safe_load(path.read_text(encoding="utf-8"))
+    print("PASS", path)
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Проверить число зарегистрированных STAS5 model paths:
+
+```powershell
+@'
+from pathlib import Path
+import yaml
+registry = yaml.safe_load(Path("STAS9_CONTROL_PLANE/MODEL_REGISTRY.yaml").read_text(encoding="utf-8"))
+models = registry["models"]
+missing = [item["path"] for item in models if not Path(item["path"]).exists()]
+print({"models": len(models), "missing": missing})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидаемо: `models=37`, `missing=[]`.
+
+Открыть архитектуру:
+
+```powershell
+ii .\STAS9_CONTROL_PLANE\STAS9_ARCHITECTURE_PROPOSAL_RU.md
+```
+
+Граница: эти команды только читают и валидируют STAS9. Они не запускают обучение, forward, Optuna и не меняют STAS5–STAS8.
+
+## Codex Project CPU Relief
+
+Проверить, что обучение не запущено:
+
+```powershell
+Get-CimInstance Win32_Process |
+  Where-Object { $_.Name -match '^python(w)?\.exe$' -or $_.CommandLine -match 'stas5|mlbotnav' } |
+  Select-Object ProcessId,ParentProcessId,Name,CommandLine |
+  Format-List
+```
+
+Мягко понизить приоритет Codex/VS Code после перезапуска, не закрывая процессы:
+
+```powershell
+foreach($name in @('ChatGPT','codex','Code','node_repl','codex-code-mode-host')){
+  Get-Process -Name $name -ErrorAction SilentlyContinue | ForEach-Object {
+    $_.PriorityClass = 'Idle'
+  }
+}
+```
+
+Проверить постоянное исключение generated STAS4 review:
+
+```powershell
+git check-ignore -v STAS4_FEATURE_HYPOTHESIS_REVIEW\combo_spectrum_4strategies_3days_20260710
+```
+
+Отчет: `docs/codex/CODEX_PROJECT_CPU_RELIEF_20260723_RU.md`.
+
+## Build/Open Base R2-Style Review Gallery
+
+Пересобрать базу `2026-01-27..2026-02-27` в обычном формате как R2/R3/R4:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+.\STAS5_ML_CORE\run_stas5_v5_base_review_gallery.ps1 -StartDay 2026-01-27 -EndDay 2026-02-27 -OpenFolder
+```
+
+Открыть уже собранную папку:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_BASE_R2_STYLE_VISUAL_REVIEW_20260127_20260227
+```
+
+Открыть индекс:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_BASE_R2_STYLE_VISUAL_REVIEW_20260127_20260227\STAS5_V5_BASE_R2_STYLE_REVIEW_GALLERY_INDEX_RU.md
+```
+
+## Open Entry Visual Check Pack BASE/R2/R3/R4
+
+Открыть единую папку графиков для ручной проверки входов:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ENTRY_VISUAL_CHECK_CURRENT_20260127_20260320
+```
+
+Открыть индекс:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ENTRY_VISUAL_CHECK_CURRENT_20260127_20260320\STAS5_V5C_ENTRY_VISUAL_CHECK_INDEX_RU.md
+```
+
+Пересобрать только R2/R3/R4 visual gallery без обучения и без forward:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R2
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R3
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R4
+```
+
+## R4BB Table/ML Audit Artifacts
+
+Открыть отчет по аудиту train-таблиц и моделей R4BB:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r4bb_train_20260127_20260320\STAS5_V5C_R4BB_TABLE_ML_AUDIT_20260722_RU.md
+```
+
+Важно: это отчет аудита. Он не запускает обучение и не меняет forward.
+
+## STAS8 Soft Capacity V2 Preview R5
+
+Пересобрать `STAS8_SOFT_CAPACITY_V2` на R5 `2026-03-21..2026-03-27` без обучения и без нового forward:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_stas8_move_capacity_audit.ps1 `
+  -ForwardRunId stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1 `
+  -StartDay 2026-03-21 `
+  -EndDay 2026-03-27 `
+  -SoftV2Preview `
+  -OpenFolder
+```
+
+Открыть папку `soft_capacity_v2`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\soft_capacity_v2
+```
+
+Открыть главный кандидат `balanced`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\soft_capacity_v2\STAS8_SOFT_V2_BALANCED_CONTACT_SHEET.png
+```
+
+Открыть раздушенный вариант `wide`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\soft_capacity_v2\STAS8_SOFT_V2_WIDE_CONTACT_SHEET.png
+```
+
+Открыть guard:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\soft_capacity_v2\STAS5_V5C_STAS8_SOFT_CAPACITY_V2_GUARD_20260321_20260327.json
+```
+
+Важно: зеленый круг на PNG теперь означает только финальный live `ENTER` после STAS8. `RECALL_WATCH` и teacher-hit поля в этом preview нужны только для ручного просмотра, не для live, и не рисуются как зеленые входы.
+
+## Open STAS8 R5 Entry/Move Audit
+
+Открыть свежий аудит по R5 `2026-03-21..2026-03-27`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\v1\STAS5_V5C_STAS8_R5_ENTRY_MOVE_AUDIT_20260321_20260327_RU.md
+```
+
+Открыть папку с CSV-срезами и графиками:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\v1
+```
+
+Открыть контактный лист 7 дней без Bollinger:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\v1\STAS5_V5C_STAS8_R5_VISUAL_CONTACT_SHEET_NO_BOLLINGER.png
+```
+
+## Open STAS8 R5 Clean Visuals Without Bollinger
+
+Открыть актуальные STAS8-графики R5 без Bollinger-полос:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\v1\visual_review
+```
+
+Открыть 2026-03-26:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\v1\visual_review\20260326\STAS5_V5C_STAS8_MOVE_CAPACITY_AUDIT_20260326_V1.png
+```
+
+## STAS8 Move Capacity Audit Preview R5
+
+Пересобрать STAS8 audit-preview на актуальном R5 no-risk X463 forward `2026-03-21..2026-03-27`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_stas8_move_capacity_audit.ps1 `
+  -ForwardRunId stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1 `
+  -StartDay 2026-03-21 `
+  -EndDay 2026-03-27 `
+  -OpenFolder
+```
+
+Открыть готовую папку:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\v1
+```
+
+Открыть проблемный день 2026-03-26:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\v1\visual_review\20260326\STAS5_V5C_STAS8_MOVE_CAPACITY_AUDIT_20260326_V1.png
+```
+
+Открыть guard:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1\stas8_move_capacity_audit\v1\STAS5_V5C_STAS8_MOVE_CAPACITY_GUARD_20260321_20260327_V1.json
+```
+
+Важно: это audit-preview. Команда не запускает обучение, не запускает новый forward и не меняет исходный predictions CSV.
+
+## STAS5 V5C R4BB Fast Train Audit
+
+Открыть аудит быстрого train `stas5_v5c_r4bb_train_20260127_20260320`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r4bb_train_20260127_20260320\STAS5_V5C_R4BB_FAST_TRAIN_AUDIT_RU.md
+```
+
+Открыть run-папку:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r4bb_train_20260127_20260320
+```
+
+Быстро проверить, что управляющий config смотрит на R4BB/X463:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import json
+from pathlib import Path
+import yaml
+
+root = Path(r"C:\Users\007\Desktop\MLbotNav")
+cfg = yaml.safe_load((root / "STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml").read_text(encoding="utf-8-sig"))
+snap = json.loads((root / "STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.json").read_text(encoding="utf-8-sig"))
+for name, data in [("yaml", cfg), ("json", snap)]:
+    train = data["active_context"]["train"]
+    print(name, train["run_id"], train["feature_count"], train["batch_path"], train["riskgate_dataset_path"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+## STAS5 V5C Bollinger Layer V1 X463
+
+Пересобрать train datasets `2026-01-27..2026-03-20` с Bollinger-признаками:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_train_dataset_builder.ps1 `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-20 `
+  -EnableBollingerLayer `
+  -Force `
+  -OpenFolder
+```
+
+Проверить training guard без обучения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode TrainingGuard `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-20 `
+  -TrainRunId stas5_v5c_r4bb_train_20260127_20260320
+```
+
+Открыть R2/R3/R4 Bollinger gallery:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW_BOLLINGER20_2SIGMA\R2
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW_BOLLINGER20_2SIGMA\R3
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW_BOLLINGER20_2SIGMA\R4
+```
+
+Пересобрать эти галереи:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R2 -BollingerPreview -OpenFolder
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R3 -BollingerPreview -OpenFolder
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R4 -BollingerPreview -OpenFolder
+```
+
+После визуального OK пользователь запускает обучение сам:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Train `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-20 `
+  -TrainRunId stas5_v5c_r4bb_train_20260127_20260320
+```
+
+Forward на следующую неделю после PASS train/post-train guards:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Forward `
+  -TrainManifestPath .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r4bb_train_20260127_20260320\STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json `
+  -ForwardStartDay 2026-03-21 `
+  -ForwardEndDay 2026-03-27 `
+  -ForwardRunId stas5_v5c_r4bb_forward_20260321_20260327_wide_v1 `
+  -EntryDecisionPolicy WideReview `
+  -BollingerPreview `
+  -OpenFolder
+```
+
+## STAS5 V5C R5 ENTRY-Only No-Risk Bollinger Visual Review
+
+Пересобрать обычные графики **без риска** из R5 `visual_review` с Bollinger `20/2`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.stas5_v5_forward_visual_review `
+  --forward-run-dir .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r5_entry_only_forward_20260321_20260327_wide_no_risk `
+  --start-day 2026-03-21 `
+  --end-day 2026-03-27 `
+  --bollinger-preview
+```
+
+Открыть правильную папку:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r5_entry_only_forward_20260321_20260327_wide_no_risk\visual_review
+```
+
+Готовые дневные PNG лежат внутри `visual_review\YYYYMMDD` и называются:
+
+```text
+STAS5_V5_FORWARD_VISUAL_REVIEW_YYYYMMDD_ENTER_ARROWS_BOLLINGER20_2SIGMA_PREVIEW.png
+```
+
+Это no-risk/ENTRY-only visual review. Safety-pulse/RiskGate папки здесь не используются.
+
+Открыть готовые графики с красными кругами `BB_BLOCK_V0`, где Bollinger preview пометил опасные `ENTER/WATCH` за `2026-03-21..2026-03-27`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r5_entry_only_forward_20260321_20260327_wide_no_risk\visual_review
+```
+
+Имена дневных PNG:
+
+```text
+STAS5_V5_FORWARD_VISUAL_REVIEW_YYYYMMDD_ENTER_WATCH_BOLLINGER_BLOCK_V0_RED_CIRCLES.png
+```
+
+Week-manifest с цифрами:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r5_entry_only_forward_20260321_20260327_wide_no_risk\visual_review\STAS5_V5_FORWARD_VISUAL_REVIEW_20260321_20260327_BOLLINGER_BLOCK_V0_WEEK_MANIFEST.json
+```
+
+## STAS5 V5C Bollinger Visual Preview 2026-03-21..2026-03-27
+
+Пересобрать все графики недели `DOWN_CHANNEL_NO_LONG_V1` с Bollinger `20/2`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_safety_pulse_preview.ps1 `
+  -ForwardRunId stas5_v5c_r4_forward_20260321_20260327_wide_v1 `
+  -StartDay 2026-03-21 `
+  -EndDay 2026-03-27 `
+  -Policy DOWN_CHANNEL_NO_LONG_V1 `
+  -BollingerPreview `
+  -OpenFolder
+```
+
+Открыть готовую папку:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4_forward_20260321_20260327_wide_v1\safety_pulse_preview\down_channel_no_long_v1
+```
+
+Открыть график `2026-03-23` напрямую:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4_forward_20260321_20260327_wide_v1\safety_pulse_preview\down_channel_no_long_v1\20260323\STAS5_V5C_BALANCED_SAFETY_PULSE_20260323_BOLLINGER20_2SIGMA_PREVIEW_V1.png
+```
+
+Это только открытие PNG. Train/forward/ML decisions не запускаются и не меняются.
+
+## STAS5 V5C ENTRY-Only Wide R5
+
+Команда обучения базовой ENTRY-цепочки по базе `2026-01-27..2026-03-20` с R2/R3/R4 ручными правками, но без обучения RiskGate ML в этом run:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Train `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-20 `
+  -TrainRunId stas5_v5c_r5_entry_only_train_20260127_20260320 `
+  -SkipRiskGateML
+```
+
+После PASS train раздушенный forward без RiskGate, через wide-review пороги:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Forward `
+  -TrainManifestPath .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r5_entry_only_train_20260127_20260320\STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json `
+  -ForwardStartDay 2026-03-21 `
+  -ForwardEndDay 2026-03-27 `
+  -ForwardRunId stas5_v5c_r5_entry_only_forward_20260321_20260327_wide_no_risk `
+  -EntryDecisionPolicy WideReview `
+  -DisableRiskGateML `
+  -OpenFolder
+```
+
+Смысл: ENTRY учится на `entry_y` из base32 + approved R2/R3/R4, использует только X439 causal features. `risk_bad_y`, RiskGate labels, manual review, future/outcome не становятся feature. `WideReview` не обучает заново threshold на forward: он берет train OOF quantile и дает больше кандидатов для просмотра.
+
+## STAS8 Live Wave + Move Capacity TZ
+
+Дата фиксации: `2026-07-22`. Блок выключен, это только ТЗ и команды проверки.
+
+Рельса:
+
+```text
+R2/R3/R4 = approved train material
+R5 2026-03-21..2026-03-27 = blind-forward/audit-preview, не train до ручного review
+STAS8_LIVE_MOVE_CONTEXT_V1 = no-future live long-search gate
+STAS8_TEACHER_MOVE_GRID_V1 = offline teacher/audit future grid
+```
+
+Открыть отложенное ТЗ:
+
+```powershell
+ii .\STAS5_ML_CORE\10_STAS8_MOVE_CAPACITY_GRID_TZ_RU.md
+```
+
+Открыть управляющий YAML, где `STAS8_MOVE_CAPACITY_GRID_V1` записан как выключенный будущий блок:
+
+```powershell
+ii .\STAS5_ML_CORE\configs\STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml
+```
+
+Проверить YAML/JSON без запуска ML:
+
+```powershell
+@'
+from pathlib import Path
+import json
+import yaml
+root = Path(r"C:\Users\007\Desktop\MLbotNav")
+y = yaml.safe_load((root / "STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml").read_text(encoding="utf-8-sig"))
+j = json.loads((root / "STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.json").read_text(encoding="utf-8-sig"))
+for name, d in [("yaml", y), ("json", j)]:
+    b = d["ml_blocks"]["STAS8_MOVE_CAPACITY_GRID_V1"]
+    print(name, b["enabled"], b["type"], b["train_scope_rule"]["blind_forward_audit_range"], b["teacher_grid_layer"]["decision_thresholds_pct"]["enter_main"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+## STAS5 V5C Safety Pulse Preview
+
+Текущий рекомендуемый preview для просмотра после плохих входов `2026-03-26/2026-03-27`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_safety_pulse_preview.ps1 `
+  -ForwardRunId stas5_v5c_r4_forward_20260321_20260327_wide_v1 `
+  -StartDay 2026-03-21 `
+  -EndDay 2026-03-27 `
+  -Policy DOWN_CHANNEL_NO_LONG_V1 `
+  -OpenFolder
+```
+
+Открыть готовую папку без пересборки:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4_forward_20260321_20260327_wide_v1\safety_pulse_preview\down_channel_no_long_v1
+```
+
+Контрольные цифры текущего preview:
+
+```text
+До RiskGate: ENTER=70, WATCH=176, SKIP=318
+Старый финал с RISKGATE_ML: ENTER=34, WATCH=37, SKIP=493
+DOWN_CHANNEL_NO_LONG_V1: ENTER=40, WATCH=136, SKIP=388
+```
+
+Быстрый test-drive без обучения и без пересборки forward. Использует готовый forward `2026-03-21..2026-03-27`, готовые predictions и RiskGate taxonomy audit, затем рисует отдельные PNG.
+
+Рекомендуемый для просмотра пульс сейчас:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_safety_pulse_preview.ps1 `
+  -ForwardRunId stas5_v5c_r4_forward_20260321_20260327_wide_v1 `
+  -StartDay 2026-03-21 `
+  -EndDay 2026-03-27 `
+  -Policy HARD_BLOCK_ONLY_V1 `
+  -OpenFolder
+```
+
+Открыть готовую папку:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r4_forward_20260321_20260327_wide_v1\safety_pulse_preview\hard_block_only_v1
+```
+
+Более строгий вариант для сравнения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_safety_pulse_preview.ps1 `
+  -ForwardRunId stas5_v5c_r4_forward_20260321_20260327_wide_v1 `
+  -StartDay 2026-03-21 `
+  -EndDay 2026-03-27 `
+  -Policy BALANCED_SAFETY_V1 `
+  -OpenFolder
+```
+
+Важно: это не запускает `Train`, не запускает новый `Forward`, не меняет исходный predictions CSV.
+
+## STAS5 V5C R4 ENTRY + RiskGate ML Manual Train
+
+Текущая команда ручного запуска обучения в VS Code. Она должна обучить ENTRY-цепочку и затем отдельный `RISKGATE_ML` в том же train run:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Train `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-20 `
+  -TrainRunId stas5_v5c_r4_train_20260127_20260320
+```
+
+Перед Train уже проверено:
+
+```text
+ENTRY TrainingGuard: PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING
+RiskGate ML TrainingGuard: PASS_V5C_RISKGATE_ML_TRAINING_GUARD_READY_FOR_TRAINING
+```
+
+После Train открыть run dir:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r4_train_20260127_20260320
+```
+
+Проверить, что появились RiskGate ML artifacts:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r4_train_20260127_20260320\STAS5_V5C_RISKGATE_ML_TRAIN_MANIFEST_V1.json
+ii .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r4_train_20260127_20260320\STAS5_V5C_RISKGATE_ML_POST_TRAIN_GUARD_V1.json
+```
+
+Forward не запускать, пока ENTRY post-train guard и RiskGate post-train guard не PASS.
+
+## STAS5 V5C R4 Build/Train Commands
+
+Пересобрать ENTRY + RiskGate train datasets без обучения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_train_dataset_builder.ps1 -Force
+```
+
+Открыть готовые guards:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\STAS5_V5C_BATCH_20260127_20260320_GUARD_V1.json
+ii .\STAS5_ML_CORE\artifacts\v5c\STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_GUARD_V1.json
+```
+
+Проверить TrainingGuard без обучения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode TrainingGuard `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-20 `
+  -TrainRunId stas5_v5c_r4_train_20260127_20260320
+```
+
+Ручной запуск обучения в VS Code:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Train `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-20 `
+  -TrainRunId stas5_v5c_r4_train_20260127_20260320
+```
+
+Forward не запускать до завершенного Train и post-train guard PASS.
+
+## STAS5 V5C Open ML Control Config
+
+Открыть главный управляющий YAML:
+
+```powershell
+ii .\STAS5_ML_CORE\configs\STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml
+```
+
+Открыть справочные config-снимки:
+
+```powershell
+ii .\STAS5_ML_CORE\configs\STAS5_V5C_ML_CONTROL_CONFIG_V1.json
+ii .\STAS5_ML_CORE\configs\STAS5_V5C_ML_CONTROL_CONFIG_V1_RU.md
+```
+
+Текущий статус config: `REVIEW_PACK_DATASET_RAILS_LOCKED_NO_TRAINING`. Команды Train/Forward здесь специально не добавлены как следующий запуск: сначала нужен builder `X439_SOURCE`, `ENTRY_TRAIN_DATASET`, `RISKGATE_TRAIN_DATASET` и их guards.
+
+Открыть approved review-pack, который должен использовать будущий dataset builder:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_APPROVED_REVIEW_PACKS\STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1
+```
+
+Ожидаемые цифры будущего ENTRY train view после builder guard:
+
+```text
+days=53
+rows=3285
+GOOD=517
+BAD=2768
+RISK_BAD=400
+features=439
+```
+
+## STAS5 V5C Build Approved Review Pack R2/R3/R4
+
+Собрать единый approved review-pack по `R2/R3/R4` без training и без forward:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_pack.ps1
+```
+
+Если pack уже существует и нужно пересобрать его поверх свежих `APPROVED` ledgers:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_pack.ps1 -Force
+```
+
+Открыть готовую папку:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_APPROVED_REVIEW_PACKS\STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1
+```
+
+Открыть guard:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_APPROVED_REVIEW_PACKS\STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1\STAS5_V5C_R2_R3_R4_REVIEW_PACK_GUARD_V1.json
+```
+
+Открыть сводные CSV:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_APPROVED_REVIEW_PACKS\STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1\entry\STAS5_V5C_R2_R3_R4_ENTRY_REVIEW_APPROVED_ALL_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_APPROVED_REVIEW_PACKS\STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1\riskgate\STAS5_V5C_R2_R3_R4_RISKGATE_REVIEW_APPROVED_ALL_V1.csv
+```
+
+Ожидаемые цифры текущего PASS-пакета:
+
+```text
+days=21
+ENTRY rows=689
+ENTRY GOOD=227
+ENTRY BAD=462
+RISK BAD=400
+guard=PASS_V5C_REVIEW_PACK_GUARD_READY_NO_TRAINING
+```
+
+## STAS5 V5C Open Current Review Graph
+
+Открыть официальный текущий график R2 `2026-03-01`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\r2_user_review\20260301\STAS5_V5C_R2_USER_REVIEW_20260301_CURRENT_REVIEW.png
+```
+
+Открыть manifest, где видно, какие цифры связаны с этим графиком:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\r2_user_review\20260301\STAS5_V5C_R2_USER_REVIEW_20260301_CURRENT_VISUAL_MANIFEST_V1.json
+```
+
+Открыть R2-витрину после cleanup:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW\R2
+```
+
+В корне дня должен быть один `*_CURRENT_REVIEW.png`; старые/технические PNG лежат в `_visual_archive`.
+
+## STAS5 V5C Open Updated Review Gallery
+
+Открыть общую витрину с обновленными `LAxxx` над review-маркерами:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW
+```
+
+Открыть контрольный R2-график `2026-03-01`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW\R2\20260301\STAS5_V5C_R2_20260301_ANNOTATED_ENTRY_RISK.png
+```
+
+Пересобрать витрину после новых review-ledgers:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R2 -OpenFolder
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R3 -OpenFolder
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R4 -OpenFolder
+```
+
+Эти команды не запускают training, forward и day passport rebuild.
+
+## STAS5 V5C Review Gallery R2/R3/R4
+
+Собрать/обновить общую витрину review-графиков:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R2 -OpenFolder
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R3 -OpenFolder
+.\STAS5_ML_CORE\run_stas5_v5c_review_gallery.ps1 -Round R4 -OpenFolder
+```
+
+Открыть общую папку:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW
+```
+
+Открыть R2:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW\R2
+```
+
+Витрина создает только PNG/CSV-копии для review: `ALL_ENTRIES` и `ANNOTATED_ENTRY_RISK`. Training, forward и пересборку дневных passports она не запускает.
+
+## STAS5 V5C ENTRY/RiskGate Label Contract
+
+Быстрая диктовка сохраняет две разные цели:
+
+```text
+обычное хорошо / вход / крестик хорошо / ромбик хорошо -> ENTRY -> entry_y=1
+обычное плохо без слова риск -> ENTRY -> entry_y=0
+риск плохо -> ENTRY BAD + RiskGate BAD -> entry_y=0 + risk_bad_y=1
+```
+
+`risk_bad_y` не является live feature. Это отдельный target для RiskGate, но сам LA одновременно остается плохим примером для ENTRY (`entry_y=0`). Команду `-Stage All -Approve` запускать одной цельной командой, не дописывать `-Stage` отдельной строкой после завершения команды PowerShell.
+
+## STAS5 V5C Quick Review Ladder ENTRY + RiskGate
+
+Проверить разбор без записи файлов:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_ladder.ps1 `
+  -Day 2026-03-18 `
+  -Round R4 `
+  -ForwardRunId stas5_v5c_r3_forward_20260314_20260320_wide_v1 `
+  -Review "14 плохо; 22 ромбик хорошо; 47 крестик вход; 40 риск плохо" `
+  -Stage Parse
+```
+
+Сохранить draft-ledger, без пересборки дня:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_ladder.ps1 `
+  -Day 2026-03-18 `
+  -Round R4 `
+  -ForwardRunId stas5_v5c_r3_forward_20260314_20260320_wide_v1 `
+  -Review "14 плохо; 22 ромбик хорошо; 47 крестик вход; 40 риск плохо" `
+  -Stage SaveReview `
+  -OpenFolder
+```
+
+В папке дня должен появиться контрольный PNG со всеми входами:
+
+```text
+STAS5_V5C_R4_USER_REVIEW_YYYYMMDD_DRAFT_ALL_ENTRIES.png
+STAS5_V5C_R4_USER_REVIEW_YYYYMMDD_DRAFT_ANNOTATED.png
+```
+
+`*_ALL_ENTRIES.png` - чистый график со всеми LA. `*_ANNOTATED.png` - рабочий график для проверки диктовки: поверх цены видны `GOOD/BAD/RISK BAD`, нижние полосы `Fon/LONG/SHORT/WAVE` сохранены. Overlay без стрелок: `GOOD` = зеленый круг, `RISK BAD` = ярко-красный круг, обычный `BAD` = красный квадрат.
+
+Открыть проверочный PNG с подсветкой для примера `2026-03-18`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\r4_user_review\20260318\STAS5_V5C_R4_USER_REVIEW_20260318_APPROVED_ANNOTATED.png
+```
+
+Закрыть день и сразу пересобрать V5 day package по ENTRY GOOD ids:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_ladder.ps1 `
+  -Day 2026-03-18 `
+  -Round R4 `
+  -ForwardRunId stas5_v5c_r3_forward_20260314_20260320_wide_v1 `
+  -Review "14 плохо; 22 ромбик хорошо; 47 крестик вход; 40 риск плохо" `
+  -Stage All `
+  -Approve `
+  -OpenFolder
+```
+
+Если `APPROVED` review уже успел записаться, но пересборка дня была прервана, повторить ту же команду с `-Force`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_review_ladder.ps1 `
+  -Day 2026-03-18 `
+  -Round R4 `
+  -ForwardRunId stas5_v5c_r3_forward_20260314_20260320_wide_v1 `
+  -Review "14 плохо; 22 ромбик хорошо; 47 крестик вход; 40 риск плохо" `
+  -Stage All `
+  -Approve `
+  -Force `
+  -OpenFolder
+```
+
+Правило диктовки:
+
+```text
+без слова риск -> ENTRY: хорошо/вход = GOOD, плохо = BAD
+со словом риск -> RiskGate: только риск плохо = RISK_BAD
+риск хорошо не использовать
+```
+
+Если нужно одновременно сказать, что вход плохой и зона рискованная:
+
+```text
+47 плохо; 47 риск плохо
+```
+
+## STAS5 V5C RiskGate Taxonomy V1
+
+Пересобрать RiskGate audit-only на `2026-03-18` с полной таксономией режимов и user-pass `LA059,LA067,LA078`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode RiskGate `
+  -ForwardStartDay 2026-03-18 `
+  -ForwardEndDay 2026-03-18 `
+  -ForwardRunId stas5_v5c_r3_forward_20260314_20260320_wide_v1 `
+  -RiskGateUserPassIds LA059,LA067,LA078 `
+  -OpenFolder
+```
+
+Открыть свежий PNG:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_audit\20260318\STAS5_V5C_RISKGATE_AUDIT_20260318_V1.png
+```
+
+Открыть свежий CSV с режимами:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_audit\20260318\STAS5_V5C_RISKGATE_AUDIT_20260318_V1.csv
+```
+
+Ключевые новые колонки: `RISK_GATE_TAXONOMY_VERSION`, `RISK_GATE_PRIMARY_REGIME`, `RISK_GATE_TAGS`, `RISK_MODE_*_SCORE`, `RISK_MODE_*_FLAG`.
+
+## STAS5 V5C RiskGate Audit-Only
+
+Запустить RiskGate audit-only на уже готовом R3 forward-дне `2026-03-18` с тремя проходящими входами пользователя:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode RiskGate `
+  -ForwardStartDay 2026-03-18 `
+  -ForwardEndDay 2026-03-18 `
+  -ForwardRunId stas5_v5c_r3_forward_20260314_20260320_wide_v1 `
+  -RiskGateUserPassIds LA059,LA067,LA078 `
+  -OpenFolder
+```
+
+Открыть официальный RiskGate PNG:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_audit\20260318\STAS5_V5C_RISKGATE_AUDIT_20260318_V1.png
+```
+
+Открыть официальный RiskGate CSV:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_audit\20260318\STAS5_V5C_RISKGATE_AUDIT_20260318_V1.csv
+```
+
+Важно: это не training и не forward. Это audit-only слой поверх готовых predictions.
+
+Если RiskGate запускается на диапазон больше одного дня, `USER_PASS` нужно указывать с датой, чтобы одинаковые `LAxxx` не применились к другим дням:
+
+```powershell
+-RiskGateUserPassIds 2026-03-18:LA059,2026-03-18:LA067,2026-03-18:LA078
+```
+
+## STAS5 V5C Open RiskGate Preview 2026-03-18
+
+Открыть PNG-прототип RiskGate V0 для `2026-03-18`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_preview\20260318\STAS5_V5C_RISKGATE_PREVIEW_20260318_V0.png
+```
+
+Открыть отчет:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_preview\20260318\STAS5_V5C_RISKGATE_PREVIEW_20260318_RU.md
+```
+
+Открыть CSV с причинами:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_preview\20260318\STAS5_V5C_RISKGATE_PREVIEW_20260318_V0.csv
+```
+
+Открыть V1 user-pass версию, где `LA059`, `LA067`, `LA078` помечены как проходящие:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_preview\20260318\STAS5_V5C_RISKGATE_PREVIEW_20260318_V1_USER_PASS.png
+```
+
+Открыть V1 CSV:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r3_forward_20260314_20260320_wide_v1\riskgate_preview\20260318\STAS5_V5C_RISKGATE_PREVIEW_20260318_V1_USER_PASS.csv
+```
+
+## STAS5 V5C Check Frozen Two-Block
+
+Проверить, что `ENTRY_ML_TWO_BLOCK` заморожен в главном YAML:
+
+```powershell
+@'
+from pathlib import Path
+import yaml
+p = Path("STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml")
+d = yaml.safe_load(p.read_text(encoding="utf-8"))
+b = d["ml_blocks"]["ENTRY_ML_TWO_BLOCK"]
+print("ENTRY_ML_TWO_BLOCK enabled=", b["enabled"])
+print("ENTRY_ML_TWO_BLOCK mode=", b["mode"])
+print("ENTRY_ML_TWO_BLOCK selection_status=", b["selection_status"])
+'@ | python -X utf8 -
+```
+
+Ожидаемо:
+
+```text
+enabled=False
+mode=frozen_not_selected
+selection_status=FROZEN_NOT_SELECTED_BY_R3_QUALITY_GATE
+```
+
+## STAS5 V5C YAML Config With Russian Comments
+
+Открыть главный YAML config с русскими комментариями по ML-блокам:
+
+```powershell
+ii .\STAS5_ML_CORE\configs\STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml
+```
+
+Проверить, что YAML после комментариев валиден:
+
+```powershell
+@'
+from pathlib import Path
+import yaml
+p = Path("STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml")
+d = yaml.safe_load(p.read_text(encoding="utf-8"))
+print("YAML_VALIDATE=PASS", d["status"])
+'@ | python -X utf8 -
+```
+
+## STAS5 V5C Main YAML ML Control Config
+
+Открыть главный управляемый YAML config по ML-блокам:
+
+```powershell
+ii .\STAS5_ML_CORE\configs\STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml
+```
+
+Проверить YAML:
+
+```powershell
+@'
+from pathlib import Path
+import yaml
+p = Path("STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml")
+d = yaml.safe_load(p.read_text(encoding="utf-8"))
+print(d["config_id"], d["status"])
+print("source_of_truth=", d["source_of_truth"])
+print("selected_entry=", d["ml_blocks"]["ENTRY_BASELINE_ML"]["selected_for_entry"])
+'@ | python -X utf8 -
+```
+
+Важно: с `2026-07-20` главным source-of-truth является YAML. JSON и RU.md являются справочными снимками.
+
+## STAS5 V5C ML Control Config
+
+Открыть старую человекочитаемую справку по ML-блокам:
+
+```powershell
+ii .\STAS5_ML_CORE\configs\STAS5_V5C_ML_CONTROL_CONFIG_V1_RU.md
+```
+
+Проверить машинный JSON config:
+
+```powershell
+python -m json.tool .\STAS5_ML_CORE\configs\STAS5_V5C_ML_CONTROL_CONFIG_V1.json > $env:TEMP\stas5_v5c_ml_control_config_v1.pretty.json
+```
+
+Важно: config V1 пока не запускает обучение и не включает RiskGate автоматически. Следующий кодовый шаг должен подключать `RISK_GATE_RULE_V0` только в режиме `audit_only`.
+
+## STAS5 V5C R3 TrainingGuard, Train, Forward Week3
+
+R3 batch уже собран и guard `PASS`. Эти команды используют пользовательские правки за `2026-03-07..2026-03-13`; не использовать старый R2/R2Q train range до `2026-03-06`.
+
+Текущий статус: `TrainingGuard` и `Train` уже выполнены, post-train guard `PASS_V5_TWO_BLOCK_POST_TRAIN_GUARD_READY_FOR_FORWARD`. Следующая команда - blind-forward week3 `2026-03-14..2026-03-20`.
+
+1. TrainingGuard, без обучения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode TrainingGuard `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-13 `
+  -TrainRunId stas5_v5c_r3_train_20260127_20260313
+```
+
+Ожидаемо: `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING`.
+
+2. Train, уже выполнено:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Train `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-13 `
+  -TrainRunId stas5_v5c_r3_train_20260127_20260313
+```
+
+3. Blind-forward week3, запускать сейчас:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Forward `
+  -ForwardStartDay 2026-03-14 `
+  -ForwardEndDay 2026-03-20 `
+  -ContextStartDay 2026-01-27 `
+  -ContextWarmupMinutes 720 `
+  -EntryDecisionPolicy WideReview `
+  -TrainManifestPath .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r3_train_20260127_20260313\STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json `
+  -ForwardRunId stas5_v5c_r3_forward_20260314_20260320_wide_v1 `
+  -OpenFolder
+```
+
+`2026-03-07..2026-03-13` уже вошли в R3 train и не являются новым blind proof. Новый blind proof - `2026-03-14..2026-03-20`.
+
+## STAS5 V5C R2Q Forward Rerun After Normal Threshold Fix
+
+Старый `Normal` был слишком зажат: на `2026-03-07..2026-03-13` дал только `ENTER=5`. После фикса `Normal` ожидается около `25` ENTER; для ручного review можно сразу запускать `WideReview`, ожидается около `64` ENTER. Оба режима считают пороги только по train OOF, без forward outcome labels.
+
+Рекомендуемый сейчас режим для визуального разбора: `WideReview`.
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Forward `
+  -ForwardStartDay 2026-03-07 `
+  -ForwardEndDay 2026-03-13 `
+  -ContextStartDay 2026-01-27 `
+  -ContextWarmupMinutes 720 `
+  -EntryDecisionPolicy WideReview `
+  -TrainManifestPath .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r2q_train_20260127_20260306\STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json `
+  -ForwardRunId stas5_v5c_r2q_forward_20260307_20260313_wide_v2 `
+  -OpenFolder
+```
+
+Более спокойный вариант:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Forward `
+  -ForwardStartDay 2026-03-07 `
+  -ForwardEndDay 2026-03-13 `
+  -ContextStartDay 2026-01-27 `
+  -ContextWarmupMinutes 720 `
+  -EntryDecisionPolicy Normal `
+  -TrainManifestPath .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r2q_train_20260127_20260306\STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json `
+  -ForwardRunId stas5_v5c_r2q_forward_20260307_20260313_normal_v2 `
+  -OpenFolder
+```
+
+## STAS5 V5C R2Q Normal Forward More Entries
+
+После R2Q train PASS можно запустить повторный forward той же недели `2026-03-07..2026-03-13` с более широким порогом `Normal`. Модель, train и X439 не меняются; меняется только decision threshold, рассчитанный по train OOF quantiles без forward tuning.
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Forward `
+  -ForwardStartDay 2026-03-07 `
+  -ForwardEndDay 2026-03-13 `
+  -ContextStartDay 2026-01-27 `
+  -ContextWarmupMinutes 720 `
+  -EntryDecisionPolicy Normal `
+  -TrainManifestPath .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r2q_train_20260127_20260306\STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json `
+  -ForwardRunId stas5_v5c_r2q_forward_20260307_20260313_normal `
+  -OpenFolder
+```
+
+`WideReview` использовать только если `Normal` все равно слишком скупой:
+
+```powershell
+-EntryDecisionPolicy WideReview
+```
+
+## STAS5 V5C R2Q Train Retry After Multiclass Fix
+
+Если `TrainingGuard` уже вернул `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING`, а первый `Train` упал на `liblinear` multiclass для `phase_y/state_y`, после фикса кода команда не меняется. Повторить:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Train `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-06 `
+  -TrainRunId stas5_v5c_r2q_train_20260127_20260306
+```
+
+Ожидаемый следующий PASS после успешного обучения: `PASS_V5_TWO_BLOCK_ML_TRAINED_POST_TRAIN_GUARD_READY_FOR_FORWARD`. Forward запускать только после него.
+
+## STAS5 V5C R2Q Quality-Fix Train And Diagnostic Forward
+
+Новая рельса после ML quality fix. Не использовать старый R2 run_id, чтобы не смешивать артефакты.
+
+1. TrainingGuard:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode TrainingGuard `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-06 `
+  -TrainRunId stas5_v5c_r2q_train_20260127_20260306
+```
+
+2. Train, только после guard PASS:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Train `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-06 `
+  -TrainRunId stas5_v5c_r2q_train_20260127_20260306
+```
+
+3. Diagnostic forward week2, только после post-train guard PASS:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Forward `
+  -ForwardStartDay 2026-03-07 `
+  -ForwardEndDay 2026-03-13 `
+  -ContextStartDay 2026-01-27 `
+  -ContextWarmupMinutes 720 `
+  -TrainManifestPath .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r2q_train_20260127_20260306\STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json `
+  -ForwardRunId stas5_v5c_r2q_forward_20260307_20260313 `
+  -OpenFolder
+```
+
+Открыть графики после forward:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r2q_forward_20260307_20260313\visual_review
+```
+
+Важно: week2 уже смотрели глазами, поэтому это diagnostic replay без future leakage в коде, но не новый human-blind proof. Для настоящего blind proof нужна следующая неразмеченная неделя.
+
+## STAS5 V5C R2 Train And Blind Forward Week2
+
+Текущий R2 batch уже собран и guard `PASS`:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260306_GUARD_V1.json
+rows=3172
+entry_y 1=359 / 0=2813
+features=439
+```
+
+Пользовательский порядок запуска: сначала training guard, потом train, потом blind forward week2. Не использовать `-NoStrict`.
+
+1. Только R2 TrainingGuard, без обучения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode TrainingGuard `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-06 `
+  -TrainRunId stas5_v5c_r2_train_20260127_20260306
+```
+
+Ожидаемо: `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING`.
+
+2. R2 Train, запускать только после TrainingGuard PASS:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Train `
+  -TrainStartDay 2026-01-27 `
+  -TrainEndDay 2026-03-06 `
+  -TrainRunId stas5_v5c_r2_train_20260127_20260306
+```
+
+Ожидаемый train manifest после успешного обучения:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r2_train_20260127_20260306/STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json
+```
+
+3. Blind forward week2, запускать только после post-train guard PASS:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 `
+  -Mode Forward `
+  -ForwardStartDay 2026-03-07 `
+  -ForwardEndDay 2026-03-13 `
+  -ContextStartDay 2026-01-27 `
+  -ContextWarmupMinutes 720 `
+  -TrainManifestPath .\STAS5_ML_CORE\artifacts\v5c\model\runs\stas5_v5c_r2_train_20260127_20260306\STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json `
+  -ForwardRunId stas5_v5c_r2_forward_20260307_20260313 `
+  -OpenFolder
+```
+
+После forward открыть графики:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_r2_forward_20260307_20260313\visual_review
+```
+
+Граница no-future: `2026-03-07..2026-03-13` не должны участвовать в R2 train или threshold tuning. Дни `2026-02-28..2026-03-06` уже входят в R2 train как teacher-разметка и больше не являются blind proof для R2.
+
+## STAS5 V5C R2 Text Encoding Audit
+
+Проверить, что в R2 review-артефактах нет question-mark placeholders и типичных UTF-8/CP1251 кракозяб:
+
+```powershell
+$bad = [char]0xfffd; rg -n "\?\?\?|$bad|Ð|Ñ|Â|Ã|РЎ|Рџ|Рґ|Р»|Рѕ|РЅ|Рё|Р°|Рµ|СЃ|С‚|СЂ|СЏ|СЊ|С‹|С‡|С€" STAS5_ML_CORE/artifacts/v5c -g "*.md" -g "*.json" -g "*.csv"
+```
+
+Ожидаемый результат после фикса:
+
+```text
+no matches
+```
+
+Открыть отчет по фиксу:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\r2_user_review\STAS5_V5C_R2_TEXT_ENCODING_AUDIT_20260717_RU.md
+```
+
+## STAS5 V5C R2 Close Reviewed Day
+
+Закрыть reviewed day как teacher-разметку для R2 без запуска training:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-02-28 -Stage All -GoodIds LA022,LA023,LA032,LA035,LA043,LA047,LA052,LA062,LA067,LA068
+```
+
+Проверить итоговый дневной пакет:
+
+```powershell
+@'
+import pandas as pd
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v5/market_passports/20260228/STAS5_V5_MARKET_PASSPORT_20260228_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv")
+df = pd.read_csv(p)
+print(len(df), df["entry_y"].value_counts().sort_index().to_dict())
+print(",".join(df.loc[df["entry_y"].astype(int).eq(1), "candidate_id"].tolist()))
+'@ | .\.venv\Scripts\python.exe -X utf8 -
+```
+
+Ожидаемый итог для текущей закрытой версии `2026-02-28`:
+
+```text
+rows=81
+entry_y 1=10 / 0=71
+GOOD=LA022,LA023,LA032,LA035,LA043,LA047,LA052,LA062,LA067,LA068
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+Закрытая команда для `2026-03-01`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-03-01 -Stage All -GoodIds LA002,LA005,LA012,LA033,LA044,LA048,LA055,LA071,LA075
+```
+
+Ожидаемый итог для текущей закрытой версии `2026-03-01`:
+
+```text
+rows=81
+entry_y 1=9 / 0=72
+GOOD=LA002,LA005,LA012,LA033,LA044,LA048,LA055,LA071,LA075
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+Закрытая команда для `2026-03-02`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-03-02 -Stage All -GoodIds LA006,LA025,LA027,LA028,LA049,LA051,LA052,LA053,LA057,LA063,LA067,LA070
+```
+
+Ожидаемый итог для текущей закрытой версии `2026-03-02`:
+
+```text
+rows=81
+entry_y 1=12 / 0=69
+GOOD=LA006,LA025,LA027,LA028,LA049,LA051,LA052,LA053,LA057,LA063,LA067,LA070
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+Закрытая команда для `2026-03-03`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-03-03 -Stage All -GoodIds LA006,LA007,LA043,LA045,LA055,LA060,LA062,LA066,LA067,LA072,LA082,LA083
+```
+
+Ожидаемый итог для текущей закрытой версии `2026-03-03`:
+
+```text
+rows=89
+entry_y 1=12 / 0=77
+GOOD=LA006,LA007,LA043,LA045,LA055,LA060,LA062,LA066,LA067,LA072,LA082,LA083
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+Закрытая команда для `2026-03-04`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-03-04 -Stage All -GoodIds LA014,LA019,LA020,LA022,LA034,LA040,LA047,LA051,LA071
+```
+
+Ожидаемый итог для текущей закрытой версии `2026-03-04`:
+
+```text
+rows=72
+entry_y 1=9 / 0=63
+GOOD=LA014,LA019,LA020,LA022,LA034,LA040,LA047,LA051,LA071
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+Закрытая команда для `2026-03-05`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-03-05 -Stage All -GoodIds LA008,LA023,LA030,LA035,LA049,LA053,LA054,LA059,LA064,LA065,LA067
+```
+
+Ожидаемый итог для текущей закрытой версии `2026-03-05`:
+
+```text
+rows=85
+entry_y 1=11 / 0=74
+GOOD=LA008,LA023,LA030,LA035,LA049,LA053,LA054,LA059,LA064,LA065,LA067
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+Закрытая команда для `2026-03-06`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-03-06 -Stage All -GoodIds LA006,LA023,LA028,LA047,LA055,LA066
+```
+
+Ожидаемый итог для текущей закрытой версии `2026-03-06`:
+
+```text
+rows=87
+entry_y 1=6 / 0=81
+GOOD=LA006,LA023,LA028,LA047,LA055,LA066
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+## STAS5 V5C Continuous Train And Forward
+
+Полный повтор непрерывного контура `V5C_CONTINUOUS`: пересобрать batch, обучить two-block, прогнать blind forward `2026-02-28..2026-03-06`, построить графики и открыть папку.
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 -Mode All -ContextWarmupMinutes 720 -OpenFolder
+```
+
+Только пересобрать V5C batch/guard без обучения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 -Mode BuildBatch -ContextWarmupMinutes 720
+```
+
+Только обучить по уже готовому V5C batch:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 -Mode Train -ContextWarmupMinutes 720
+```
+
+Только blind forward по последней V5C модели:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 -Mode Forward -ContextWarmupMinutes 720
+```
+
+Открыть графики текущего V5C forward:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\forward\runs\stas5_v5c_continuous_forward_20260228_20260306_20260716_155343\visual_review
+```
+
+Перерисовать графики текущего V5C forward без обучения и без нового forward:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5c_continuous_train_forward.ps1 -Mode RenderForward -ForwardRunId stas5_v5c_continuous_forward_20260228_20260306_20260716_155343 -ForwardStartDay 2026-02-28 -ForwardEndDay 2026-03-06 -OpenFolder
+```
+
+Проверить, что новый visual review использует непрерывный блок `Fon / LONG / SHORT / WAVE`, а серый `GAP` в WAVE не рисуется:
+
+```powershell
+@'
+import json
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_continuous_forward_20260228_20260306_20260716_155343/visual_review/STAS5_V5_FORWARD_VISUAL_REVIEW_MANIFEST_V1.json")
+m = json.loads(p.read_text(encoding="utf-8"))
+print(m["status"], m["png_count"])
+for c in m["checks"]:
+    if "strength" in c["check"] or "gap" in c["check"] or "macro_wave" in c["check"]:
+        print(c["check"], c["status"], c.get("details", {}))
+for item in m["day_outputs"]:
+    print(item["day"], item["strength_strip_context_status"], item["strength_strip_context_rows"], item["strength_strip_gap_rows_rendered"], item["strength_strip_macro_wave_directions"])
+'@ | .\.venv\Scripts\python.exe -X utf8 -
+```
+
+Проверить основные V5C счетчики:
+
+```powershell
+@'
+import json
+from pathlib import Path
+root = Path("STAS5_ML_CORE/artifacts/v5c")
+batch_guard = json.loads((root / "STAS5_V5C_BATCH_20260127_20260227_GUARD_V1.json").read_text(encoding="utf-8"))
+latest_forward = json.loads((root / "forward/STAS5_V5C_LATEST_TWO_BLOCK_FORWARD_RUN.json").read_text(encoding="utf-8"))
+forward_manifest = json.loads(Path(latest_forward["manifest_path"]).read_text(encoding="utf-8"))
+print(batch_guard["status"], batch_guard["rows"], batch_guard["entry_y_counts"], batch_guard["feature_count"])
+print(forward_manifest["status"], forward_manifest["rows"], forward_manifest["decision_counts_total"])
+print(forward_manifest["visual_review_status"], forward_manifest["visual_review_png_count"])
+'@ | .\.venv\Scripts\python.exe -X utf8 -
+```
+
+Ожидаемый результат:
+
+```text
+batch guard PASS, rows=2596, entry_y 1=290 / 0=2306, features=439
+forward PASS, rows=576, ENTER=62 / WATCH=121 / SKIP=393
+visual PASS, png_count=14
+```
+
+Проверить, что WAVE-полоса закрывает доступный конец свечей и использует cumulative percent от настоящего старта волны:
+
+```powershell
+@'
+import json
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_continuous_forward_20260228_20260306_20260716_155343/visual_review/STAS5_V5_FORWARD_VISUAL_REVIEW_MANIFEST_V1.json")
+m = json.loads(p.read_text(encoding="utf-8"))
+for c in m["checks"]:
+    if "tail" in c["check"] or "available" in c["check"] or "cross_day" in c["check"] or "cumulative" in c["check"]:
+        print(c["check"], c["status"], c.get("details", {}))
+for item in m["day_outputs"]:
+    print(
+        item["day"],
+        "available=", item["strength_strip_available_end_utc"],
+        "last=", item["strength_strip_last_wave_end_utc"],
+        "covered=", item["strength_strip_tail_covered_to_data_end"],
+        "filled_min=", item["strength_strip_tail_gap_minutes_filled"],
+        "basis=", item["strength_strip_label_pct_basis"],
+    )
+'@ | .\.venv\Scripts\python.exe -X utf8 -
+```
+
+## STAS5 V5 Forward Visual Review With All LA Labels
+
+Перерендерить обзорные графики уже готового V5 forward run без обучения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_two_block_ml.ps1 -Mode RenderForward -ForwardRunId stas5_v5_forward_20260228_20260306_20260716 -ForwardStartDay 2026-02-28 -ForwardEndDay 2026-03-06 -OpenFolder
+```
+
+Открыть папку со всеми V5-графиками:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\forward\runs\stas5_v5_forward_20260228_20260306_20260716\visual_review
+```
+
+Открыть пример overview с желтыми `LAxxx`, желтыми X/ромбами и зелеными треугольниками `ENTER`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\forward\runs\stas5_v5_forward_20260228_20260306_20260716\visual_review\20260304\STAS5_V5_FORWARD_VISUAL_REVIEW_20260304_ENTER_ARROWS.png
+```
+
+Открыть closeup-лист входов за день:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\forward\runs\stas5_v5_forward_20260228_20260306_20260716\visual_review\20260304\STAS5_V5_FORWARD_ENTER_CLOSEUPS_20260304.png
+```
+
+Проверить manifest:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\forward\runs\stas5_v5_forward_20260228_20260306_20260716\visual_review\STAS5_V5_FORWARD_VISUAL_REVIEW_MANIFEST_V1.json
+```
+
+Ожидаемый статус:
+
+```text
+PASS_V5_FORWARD_VISUAL_REVIEW_READY_ALL_LA_LABELS_ENTER_TRIANGLES
+png_count=14
+```
+
+## STAS5 V5 Two-Block Train And Forward
+
+Полный проход training + blind forward:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_two_block_ml.ps1 -Mode TrainForward -ForwardStartDay 2026-02-28 -ForwardEndDay 2026-03-06
+```
+
+Только training guard:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_two_block_ml.ps1 -Mode TrainingGuard
+```
+
+Только training:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_two_block_ml.ps1 -Mode Train
+```
+
+Только forward после сохраненной модели:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_two_block_ml.ps1 -Mode Forward -ForwardStartDay 2026-02-28 -ForwardEndDay 2026-03-06
+```
+
+Итоговый отчет текущего прохода:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\STAS5_V5_TWO_BLOCK_TRAIN_FORWARD_20260716_RU.md
+```
+
+Forward predictions:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\forward\runs\stas5_v5_forward_20260228_20260306_20260716\STAS5_V5_FORWARD_PREDICTIONS_20260228_20260306_V1.csv
+```
+
+Граница: two-block guard `PASS`, но OOF хуже baseline. Перед production нужен review forward `ENTER` и baseline-forward сравнение.
+
+## STAS5 V5 Two-Block ML TZ
+
+Открыть ТЗ следующего ML-этапа:
+
+```powershell
+ii .\STAS5_ML_CORE\09_STAS5_V5_TWO_BLOCK_ML_TZ_RU.md
+```
+
+Текущий статус этапа:
+
+```text
+TZ_DRAFT_READY_FOR_USER_REVIEW_NO_TRAINING
+```
+
+Следующая команда еще должна быть реализована: `STAS5_V5_TWO_BLOCK_TRAINING_GUARD_V1`. До ее `PASS` не запускать baseline/training. До post-train guard `PASS` не запускать forward.
+
+## STAS5 V5 Batch Dataset And Guard
+
+Собрать batch dataset и batch leakage/no-future guard по текущему approved диапазону:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_batch_dataset_builder.ps1
+```
+
+То же напрямую через Python:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m mlbotnav.stas5_v5_batch_dataset_builder --start-day 2026-01-27 --end-day 2026-02-27
+```
+
+Открыть RU-аудит после сборки:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_batch_dataset_builder.ps1 -OpenReport
+```
+
+Проверить итоговый guard:
+
+```powershell
+@'
+import json
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_GUARD_V1.json")
+j = json.loads(p.read_text(encoding="utf-8"))
+print(j["status"])
+print(j["rows"], j["entry_y_counts"], j["feature_count"])
+print({item["check"]: item["status"] for item in j["checks"]})
+'@ | python -X utf8 -
+```
+
+Ожидаемый результат:
+
+```text
+PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING
+rows=2596
+entry_y 1=290 / 0=2306
+features=439
+```
+
+Граница: эта команда не запускает training и forward. Следующий слой должен начинаться с отдельного training guard и two-block ML `MARKET_PHASE_STATE_ML -> ENTRY_ML`.
+
+## STAS5 V5 Аудит Готовой Пачки
+
+Полный аудит V5-папки:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_folder_audit.ps1 -OpenReport
+```
+
+Текущий отчет диапазона `2026-01-27..2026-02-27`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\STAS5_V5_RANGE_AUDIT_20260127_20260227_RU.md
+```
+
+Текущий результат диапазона:
+
+```text
+32/32 full-ready days
+2596 rows
+entry_y 1=290 / 0=2306
+features=439
+training=False
+forward=False
+```
+
+Следующий командный слой еще нужно реализовать: `V5 batch dataset builder` и `batch leakage/no-future guard`.
+
+## STAS5 V5 День По GOOD ids
+
+Одна команда для дня, когда пользователь уже назвал хорошие входы `LAxxx`. Она не запускает обучение и не делает forward.
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-01-28 -Stage All -GoodIds LA020,LA037,LA042,LA045,LA051,LA059,LA069,LA078,LA084 -OpenFolder
+```
+
+Что делает команда:
+
+```text
+1. Находит или собирает FULL274.
+2. По GoodIds создает approved passport/targets.
+3. Проверяет baseline guard: 274 features, targets not in features.
+4. Строит cs_*.
+5. Строит fcs_* и карту дня.
+6. Запускает V5 folder audit.
+```
+
+Отдельно создать только approved-passport слой из GOOD ids:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_approved_passport_builder.ps1 -Day 2026-01-28 -GoodIds LA020,LA037,LA042,LA045,LA051,LA059,LA069,LA078,LA084 -OpenFolder
+```
+
+Открыть готовую папку `2026-01-28`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260128
+```
+
+Открыть главный CSV дня:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260128\STAS5_V5_MARKET_PASSPORT_20260128_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv
+```
+
+Открыть главную карту дня:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260128\DAY_MARKET_PASSPORT_20260128_FULL_CAUSAL_STRUCTURE_MAP_V1.png
+```
+
+Проверить guard-и дня:
+
+```powershell
+@'
+import json
+import pandas as pd
+from pathlib import Path
+base = Path("STAS5_ML_CORE/artifacts/v5/market_passports/20260128")
+for name in [
+    "STAS5_V5_MARKET_PASSPORT_20260128_PHASE_STATE_REASON_GUARD_V2.json",
+    "STAS5_V5_MARKET_PASSPORT_20260128_CAUSAL_STRUCTURE_GUARD_V1.json",
+    "STAS5_V5_MARKET_PASSPORT_20260128_FULL_CAUSAL_STRUCTURE_GUARD_V1.json",
+]:
+    guard = json.load(open(base / name, encoding="utf-8"))
+    print(name, guard["status"], "features=", guard.get("feature_count"))
+df = pd.read_csv(base / "STAS5_V5_MARKET_PASSPORT_20260128_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv", encoding="utf-8-sig")
+print("rows:", len(df))
+print("entry_y:", df["entry_y"].value_counts().sort_index().to_dict())
+print("good_ids:", df.loc[df["entry_y"].eq(1), "candidate_id"].tolist())
+'@ | python -X utf8 -
+```
+
+Важно: `GoodIds` - это teacher-target разметка истории. В `X` они не попадают. Обучение запускать только после batch dataset и batch guard по нескольким full-ready дням.
+
+## STAS5 V5 Главная Лесенка Дня
+
+Одна команда для нового дня. Она не запускает обучение и не делает forward.
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-01-28 -Stage All -OpenFolder
+```
+
+Как она работает:
+
+```text
+1. Если FULL274 уже есть - использует его.
+2. Если FULL274 нет - собирает FULL274.
+3. Проверяет, есть ли approved V5 passport/targets.
+4. Если approved нет - останавливается и показывает недостающие файлы.
+5. Если approved есть - строит cs_*.
+6. Потом строит fcs_*.
+7. Потом запускает V5 folder audit.
+```
+
+Режимы:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-01-28 -Stage Collect
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-01-28 -Stage BuildApproved
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-01-28 -Stage Audit
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-01-28 -Stage Open
+```
+
+Пересобрать FULL274 даже если run уже есть:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-01-28 -Stage Collect -ForceCollect -OpenFolder
+```
+
+Полный аудит папки V5:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_folder_audit.ps1 -OpenReport
+```
+
+Текущий отчет аудита:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\STAS5_V5_FOLDER_AUDIT_20260715_RU.md
+```
+
+## STAS5 V5 Full Causal Market-Structure 2026-01-27
+
+Пересобрать полный causal market-structure пакет дня:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_full_causal_structure_builder.ps1 -Day 2026-01-27
+```
+
+Открыть папку дня после сборки:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_full_causal_structure_builder.ps1 -Day 2026-01-27 -OpenFolder
+```
+
+Открыть главный файл-указатель:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\00_OPEN_FIRST_RU.md
+```
+
+Открыть главную ML-ready таблицу `274 + cs_* + fcs_* + targets`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv
+```
+
+Открыть новую полную карту структуры:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\DAY_MARKET_PASSPORT_20260127_FULL_CAUSAL_STRUCTURE_MAP_V1.png
+```
+
+Открыть новые full-causal артефакты:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_FULL_STRUCTURE_CANDIDATE_FEATURES_CAUSAL_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_LEVELS_CAUSAL_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_CHANNELS_CAUSAL_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_REGIMES_CAUSAL_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_EVENTS_CAUSAL_V1.csv
+```
+
+Проверить full guard:
+
+```powershell
+@'
+import json
+import pandas as pd
+from pathlib import Path
+base = Path("STAS5_ML_CORE/artifacts/v5/market_passports/20260127")
+guard = json.load(open(base / "STAS5_V5_MARKET_PASSPORT_20260127_FULL_CAUSAL_STRUCTURE_GUARD_V1.json", encoding="utf-8"))
+df = pd.read_csv(base / "STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv", encoding="utf-8-sig")
+print(guard["status"])
+print("rows:", len(df), "features:", guard["feature_count"])
+print("base_before_fcs:", guard["base_feature_count"], "fcs:", guard["full_causal_feature_count"])
+print("entry_y:", df["entry_y"].value_counts().sort_index().to_dict())
+print("checks:", {c["check"]: c["status"] for c in guard["checks"]})
+print("artifact_counts:", guard["artifact_counts"])
+'@ | python -X utf8 -
+```
+
+Важно: это не обучение. Это подготовка одного approved дня с live-safe `X` признаками и teacher-target `y`.
+
+## STAS5 V5 Causal Builder View 2026-01-27
+
+Открыть главный расширенный график структуры V5:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\DAY_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_MAP_V4_CLEAN.png
+```
+
+Открыть таблицу тегов расширенной карты:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_MAP_TAGS_V4.csv
+```
+
+Открыть график, где causal-builder показан прямо на цене:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\DAY_MARKET_PASSPORT_20260127_CAUSAL_BUILDER_VIEW_V2.png
+```
+
+Открыть таблицу визуальных тегов builder'а:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_CAUSAL_BUILDER_VISUAL_TAGS_V2.csv
+```
+
+## STAS5 V5 Causal Market-Structure 2026-01-27
+
+Открыть главный навигационный файл дня:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\00_OPEN_FIRST_RU.md
+```
+
+Открыть главный CSV `274F + cs_* + targets`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_PLUS_CAUSAL_STRUCTURE_TARGETS_V1.csv
+```
+
+Открыть causal features, allowlist и guard:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_FEATURES_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_FEATURE_ALLOWLIST_274_PLUS_CAUSAL_STRUCTURE_V1.json
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_GUARD_V1.json
+```
+
+Пересобрать causal-structure пакет дня:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_causal_structure_builder.ps1 -Day 2026-01-27
+```
+
+То же напрямую через Python:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m mlbotnav.stas5_v5_causal_structure_builder --day 2026-01-27
+```
+
+Проверить текущий guard и счетчики:
+
+```powershell
+@'
+import json
+import pandas as pd
+base = "STAS5_ML_CORE/artifacts/v5/market_passports/20260127"
+guard = json.load(open(base + "/STAS5_V5_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_GUARD_V1.json", encoding="utf-8"))
+df = pd.read_csv(base + "/STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_PLUS_CAUSAL_STRUCTURE_TARGETS_V1.csv", encoding="utf-8-sig")
+print(guard["status"])
+print("rows:", len(df))
+print("features:", guard["feature_count"])
+print("base:", guard["base_feature_count"], "causal:", guard["causal_structure_feature_count"])
+print("entry_y:", df["entry_y"].value_counts().sort_index().to_dict())
+print("checks:", {c["check"]: c["status"] for c in guard["checks"]})
+'@ | python -X utf8 -
+```
+
+Открыть проектный аудит V5:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\STAS5_V5_PROJECT_AUDIT_20260715_RU.md
+ii .\STAS5_ML_CORE\artifacts\v5\STAS5_V5_PROJECT_AUDIT_20260715.json
+```
+
+Важно: это не команда обучения. V5 training и V5 forward запускать только после batch dataset и batch guard по нескольким approved дням.
+
+## STAS5 V5 Быстрый Вход В Папку 2026-01-27
+
+Открыть файл-указатель, чтобы не путаться в `V1/V2/V3`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\00_OPEN_FIRST_RU.md
+```
+
+Открыть саму папку дня:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127
+```
+
+## STAS5 V5 Entry/Phase/State/Reason 2026-01-27
+
+Открыть актуальную V2 ML-ready таблицу:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_ENTRY_PHASE_STATE_REASON_TARGETS_V2.csv
+```
+
+Открыть ledger, phase segments, allowlist и guard:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_ENTRY_PHASE_STATE_REASON_LEDGER_USER_APPROVED_V2.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_PHASE_SEGMENTS_USER_APPROVED_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_FEATURE_ALLOWLIST_274_ENTRY_PHASE_STATE_REASON_V2.json
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_PHASE_STATE_REASON_GUARD_V2.json
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\TRAINING_SCHEMA_ENTRY_PHASE_STATE_REASON_RU.md
+```
+
+Проверить актуальный V2 guard:
+
+```powershell
+@'
+import json
+import pandas as pd
+base = "STAS5_ML_CORE/artifacts/v5/market_passports/20260127"
+guard = json.load(open(base + "/STAS5_V5_MARKET_PASSPORT_20260127_PHASE_STATE_REASON_GUARD_V2.json", encoding="utf-8"))
+df = pd.read_csv(base + "/STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_ENTRY_PHASE_STATE_REASON_TARGETS_V2.csv", encoding="utf-8-sig")
+print(guard["status"])
+print(df.shape)
+print("entry_y:", df["entry_y"].value_counts().sort_index().to_dict())
+print("phase_y:", df["phase_y"].value_counts().sort_index().to_dict())
+print("forbidden:", guard["forbidden_feature_columns_detected"])
+'@ | python -X utf8 -
+```
+
+## STAS5 V5 Market Passport Package 2026-01-27
+
+Открыть отдельную упакованную папку дня:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127
+```
+
+Открыть ML-ready таблицу и allowlist 274 признаков:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_LABELS_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_FEATURE_ALLOWLIST_274_V1.json
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\TRAINING_SCHEMA_RU.md
+```
+
+Открыть числовую структуру дня:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_MARKET_STRUCTURE_NUMERIC_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\market_passports\20260127\STAS5_V5_MARKET_PASSPORT_20260127_274F_LABELS_PLUS_STRUCTURE_CONTEXT_V1.csv
+```
+
+Проверить пакет:
+
+```powershell
+@'
+import json
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_PACKAGE_MANIFEST.json"
+j = json.load(open(p, encoding="utf-8"))
+df = pd.read_csv(j["outputs"]["ml_ready_274f_labels"], encoding="utf-8-sig")
+print(j["status"], j["rows"], j["feature_count"], j["label_counts"])
+print(df["train_label_binary"].value_counts().sort_index().to_dict())
+print(j["forbidden_feature_columns_detected"])
+'@ | python -X utf8 -
+```
+
+## STAS5 V5 Market Passport 2026-01-27 User Approved V3
+
+Открыть финальный approved overlay:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\DAY_MARKET_PASSPORT_20260127_USER_APPROVED_V3_ANNOTATED_TOP.png
+```
+
+Открыть финальный паспорт и ledger:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\DAY_MARKET_PASSPORT_20260127_USER_APPROVED_RU.md
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\DAY_MARKET_PASSPORT_LEDGER_20260127_USER_APPROVED_V3.csv
+```
+
+Проверить финальные счетчики:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/DAY_MARKET_PASSPORT_LEDGER_20260127_USER_APPROVED_V3.csv"
+df = pd.read_csv(p, encoding="utf-8-sig")
+print(len(df))
+print(df["entry_label"].value_counts().to_dict())
+print("GOOD:", ", ".join(df.loc[df.entry_label=="GOOD_APPROVED", "candidate_id"]))
+'@ | python -X utf8 -
+```
+
+## STAS5 V5 Market Passport 2026-01-27 V2
+
+Открыть актуальный V2 overlay:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\DAY_MARKET_PASSPORT_20260127_LABELS_DRAFT_V2_ANNOTATED_TOP.png
+```
+
+Открыть паспорт и ledger:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\DAY_MARKET_PASSPORT_20260127_RU.md
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\DAY_MARKET_PASSPORT_LEDGER_20260127_DRAFT_V2.csv
+```
+
+Проверить счетчики V2:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/DAY_MARKET_PASSPORT_LEDGER_20260127_DRAFT_V2.csv"
+df = pd.read_csv(p, encoding="utf-8-sig")
+print(len(df))
+print(df["entry_label"].value_counts().to_dict())
+print("GOOD_APPROVED:", ", ".join(df.loc[df.entry_label=="GOOD_APPROVED", "candidate_id"]))
+print("GOOD_ALT:", ", ".join(df.loc[df.entry_label=="GOOD_ALT", "candidate_id"]))
+print("REVIEW_ONLY:", ", ".join(df.loc[df.entry_label=="REVIEW_ONLY", "candidate_id"]))
+'@ | python -X utf8 -
+```
+
+## STAS5 V5 Market Passport Trial 2026-01-27
+
+Открыть актуальный слой согласованных пользовательских входов:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_USER_DESIRED_V1_ANNOTATED_TOP.png
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_USER_DESIRED_V1.csv
+```
+
+Открыть папку пробного паспорта:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127
+```
+
+Открыть быстрый crop верхнего графика:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_ANNOTATED_TOP.png
+```
+
+Открыть полный PNG:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_ANNOTATED_FULL.png
+```
+
+Открыть draft-зоны и отчет:
+
+```powershell
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_DRAFT_ZONES.csv
+ii .\STAS5_ML_CORE\runs\full274_feature_collect_20260127_20260715_090857\market_passport_trial_20260127\STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_RU.md
+```
+
+Проверить счетчики draft-зон:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_DRAFT_ZONES.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["draft_label"].value_counts().to_dict())
+print(df[["phase_id","candidate_id","entry_time_utc","entry_price_5bps","draft_label","draft_reason"]].to_string(index=False))
+'@ | python -
+```
+
+## STAS5 FULL274 One-Day Feature Collect
+
+Статус: `PASS`, команда добавлена `2026-07-15`.
+
+Отдельный wrapper для проверки одного дня до обучения:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_full274_feature_collect.ps1 -Day 2026-04-01 -OpenFolder
+```
+
+Что делает команда:
+
+```text
+STAS1 candidates -> STAS2 context -> V1 111 features -> V2/STAS4/STAS5 163 features -> FULL274 snapshot -> visual approval PNG
+```
+
+Артефакты каждого запуска пишутся в отдельную папку:
+
+```text
+STAS5_ML_CORE/runs/full274_feature_collect_YYYYMMDD_YYYYMMDD_HHMMSS/
+```
+
+Контрольный запуск:
+
+```text
+STAS5_ML_CORE/runs/full274_feature_collect_20260401_20260715_084509/
+rows=81
+features=274
+v1_features=111
+v2_features=163
+training_started=false
+```
+
+Главные файлы внутри run:
+
+```text
+STAS5_FULL274_FEATURE_SNAPSHOT_YYYYMMDD.csv
+STAS5_FULL274_FEATURE_SNAPSHOT_YYYYMMDD.manifest.json
+YYYYMMDD/STAS5_V2_FEATURE_VISUAL_APPROVAL_YYYYMMDD.png
+STAS5_FULL274_FEATURE_COLLECT_SUMMARY.json
+```
+
+Обучение, API, TP/Stas3 этой командой не запускаются.
+
+## Актуальный источник правды STAS5 V4
+
+Перед любыми следующими командами по V4 проверять текущий guard/unified ledger, а не старые исторические ожидания из нижних секций:
+
+```powershell
+@'
+import json
+import pandas as pd
+ledger = "STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv"
+guard = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json"
+df = pd.read_csv(ledger)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(int(df["is_group_winner"].astype(int).sum()))
+print(json.load(open(guard, encoding="utf-8"))["status"])
+'@ | python -
+```
+
+## STAS5 V5 Row-Level Pivot / Day23 Pre-Knife Artifacts
+
+Статус: `V5_ROW_LABEL_PREP_NO_TRAINING_COMMAND_YET`.
+
+Открыть новый отчет по `2026-05-23`, где верхняя pre-knife зона переведена из good в no-trade:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260523\STAS5_V4_GROUP_RANK_REVIEW_20260523_USER_CORRECTED_V2_PRE_KNIFE_RU.md
+```
+
+Открыть новый corrected ledger:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260523\STAS5_V4_GROUP_RANK_LEDGER_20260523_USER_CORRECTED_V2_PRE_KNIFE.csv
+```
+
+Открыть числовой аудит по ножу:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260523\STAS5_V4_GROUP_RANK_REVIEW_20260523_PRE_KNIFE_NUMERIC_AUDIT.csv
+```
+
+Открыть общий V5 label-source `2026-05-15..2026-05-25` с замененным day23:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5\labels\STAS5_V5_ROW_LABEL_SOURCE_20260515_20260525_WITH_DAY23_PRE_KNIFE_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v5\labels\STAS5_V5_ROW_LABEL_SOURCE_20260515_20260525_WITH_DAY23_PRE_KNIFE_V1.manifest.json
+ii .\STAS5_ML_CORE\artifacts\v5\labels\STAS5_V5_ROW_LABEL_SOURCE_20260515_20260525_WITH_DAY23_PRE_KNIFE_V1_RU.md
+```
+
+Важная граница: V4/V4L команды выше оставлены только для воспроизведения старых артефактов. Следующая учеба должна быть отдельным V5 row-level ML-контуром по исправленным меткам; команды обучения V5 появятся только после реализации dataset/guard/train/forward.
+
+## STAS5 V4L Live-Safe Full Cycle
+
+Главная команда для нового честного обучения без подглядывания в будущее и слепого forward `2026-05-26..2026-05-30`:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v4l_live_safe_train_forward.ps1
+```
+
+То же самое с явными параметрами:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v4l_live_safe_train_forward.ps1 `
+  -ForwardStartDay 2026-05-26 `
+  -ForwardEndDay 2026-05-30 `
+  -EnterThreshold 0.50 `
+  -UnsureThreshold 0.35 `
+  -Stas2RenderLimit 1
+```
+
+Что делает команда:
+
+1. собирает live-safe train dataset `2026-05-01..2026-05-25`;
+2. проверяет `prefix_invariance` и banned full-group/future/old-ML features;
+3. обучает `STAS5_V4L_LIVE_SAFE_GROUP_RANKER_V0`;
+4. делает blind forward `2026-05-26..2026-05-30`;
+5. пишет CSV/PNG в `STAS5_ML_CORE/artifacts/v4l/forward/runs/...`.
+
+Открыть последний V4L forward pointer:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4l\forward\STAS5_V4L_LATEST_FORWARD_RUN.json
+```
+
+Открыть последний проверенный V4L forward run:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4l\forward\runs\stas5_v4l_forward_20260526_20260530_20260714_181635
+```
+
+Ожидание на текущем состоянии: `738` строк, `BEST_GOOD=64`, `GOOD_ALT=42`, `BAD_IN_GROUP=433`, `NO_TRADE_GROUP=199`, winners `64`, guard `PASS`.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-25 Screenshot Check
+
+Статус: `STAS5_V4_20260525_USER_CHECKED_PASS_NO_TRAINING`.
+
+Открыть проверочный отчет, draft CSV и кропы:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260525\STAS5_V4_GROUP_RANK_REVIEW_20260525_USER_CHECKED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260525\STAS5_V4_GROUP_RANK_LEDGER_20260525_DRAFT.csv
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260525\STAS5_V4_20260525_PRE_LONDON_LA019_LA020_WIDE_CROP.png
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260525\STAS5_V4_20260525_USER_CIRCLE_LA038_CROP.png
+```
+
+Проверить day25:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260525/STAS5_V4_GROUP_RANK_LEDGER_20260525_DRAFT.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+print(df[df["candidate_id"].isin(["LA019","LA020","LA038","LA066","LA067"])][["candidate_id","group_id","rank_label","primary_reason_code"]].to_string(index=False))
+'@ | python -
+```
+
+Ожидание: `68` строк, `BEST_GOOD=5`, `GOOD_ALT=4`, `BAD_IN_GROUP=40`, `NO_TRADE_GROUP=19`; winners `LA014`, `LA020`, `LA038`, `LA059`, `LA066`; `LA019=GOOD_ALT`, `LA020=BEST_GOOD`, `LA038=BEST_GOOD`.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-24 Screenshot Check
+
+Статус: `STAS5_V4_20260524_USER_CHECKED_PASS_NO_TRAINING`.
+
+Открыть проверочный отчет, draft CSV и кропы:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260524\STAS5_V4_GROUP_RANK_REVIEW_20260524_USER_CHECKED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260524\STAS5_V4_GROUP_RANK_LEDGER_20260524_DRAFT.csv
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260524\day24_user_circle_left_pre_london_x5.png
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260524\day24_user_circle_LA042_x5.png
+```
+
+Проверить day24:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260524/STAS5_V4_GROUP_RANK_LEDGER_20260524_DRAFT.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+print(df[df["candidate_id"].isin(["LA015","LA042","LA065","LA067"])][["candidate_id","group_id","rank_label","primary_reason_code"]].to_string(index=False))
+'@ | python -
+```
+
+Ожидание: `70` строк, `BEST_GOOD=5`, `GOOD_ALT=5`, `BAD_IN_GROUP=54`, `NO_TRADE_GROUP=6`; winners `LA009`, `LA015`, `LA024`, `LA042`, `LA065`; `LA067=GOOD_ALT`.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-23 Screenshot Check
+
+Статус: `STAS5_V4_20260523_USER_CORRECTED_V1_NO_TRAINING`.
+
+Открыть исправленный отчет, CSV и общий кроп:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260523\STAS5_V4_GROUP_RANK_REVIEW_20260523_USER_CORRECTED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260523\STAS5_V4_GROUP_RANK_LEDGER_20260523_USER_CORRECTED_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260523\day23_user_circles_all_wide.png
+```
+
+Проверить day23:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_LEDGER_20260523_USER_CORRECTED_V1.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+print(df[df["candidate_id"].isin(["LA034","LA035","LA036","LA042","LA051"])][["candidate_id","group_id","rank_label","primary_reason_code"]].to_string(index=False))
+'@ | python -
+```
+
+Ожидание: `63` строки, `BEST_GOOD=7`, `GOOD_ALT=4`, `BAD_IN_GROUP=40`, `NO_TRADE_GROUP=12`; winners `LA007`, `LA022`, `LA033`, `LA034`, `LA036`, `LA042`, `LA051`.
+
+Проверить unified ledger:
+
+```powershell
+@'
+import json
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts().to_dict())
+print("winners", int(df["is_group_winner"].astype(int).sum()))
+g = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json"
+print(json.load(open(g, encoding="utf-8"))["status"])
+'@ | python -
+```
+
+Ожидание: `rows=738`, `BEST_GOOD=64`, `GOOD_ALT=42`, `BAD_IN_GROUP=433`, `NO_TRADE_GROUP=199`, guard `PASS`.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-22 Screenshot Check
+
+Статус: `STAS5_V4_20260522_USER_CORRECTED_V1_NO_TRAINING`.
+
+Открыть исправленный отчет, CSV и увеличенный кроп:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260522\STAS5_V4_GROUP_RANK_REVIEW_20260522_USER_CORRECTED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260522\STAS5_V4_GROUP_RANK_LEDGER_20260522_USER_CORRECTED_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260522\day22_circle_2_pre_london_x5.png
+```
+
+Проверить day22:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260522/STAS5_V4_GROUP_RANK_LEDGER_20260522_USER_CORRECTED_V1.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+print(df[df["candidate_id"].isin(["LA022","LA024","LA036","LA047","LA061"])][["candidate_id","group_id","rank_label","primary_reason_code"]].to_string(index=False))
+'@ | python -
+```
+
+Ожидание: `75` строк, `BEST_GOOD=5`, `GOOD_ALT=4`, `BAD_IN_GROUP=55`, `NO_TRADE_GROUP=11`; winners `LA007`, `LA024`, `LA036`, `LA047`, `LA061`; `LA022=GOOD_ALT`, `LA024=BEST_GOOD`.
+
+Проверить unified ledger:
+
+```powershell
+@'
+import json
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts().to_dict())
+print("winners", int(df["is_group_winner"].astype(int).sum()))
+g = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json"
+print(json.load(open(g, encoding="utf-8"))["status"])
+'@ | python -
+```
+
+Ожидание: `rows=738`, `BEST_GOOD=62`, `GOOD_ALT=43`, `BAD_IN_GROUP=434`, `NO_TRADE_GROUP=199`, `winners=62`, guard `PASS`.
+
+Граница: команды только для просмотра/проверки. Не запускать V4 train, group feature builder, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-21 Screenshot Check
+
+Статус: `STAS5_V4_20260521_USER_CORRECTED_V1_NO_TRAINING`.
+
+Открыть исправленный отчет, CSV и кроп:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260521\STAS5_V4_GROUP_RANK_REVIEW_20260521_USER_CORRECTED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260521\STAS5_V4_GROUP_RANK_LEDGER_20260521_USER_CORRECTED_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260521\day21_user_circles_all_wide_x3.png
+```
+
+Проверить day21:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260521/STAS5_V4_GROUP_RANK_LEDGER_20260521_USER_CORRECTED_V1.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+print(df[df["candidate_id"].isin(["LA039","LA040","LA045","LA048","LA050","LA057","LA059"])][["candidate_id","group_id","rank_label","primary_reason_code"]].to_string(index=False))
+'@ | python -
+```
+
+Ожидание: `81` строка, `BEST_GOOD=8`, `GOOD_ALT=4`, `BAD_IN_GROUP=54`, `NO_TRADE_GROUP=15`; winners `LA006`, `LA019`, `LA039`, `LA045`, `LA050`, `LA057`, `LA059`, `LA066`.
+
+Проверить unified ledger:
+
+```powershell
+@'
+import json
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts().to_dict())
+print("winners", int(df["is_group_winner"].astype(int).sum()))
+g = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json"
+print(json.load(open(g, encoding="utf-8"))["status"])
+'@ | python -
+```
+
+Ожидание: `rows=738`, `BEST_GOOD=62`, `GOOD_ALT=43`, `BAD_IN_GROUP=434`, `NO_TRADE_GROUP=199`, `winners=62`, guard `PASS`.
+
+Граница: команды только для просмотра/проверки. Не запускать V4 train, group feature builder, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-20 Screenshot Check
+
+Статус: `STAS5_V4_20260520_USER_CORRECTED_V1_NO_TRAINING`.
+
+Открыть исправленный отчет, CSV и увеличенный кроп:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260520\STAS5_V4_GROUP_RANK_REVIEW_20260520_USER_CORRECTED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260520\STAS5_V4_GROUP_RANK_LEDGER_20260520_USER_CORRECTED_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260520\day20_user_circles_transition_wide_x4.png
+```
+
+Проверить day20:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260520/STAS5_V4_GROUP_RANK_LEDGER_20260520_USER_CORRECTED_V1.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+print(df[df["candidate_id"].isin(["LA035","LA036","LA037","LA038","LA039"])][["candidate_id","group_id","rank_label","primary_reason_code"]].to_string(index=False))
+'@ | python -
+```
+
+Ожидание: `68` строк, `BEST_GOOD=6`, `GOOD_ALT=4`, `BAD_IN_GROUP=27`, `NO_TRADE_GROUP=31`; winners `LA011`, `LA037`, `LA038`, `LA045`, `LA053`, `LA057`.
+
+Проверить unified ledger:
+
+```powershell
+@'
+import json
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts().to_dict())
+print("winners", int(df["is_group_winner"].astype(int).sum()))
+g = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json"
+print(json.load(open(g, encoding="utf-8"))["status"])
+'@ | python -
+```
+
+Ожидание для текущего unified ledger после day21: `rows=738`, `BEST_GOOD=62`, `GOOD_ALT=43`, `BAD_IN_GROUP=434`, `NO_TRADE_GROUP=199`, `winners=62`, guard `PASS`.
+
+Граница: команды только для просмотра/проверки. Не запускать V4 train, group feature builder, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-19 Screenshot Check
+
+Статус: `STAS5_V4_20260519_USER_CORRECTED_V1_NO_TRAINING`.
+
+Открыть исправленный отчет и CSV:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260519\STAS5_V4_GROUP_RANK_REVIEW_20260519_USER_CORRECTED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260519\STAS5_V4_GROUP_RANK_LEDGER_20260519_USER_CORRECTED_V1.csv
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260519\day19_user_circle_LA045_zone.png
+```
+
+Проверить day19:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260519/STAS5_V4_GROUP_RANK_LEDGER_20260519_USER_CORRECTED_V1.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+'@ | python -
+```
+
+Ожидание: `65` строк, `BEST_GOOD=6`, `GOOD_ALT=3`, `BAD_IN_GROUP=39`, `NO_TRADE_GROUP=17`; winners `LA005`, `LA016`, `LA032`, `LA042`, `LA046`, `LA063`.
+
+Проверить unified ledger:
+
+```powershell
+@'
+import json
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts().to_dict())
+print("winners", int(df["is_group_winner"].astype(int).sum()))
+g = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json"
+print(json.load(open(g, encoding="utf-8"))["status"])
+'@ | python -
+```
+
+Ожидание: `rows=738`, `BEST_GOOD=58`, `GOOD_ALT=44`, `BAD_IN_GROUP=437`, `NO_TRADE_GROUP=199`, `winners=58`, guard `PASS`.
+
+Граница: команды только для просмотра/проверки. Не запускать V4 train, group feature builder, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-18 Screenshot Check
+
+Статус: `STAS5_V4_20260518_USER_CORRECTED_V1_NO_TRAINING`.
+
+Открыть исправленный отчет и CSV:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260518\STAS5_V4_GROUP_RANK_REVIEW_20260518_USER_CORRECTED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260518\STAS5_V4_GROUP_RANK_LEDGER_20260518_USER_CORRECTED_V1.csv
+```
+
+Проверить day18:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260518/STAS5_V4_GROUP_RANK_LEDGER_20260518_USER_CORRECTED_V1.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+'@ | python -
+```
+
+Ожидание: `73` строки, `BEST_GOOD=7`, `GOOD_ALT=7`, `BAD_IN_GROUP=52`, `NO_TRADE_GROUP=7`; winners `LA006`, `LA019`, `LA034`, `LA036`, `LA049`, `LA061`, `LA066`.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-17 Screenshot Check
+
+Статус: `STAS5_V4_20260517_USER_CHECKED_V1_NO_TRAINING`.
+
+Открыть проверочный отчет:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260517\STAS5_V4_GROUP_RANK_REVIEW_20260517_USER_CHECKED_V1_RU.md
+```
+
+Проверить текущий day17 CSV:
+
+```powershell
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260517/STAS5_V4_GROUP_RANK_LEDGER_20260517_DRAFT.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts().to_dict())
+print(df[df["is_group_winner"].astype(int).eq(1)]["candidate_id"].tolist())
+'@ | python -
+```
+
+Ожидание: `63` строки, `BEST_GOOD=5`, `GOOD_ALT=3`, `BAD_IN_GROUP=25`, `NO_TRADE_GROUP=30`; winners `LA004`, `LA006`, `LA036`, `LA046`, `LA063`.
+
+## Commands 2026-07-14 STAS5 V4 2026-05-16 Screenshot Check
+
+Открыть исправленный day16:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260516\STAS5_V4_GROUP_RANK_REVIEW_20260516_USER_CORRECTED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260516\STAS5_V4_GROUP_RANK_LEDGER_20260516_USER_CORRECTED_V1.csv
+```
+
+Ожидание по day16: winners `LA016`, `LA027`, `LA038`, `LA041`; `LA049` не winner.
+
+## Commands 2026-07-14 STAS5 V4 Micro-Group Correction
+
+Открыть исправленный day15 V2:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515\STAS5_V4_GROUP_RANK_REVIEW_20260515_USER_CORRECTED_V2_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515\STAS5_V4_GROUP_RANK_LEDGER_20260515_USER_CORRECTED_V2.csv
+```
+
+Проверить актуальный unified ledger и guard:
+
+```powershell
+@'
+import json
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts().to_dict())
+print("winners", int(df["is_group_winner"].astype(int).sum()))
+g = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json"
+d = json.load(open(g, encoding="utf-8"))
+print(d["status"], d["source_winners"]["2026-05-15"])
+'@ | python -
+```
+
+Открыть audit перед ручной проверкой `2026-05-16..25`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515_20260525\STAS5_V4_MICRO_GROUP_RISK_AUDIT_20260516_20260525_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515_20260525\STAS5_V4_MICRO_GROUP_RISK_AUDIT_20260516_20260525_SUMMARY.csv
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515_20260525\STAS5_V4_MICRO_GROUP_RISK_AUDIT_20260516_20260525.csv
+```
+
+Ожидание после правок day16/day18/day19/day20/day21: `rows=738`, `BEST_GOOD=62`, `GOOD_ALT=43`, guard `PASS`, day21 winners `LA006/LA019/LA039/LA045/LA050/LA057/LA059/LA066`.
+
+Граница: команды только для проверки/просмотра. Не запускать V4 train, group feature builder, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 Screenshot Artifact Inventory 2026-05-01..2026-05-25
+
+Статус: `STAS5_V4_SCREENSHOT_ARTIFACT_INVENTORY_DONE_NO_TRAINING`.
+
+Открыть папку инвентаризации:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\review_navigation\20260714_artifact_inventory
+```
+
+Открыть контакт-листы:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\review_navigation\20260714_artifact_inventory\CONTACT_SHEET_20260501_20260514_TRAIN_VISUAL_APPROVAL.png
+ii .\STAS5_ML_CORE\artifacts\v4\review_navigation\20260714_artifact_inventory\CONTACT_SHEET_20260515_20260525_FORWARD_SOURCE.png
+ii .\STAS5_ML_CORE\artifacts\v4\review_navigation\20260714_artifact_inventory\CONTACT_SHEET_20260515_20260525_V4_GROUP_BLOCKS.png
+```
+
+Открыть индекс:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\review_navigation\20260714_artifact_inventory\STAS5_SCREENSHOT_INDEX_20260501_20260525.csv
+ii .\STAS5_ML_CORE\artifacts\v4\review_navigation\20260714_artifact_inventory\README_RU.md
+```
+
+Граница: это команды просмотра. Не запускать V4 train, group feature builder, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Unified Forward Review Ledger 2026-05-15..2026-05-25
+
+Статус: `STAS5_V4_FORWARD_REVIEW_20260515_20260525_DRAFT_NO_TRAINING`.
+
+Открыть отчет:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515_20260525\STAS5_V4_GROUP_RANK_REVIEW_20260515_20260525_FORWARD_REVIEW_V1_RU.md
+```
+
+Проверить единый ledger:
+
+```powershell
+@'
+import json
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print("days", df["day"].min(), df["day"].max(), df["day"].nunique())
+print(df["label_status"].value_counts().to_dict())
+print(df["rank_label"].value_counts().to_dict())
+print("winners", int(df["is_group_winner"].astype(int).sum()))
+g = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json"
+print(json.load(open(g, encoding="utf-8"))["status"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `738` строк, `11` дней, все `label_status=DRAFT`, `BEST_GOOD=62`, winners `62`, guard `PASS`.
+
+Граница: это review-ledger, не обучение. Не запускать V4 train, threshold tuning, Optuna, API, TP/Stas3/exit до group features и финального guard.
+
+## STAS5 V4 Approved Group Ledger 2026-05-15
+
+Статус: `STAS5_V4_20260515_APPROVED_V1_NO_TRAINING`.
+
+Открыть approved-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515\STAS5_V4_GROUP_RANK_REVIEW_20260515_APPROVED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515\STAS5_V4_GROUP_RANK_REVIEW_20260515_USER_CORRECTED_V1_ANNOTATED.png
+```
+
+Проверить approved CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_LEDGER_20260515_APPROVED_V1.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["label_status"].value_counts())
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"].astype(int) == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `41` строка, все `label_status=APPROVED`, `BAD_IN_GROUP=26`, `NO_TRADE_GROUP=6`, `BEST_GOOD=5`, `GOOD_ALT=4`; winners `LA007`, `LA021`, `LA024`, `LA054`, `LA061`.
+
+Граница: approved ledger не означает запуск V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-25
+
+Статус: `STAS5_V4_20260525_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260525\STAS5_V4_GROUP_RANK_REVIEW_20260525_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260525\STAS5_V4_GROUP_RANK_REVIEW_20260525_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260525/STAS5_V4_GROUP_RANK_LEDGER_20260525_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"].astype(int) == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `68` строк, `BAD_IN_GROUP=40`, `NO_TRADE_GROUP=19`, `BEST_GOOD=5`, `GOOD_ALT=4`; winners `LA014`, `LA020`, `LA038`, `LA059`, `LA066`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-24
+
+Статус: `STAS5_V4_20260524_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260524\STAS5_V4_GROUP_RANK_REVIEW_20260524_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260524\STAS5_V4_GROUP_RANK_REVIEW_20260524_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260524/STAS5_V4_GROUP_RANK_LEDGER_20260524_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"].astype(int) == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `70` строк, `BAD_IN_GROUP=54`, `NO_TRADE_GROUP=6`, `GOOD_ALT=5`, `BEST_GOOD=5`; winners `LA009`, `LA015`, `LA024`, `LA042`, `LA065`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-23
+
+Статус: `STAS5_V4_20260523_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260523\STAS5_V4_GROUP_RANK_REVIEW_20260523_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260523\STAS5_V4_GROUP_RANK_REVIEW_20260523_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_LEDGER_20260523_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"].astype(int) == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `63` строки, `BAD_IN_GROUP=41`, `NO_TRADE_GROUP=12`, `GOOD_ALT=5`, `BEST_GOOD=5`; winners `LA007`, `LA022`, `LA033`, `LA036`, `LA051`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-22
+
+Статус: `STAS5_V4_20260522_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260522\STAS5_V4_GROUP_RANK_REVIEW_20260522_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260522\STAS5_V4_GROUP_RANK_REVIEW_20260522_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260522/STAS5_V4_GROUP_RANK_LEDGER_20260522_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"].astype(int) == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `75` строк, `BAD_IN_GROUP=55`, `NO_TRADE_GROUP=11`, `BEST_GOOD=5`, `GOOD_ALT=4`; winners `LA007`, `LA022`, `LA036`, `LA047`, `LA061`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-21
+
+Статус: `STAS5_V4_20260521_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260521\STAS5_V4_GROUP_RANK_REVIEW_20260521_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260521\STAS5_V4_GROUP_RANK_REVIEW_20260521_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260521/STAS5_V4_GROUP_RANK_LEDGER_20260521_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"].astype(int) == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `81` строка, `BAD_IN_GROUP=56`, `NO_TRADE_GROUP=15`, `GOOD_ALT=5`, `BEST_GOOD=5`; winners `LA006`, `LA019`, `LA045`, `LA059`, `LA066`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-20
+
+Статус: `STAS5_V4_20260520_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260520\STAS5_V4_GROUP_RANK_REVIEW_20260520_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260520\STAS5_V4_GROUP_RANK_REVIEW_20260520_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260520/STAS5_V4_GROUP_RANK_LEDGER_20260520_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"].astype(int) == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `68` строк, `NO_TRADE_GROUP=31`, `BAD_IN_GROUP=28`, `BEST_GOOD=5`, `GOOD_ALT=4`; winners `LA011`, `LA037`, `LA045`, `LA053`, `LA057`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-19
+
+Статус: `STAS5_V4_20260519_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260519\STAS5_V4_GROUP_RANK_REVIEW_20260519_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260519\STAS5_V4_GROUP_RANK_REVIEW_20260519_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260519/STAS5_V4_GROUP_RANK_LEDGER_20260519_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"] == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `65` строк, `BAD_IN_GROUP=40`, `NO_TRADE_GROUP=17`, `BEST_GOOD=5`, `GOOD_ALT=3`; winners `LA005`, `LA016`, `LA032`, `LA042`, `LA063`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-18
+
+Статус: `SUPERSEDED_BY_20260518_USER_CORRECTED_V1_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260518\STAS5_V4_GROUP_RANK_REVIEW_20260518_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260518\STAS5_V4_GROUP_RANK_REVIEW_20260518_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260518/STAS5_V4_GROUP_RANK_LEDGER_20260518_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"] == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание для старого draft: `73` строки, `BAD_IN_GROUP=51`, `NO_TRADE_GROUP=11`, `GOOD_ALT=6`, `BEST_GOOD=5`; winners `LA006`, `LA019`, `LA034`, `LA049`, `LA061`. Этот draft superseded: актуальная проверка выше использует `USER_CORRECTED_V1`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Draft Group Review 2026-05-17
+
+Статус: `STAS5_V4_20260517_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260517\STAS5_V4_GROUP_RANK_REVIEW_20260517_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260517\STAS5_V4_GROUP_RANK_REVIEW_20260517_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260517/STAS5_V4_GROUP_RANK_LEDGER_20260517_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"] == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `63` строки, `NO_TRADE_GROUP=30`, `BAD_IN_GROUP=25`, `BEST_GOOD=5`, `GOOD_ALT=3`; winners `LA004`, `LA006`, `LA036`, `LA046`, `LA063`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Review Encoding Check
+
+Статус: `STAS5_V4_REVIEW_ENCODING_FIX_DONE`.
+
+Проверить V4 review Markdown на кракозябры:
+
+```powershell
+@'
+from pathlib import Path
+root = Path(r"STAS5_ML_CORE/artifacts/v4/group_rank_review")
+problems = []
+for p in sorted(root.rglob("*.md")):
+    s = p.read_text(encoding="utf-8", errors="replace")
+    q = s.count("?" * 4)
+    repl = s.count("\ufffd")
+    cjk = sum(1 for ch in s if ("\u3000" <= ch <= "\u9fff") or ("\uf900" <= ch <= "\ufaff"))
+    if q or repl or cjk:
+        problems.append((str(p), q, repl, cjk))
+print("checked_md", len(list(root.rglob("*.md"))))
+print("problems", len(problems))
+for item in problems:
+    print(item)
+'@ | python -
+```
+
+## STAS5 V4 Draft Group Review 2026-05-16
+
+Статус: `STAS5_V4_20260516_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть draft-review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260516\STAS5_V4_GROUP_RANK_REVIEW_20260516_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260516\STAS5_V4_GROUP_RANK_REVIEW_20260516_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260516/STAS5_V4_GROUP_RANK_LEDGER_20260516_DRAFT.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"] == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `71` строка, `NO_TRADE_GROUP=38`, `BAD_IN_GROUP=27`, `BEST_GOOD=5`, `GOOD_ALT=1`; winners `LA016`, `LA027`, `LA038`, `LA041`, `LA049`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 User-Corrected Group Review 2026-05-15
+
+Статус: `SUPERSEDED_BY_20260515_APPROVED_V1_NO_TRAINING`.
+
+Открыть актуальный user-corrected review:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515\STAS5_V4_GROUP_RANK_REVIEW_20260515_USER_CORRECTED_V1_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515\STAS5_V4_GROUP_RANK_REVIEW_20260515_USER_CORRECTED_V1_ANNOTATED.png
+```
+
+Проверить актуальный draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_LEDGER_20260515_USER_CORRECTED_V1.csv"
+df = pd.read_csv(p)
+print("rows", len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"] == 1][["group_id", "candidate_id", "primary_reason_code", "secondary_reason_codes"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `41` строка, `BAD_IN_GROUP=26`, `NO_TRADE_GROUP=6`, `BEST_GOOD=5`, `GOOD_ALT=4`; winners `LA007`, `LA021`, `LA024`, `LA054`, `LA061`.
+
+Граница: это `DRAFT`, не approved train ledger. Не запускать V4 training, threshold tuning, Optuna, API, TP/Stas3/exit.
+
+## STAS5 V4 Human-Style Group Ranker 2026-07-14
+
+Статус: `STAS5_V4_20260515_SCREENSHOT_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+Открыть V4 ТЗ:
+
+```powershell
+ii .\STAS5_ML_CORE\07_STAS5_V4_HUMAN_STYLE_GROUP_RANKER_TZ_RU.md
+```
+
+Открыть V4 папку:
+
+```powershell
+ii .\STAS5_ML_CORE\v4
+```
+
+Проверить наличие схемы будущего group ledger:
+
+```powershell
+Test-Path .\STAS5_ML_CORE\schemas\STAS5_V4_GROUP_RANK_LEDGER.schema.json
+```
+
+Текущая граница: команды V4 пока только документальные. Не запускать обучение, threshold tuning, Optuna, API, TP/Stas3/exit. Первый рабочий runtime-шаг должен быть отдельным созданием/проверкой `STAS5_V4_GROUP_RANK_LEDGER.csv`, а не train.
+
+Открыть draft-review по пользовательскому скриншоту `2026-05-15`:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515\STAS5_V4_GROUP_RANK_REVIEW_20260515_DRAFT_RU.md
+ii .\STAS5_ML_CORE\artifacts\v4\group_rank_review\20260515\STAS5_V4_GROUP_RANK_REVIEW_20260515_ANNOTATED_DRAFT.png
+```
+
+Проверить draft CSV:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import pandas as pd
+p = "STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_LEDGER_20260515_SCREENSHOT_DRAFT.csv"
+df = pd.read_csv(p)
+print(len(df))
+print(df["rank_label"].value_counts())
+print(df[df["is_group_winner"] == 1][["group_id", "candidate_id", "primary_reason_code"]])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `41` строка, winners `LA004`, `LA007`, `LA021`, `LA054`, `LA061`. Это `DRAFT`, не approved train ledger.
+
+## STAS5 V3 Review Train + Forward 21-25 2026-07-14
+
+Статус: `STAS5_V3_REVIEW_TRAIN_FORWARD_21_25_READY`.
+
+Одна команда: собрать V3 ledger, V3 dataset, guard, обучить `full_v2_all_274` и построить blind-forward графики `2026-05-21..2026-05-25`:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+.\STAS5_ML_CORE\run_stas5_v3_review_train_forward_21_25.ps1
+```
+
+Без открытия папки:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v3_review_train_forward_21_25.ps1 -NoOpen
+```
+
+С ручным run id:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v3_review_train_forward_21_25.ps1 -RunId stas5_v3_manual_01
+```
+
+Источник review-разметки `16..20` по умолчанию зафиксирован на root V2 forward CSV, который совпадает с пользовательскими скриншотами:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v3_review_train_forward_21_25.ps1 -ReviewForwardPredictionsPath STAS5_ML_CORE\artifacts\v2\forward\STAS5_V2_FORWARD_ALL_PREDICTIONS_20260515_20260520.csv
+```
+
+Проверенный run:
+
+```text
+STAS5_ML_CORE/artifacts/v3/forward/runs/stas5_v3_wrapper_smoke2_20260714/
+```
+
+Открыть проверенный run:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v3\forward\runs\stas5_v3_wrapper_smoke2_20260714
+```
+
+Ожидание: `5/5` days READY, `feature_count=274`, guard `PASS`.
+
+## STAS5 V2 Full274 Latest Run Check 2026-07-13
+
+Статус: `STAS5_V2_FULL274_RUN_CHECK_PASS_TECHNICAL_REVIEW_REQUIRED`.
+
+Открыть последний full274 forward run:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v2\forward\runs\stas5_v2_full274_20260713_203703
+```
+
+Открыть отчет проверки:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v2_audit\STAS5_V2_FULL274_RUN_CHECK_20260713_203703_RU.md
+```
+
+## STAS5 V2 Full 274 Train + Forward 2026-07-13
+
+Статус: `STAS5_V2_FULL_274_WRAPPER_READY`.
+
+Одна команда: пересобрать V2-признаки, проверить guard/audit, обучить модель на `full_v2_all_274` и построить blind-forward графики `2026-05-15..2026-05-20`:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+.\STAS5_ML_CORE\run_stas5_v2_full_274_train_forward.ps1
+```
+
+Результат будет в новой папке:
+
+```text
+STAS5_ML_CORE/artifacts/v2/model/runs/stas5_v2_full274_YYYYMMDD_HHMMSS/
+STAS5_ML_CORE/artifacts/v2/forward/runs/stas5_v2_full274_YYYYMMDD_HHMMSS/
+```
+
+Запуск без автоматического открытия папки:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v2_full_274_train_forward.ps1 -NoOpen
+```
+
+Запуск с ручным именем run:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v2_full_274_train_forward.ps1 -RunId stas5_v2_full274_manual_01
+```
+
+Контроль после запуска:
+
+```powershell
+Get-Content -Encoding UTF8 .\STAS5_ML_CORE\artifacts\v2\model\STAS5_V2_LATEST_MODEL_RUN.json
+Get-Content -Encoding UTF8 .\STAS5_ML_CORE\artifacts\v2\forward\STAS5_V2_LATEST_FORWARD_RUN.json
+```
+
+Ожидание: model manifest должен показать `model_feature_set=full_v2_all_274` и `feature_count=274`. Forward manifest должен показать тот же `model_feature_set`.
+
+## STAS5 V2 Graph To Feature Audit 2026-07-13
+
+Статус: `STAS5_V2_GRAPH_TO_FEATURE_AUDIT_READY`.
+
+Открыть отчет:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v2_audit\STAS5_V2_GRAPH_TO_FEATURE_AUDIT_20260504_RU.md
+```
+
+Быстро перепроверить ключевой факт: full snapshot `274`, latest model `126`:
+
+```powershell
+@'
+import json
+from pathlib import Path
+snap = json.loads(Path("STAS5_ML_CORE/artifacts/v2/features/stas5_v2_feature_snapshot_20260501_20260514_v0.manifest.json").read_text(encoding="utf-8"))
+latest = json.loads(Path("STAS5_ML_CORE/artifacts/v2/model/STAS5_V2_LATEST_MODEL_RUN.json").read_text(encoding="utf-8"))
+model = json.loads(Path(latest["manifest_path"]).read_text(encoding="utf-8"))
+print("snapshot_features", len(snap["feature_columns"]))
+print("latest_model_feature_set", model["model_feature_set"])
+print("latest_model_features", model["feature_count"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `snapshot_features 274`, `latest_model_feature_set v1_plus_risk_gate`, `latest_model_features 126`.
+
+## STAS5 V2 Train Visual Batch 2026-07-13
+
+Статус: `STAS5_V2_TRAIN_VISUAL_BATCH_READY`.
+
+Сгенерировать train-графики за все дни обучения:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_train_visual_batch --start-day 2026-05-01 --end-day 2026-05-14 --run-id stas5_v2_train_visual_YYYYMMDD_HHMMSS
+```
+
+Открыть текущий готовый batch:
+
+```powershell
+ii "C:\Users\007\Desktop\MLbotNav\STAS5_ML_CORE\artifacts\v2\visual_approval\runs\stas5_v2_train_visual_20260713_14d"
+```
+
+Открыть конкретный день:
+
+```powershell
+ii "C:\Users\007\Desktop\MLbotNav\STAS5_ML_CORE\artifacts\v2\visual_approval\runs\stas5_v2_train_visual_20260713_14d\20260501\STAS5_V2_FEATURE_VISUAL_APPROVAL_20260501.png"
+```
+
+## STAS5 V2 Isolated Train + Forward Run 2026-07-13
+
+Статус: `STAS5_V2_RUN_ISOLATION_READY`.
+
+Общая команда, чтобы каждый прогон был в отдельной папке:
+
+```powershell
+cd C:\Users\007\Desktop\MLbotNav
+$env:PYTHONPATH='src'
+$runId = 'stas5_v2_run_' + (Get-Date -Format 'yyyyMMdd_HHmmss')
+
+.\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_entry_ranker_train --model-feature-set v1_plus_risk_gate --run-id $runId
+.\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_forward_entry_review --run-id $runId
+
+ii "C:\Users\007\Desktop\MLbotNav\STAS5_ML_CORE\artifacts\v2\forward\runs\$runId"
+```
+
+Результаты будут здесь:
+
+```text
+STAS5_ML_CORE/artifacts/v2/model/runs/<run_id>/
+STAS5_ML_CORE/artifacts/v2/forward/runs/<run_id>/
+```
+
+Проверить последний run:
+
+```powershell
+Get-Content -Encoding UTF8 .\STAS5_ML_CORE\artifacts\v2\forward\STAS5_V2_LATEST_FORWARD_RUN.json
+```
+
+## STAS5 V2 Controlled Forward 2026-07-13
+
+Статус: `STAS5_V2_CONTROLLED_FORWARD_READY`.
+
+Проверить новые модули:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_v2_entry_ranker_train.py src\mlbotnav\stas5_v2_forward_entry_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_v2_entry_ranker_train.py tests\test_stas5_v2_forward_entry_review.py -q
+```
+
+Обучить selected V2 model после ablation:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_entry_ranker_train --model-feature-set v1_plus_risk_gate
+```
+
+Построить blind-forward PNG:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_forward_entry_review
+```
+
+Финальная проверка:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_leakage_guard
+$files = Get-ChildItem tests\test_stas5_*.py | % FullName; $env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest $files -q
+```
+
+Ожидание: leakage guard `PASS`, STAS5 tests `34 passed`.
+
+Граница: forward не использовать для threshold tuning; TP/Stas3/API/Optuna не запускать.
+
+## STAS5 V2 Numeric Coverage 2026-07-13
+
+Статус: `STAS5_V2_NUMERIC_COVERAGE_READY`.
+
+Проверить измененные файлы:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_common.py src\mlbotnav\stas5_v2_combo_feature_exporter.py src\mlbotnav\stas5_v2_pre_ml_audit.py src\mlbotnav\stas5_v2_numeric_coverage_audit.py
+```
+
+Пересобрать train V2 combo features:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_combo_feature_exporter
+```
+
+Пересобрать forward V2 combo features:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_combo_feature_exporter --stas2-run-dir STAS5_ML_CORE\artifacts\forward_source\stas2_runs\stas5_forward_stas2_20260515_20260520_20260710_163714 --start-day 2026-05-15 --end-day 2026-05-20 --output-csv STAS5_ML_CORE\artifacts\v2\features\stas5_v2_combo_features_20260515_20260520_forward_v0.csv --manifest-path STAS5_ML_CORE\artifacts\v2\features\stas5_v2_combo_features_20260515_20260520_forward_v0.manifest.json
+```
+
+Пересобрать snapshot, guard, ledger, audit:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_feature_snapshot_builder
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_leakage_guard
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_forward_error_ledger
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_pre_ml_audit
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_numeric_coverage_audit --day 2026-05-04
+```
+
+Проверить тесты:
+
+```powershell
+$files = Get-ChildItem tests\test_stas5_v2_*.py | % FullName; $env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest $files -q
+$files = Get-ChildItem tests\test_stas5_*.py | % FullName; $env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest $files -q
+```
+
+Ожидание: V2 tests `23 passed`; full STAS5 tests `30 passed`.
+
+Граница: эти команды не запускают final training, threshold tuning, Optuna/scorer/target-lock/API/Stas3/TP.
+
+## STAS5 V2 Strategy Audit Strip 2026-07-13
+
+Статус: `STAS5_V2_FEATURE_VISUAL_APPROVAL_WITH_STRATEGY_AUDIT_READY_WAIT_USER`.
+
+Проверить код и тест:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_v2_feature_visual_approval.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_v2_feature_visual_approval.py -q
+```
+
+Пересобрать график:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_feature_visual_approval --day 2026-05-04
+```
+
+Проверить strategy audit counts:
+
+```powershell
+@'
+import json
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.manifest.json")
+m = json.loads(p.read_text(encoding="utf-8"))
+print(m["strategy_audit_counts"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидание: `density_profile+structure_ta X=22/UP=2`, `pattern+structure_ta X=38/UP=1`, `structure_ta+volume_flow X=52/UP=1`, `structure_ta+trend_momentum X=59/UP=4`.
+
+Граница: это только visual approval. Не запускать ablation/training/threshold/Optuna/API/Stas3/TP до пользовательского подтверждения.
+
+## STAS5 V2 Feature Visual Approval 2026-07-13
+
+Статус: `STAS5_V2_FEATURE_VISUAL_APPROVAL_READY_WAIT_USER`.
+
+Проверить код и тест:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_v2_feature_visual_approval.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_v2_feature_visual_approval.py -q
+```
+
+Пересобрать approval PNG за `2026-05-04`:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_feature_visual_approval --day 2026-05-04
+```
+
+Открыть результат:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v2\visual_approval\20260504\STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.png
+```
+
+Проверить manifest:
+
+```powershell
+@'
+import json
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.manifest.json")
+m = json.loads(p.read_text(encoding="utf-8"))
+print(m["status"], m["rows"])
+print(m["label_counts"])
+print(m["approval_bucket_counts"])
+print(m["risk_bucket_counts"])
+print(m["keep_ids"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: команда делает только visual approval graph. Не запускать ablation/training/threshold/Optuna/API/Stas3/TP до пользовательского подтверждения.
+
+## STAS5 V2 Pre-ML Audit 2026-07-13
+
+Статус: `STAS5_V2_PRE_ML_AUDIT_READY`.
+
+Проверить код и тесты:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_v2_pre_ml_audit.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_v2_pre_ml_audit.py -q
+```
+
+Пересобрать V2 pre-ML audit:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_pre_ml_audit
+```
+
+Ожидаемый результат:
+
+```text
+status READY_FOR_V2_ABLATION_BASELINE
+feature_count 214
+KEEP_DRAFT 115
+CUT_DRAFT 857
+KEEP_DRAFT + yellow_x 30
+bad green 55
+missed good SKIP 65
+```
+
+Открыть отчет:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v2_audit\STAS5_V2_PRE_ML_AUDIT_20260501_20260520_RU.md
+```
+
+Граница: это audit-only отчет. Не запускать production training, threshold tuning по forward `15+`, Optuna/scorer/target-lock/API/Stas3/TP.
+
+## STAS5 V2 Forward Error Ledger 2026-07-13
+
+Статус: `STAS5_V2_FORWARD_ERROR_LEDGER_READY`.
+
+Проверить код и тесты:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_v2_forward_error_ledger.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_v2_forward_error_ledger.py -q
+```
+
+Пересобрать forward error ledger:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_forward_error_ledger
+```
+
+Ожидаемый результат:
+
+```text
+status PASS
+rows 435
+decision_counts_v1 ENTER=103 SKIP=277 UNSURE=55
+GREEN_BAD_FALLING_KNIFE=46
+GREEN_BAD_NO_REVERSAL=9
+SKIP_MISSED_GOOD=65
+```
+
+Проверить manifest:
+
+```powershell
+@'
+import json
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v2_audit/stas5_forward_error_ledger_20260515_20260520_v0.manifest.json")
+m = json.loads(p.read_text(encoding="utf-8"))
+print(m["status"], m["rows"])
+print(m["decision_counts_v1"])
+print(m["error_class_counts"])
+print(m["v2_expected_decision_counts"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: это audit-only ledger. Не использовать postfact/user-review поля как features, train labels или threshold tuning. Следующий пункт по ТЗ - V2 pre-ML audit.
+
+## STAS5 V2 Leakage Guard 2026-07-13
+
+Статус: `STAS5_V2_LEAKAGE_GUARD_READY`.
+
+Проверить код и тесты:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_v2_leakage_guard.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_v2_leakage_guard.py -q
+```
+
+Запустить V2 leakage guard на train snapshot:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_leakage_guard
+```
+
+Ожидаемый результат:
+
+```text
+status PASS
+rows 972
+feature_count 214
+forbidden_feature_columns {}
+label_columns_in_features []
+metadata_columns_in_features []
+v2_combo_feature_time_not_before_entry 0
+forward_days_present 0
+KEEP_DRAFT + yellow_x 30
+```
+
+Проверить report:
+
+```powershell
+@'
+import json
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v2/guard/stas5_v2_leakage_guard_20260501_20260514_v0.json")
+r = json.loads(p.read_text(encoding="utf-8"))
+print(r["status"], r["rows"], r["feature_count"])
+print(r["checks"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: guard не является разрешением на обучение. Следующий шаг по ТЗ - `stas5_v2_forward_error_ledger.py`, затем V2 pre-ML audit. Не запускать V2 training, threshold tuning, Optuna/scorer/target-lock/API/Stas3/TP.
+
+## STAS5 V2 Feature Snapshot 2026-07-13
+
+Статус: `STAS5_V2_FEATURE_SNAPSHOT_READY`.
+
+Проверить код и тесты:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_v2_feature_snapshot_builder.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_v2_feature_snapshot_builder.py -q
+```
+
+Пересобрать V2 train snapshot:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_feature_snapshot_builder
+```
+
+Ожидаемый результат:
+
+```text
+status PASS
+rows 972
+feature_count 214
+v1_feature_count 111
+v2_feature_count 103
+lost_after_combo_join 0
+KEEP_DRAFT + yellow_x 30
+```
+
+Проверить manifest:
+
+```powershell
+@'
+import json
+from pathlib import Path
+p = Path("STAS5_ML_CORE/artifacts/v2/features/stas5_v2_feature_snapshot_20260501_20260514_v0.manifest.json")
+m = json.loads(p.read_text(encoding="utf-8"))
+print({k: m[k] for k in ["status", "rows", "feature_count", "v1_feature_count", "v2_feature_count"]})
+print(m["checks"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: это только сбор train snapshot `2026-05-01..2026-05-14`. Не запускать обучение, forward threshold, Optuna/scorer/target-lock/API/Stas3/TP.
+
+## STAS5 V2 Forward User Review 2026-07-13
+
+Статус: `STAS5_V2_FORWARD_USER_REVIEW_READY`.
+
+Пересобрать крупные review-страницы за `2026-05-15`:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_forward_user_review --day 2026-05-15 --window-hours 3
+```
+
+Ожидаемый результат:
+
+```text
+PASS 90 STAS5_ML_CORE/artifacts/v2/user_review/20260515
+```
+
+Открыть ключевые страницы:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v2\user_review\20260515\STAS5_V2_USER_REVIEW_20260515_FULL.png
+ii .\STAS5_ML_CORE\artifacts\v2\user_review\20260515\STAS5_V2_USER_REVIEW_20260515_PAGE_01_0000_0300.png
+ii .\STAS5_ML_CORE\artifacts\v2\user_review\20260515\STAS5_V2_USER_REVIEW_20260515_PAGE_02_0300_0600.png
+ii .\STAS5_ML_CORE\artifacts\v2\user_review\20260515\STAS5_V2_USER_REVIEW_20260515_PAGE_05_1200_1500.png
+ii .\STAS5_ML_CORE\artifacts\v2\user_review\20260515\STAS5_V2_USER_REVIEW_TEMPLATE_20260515.csv
+```
+
+Граница: это визуальный forward audit для выбора пользовательских `LAxxx`. Не использовать `2026-05-15` для обучения, threshold tuning или финального trading permission.
+
+## STAS5 V2 Combo Feature Exporter 2026-07-13
+
+Статус: `STAS5_V2_COMBO_FEATURE_EXPORT_READY`.
+
+Проверить код и тесты:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_v2_combo_feature_exporter.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_v2_combo_feature_exporter.py -q
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_feature_snapshot_contract.py tests\test_stas5_forward_entry_review_contract.py tests\test_stas5_leakage_guard.py tests\test_stas5_ml_ledger_builder.py tests\test_stas5_v2_combo_feature_exporter.py -q
+```
+
+Пересобрать train V2 combo features:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_combo_feature_exporter
+```
+
+Ожидаемый результат:
+
+```text
+PASS 972 103 STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260501_20260514_v0.csv
+```
+
+Пересобрать blind-forward V2 combo features:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_v2_combo_feature_exporter --stas2-run-dir STAS5_ML_CORE\artifacts\forward_source\stas2_runs\stas5_forward_stas2_20260515_20260520_20260710_163714 --start-day 2026-05-15 --end-day 2026-05-20 --output-csv STAS5_ML_CORE\artifacts\v2\features\stas5_v2_combo_features_20260515_20260520_forward_v0.csv --manifest-path STAS5_ML_CORE\artifacts\v2\features\stas5_v2_combo_features_20260515_20260520_forward_v0.manifest.json
+```
+
+Ожидаемый результат:
+
+```text
+PASS 435 103 STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260515_20260520_forward_v0.csv
+```
+
+Быстро проверить manifests:
+
+```powershell
+@'
+import json
+from pathlib import Path
+for path in [
+    Path("STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260501_20260514_v0.manifest.json"),
+    Path("STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260515_20260520_forward_v0.manifest.json"),
+]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    print(path.as_posix(), payload["status"], payload["rows"], payload["feature_count"], payload["checks"])
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: эти команды экспортируют только causal V2 feature-layer. Они не обучают финальную V2 модель, не запускают Optuna/scorer/target-lock/API/мост Bybit и не используют Stas3/TP/exit.
+
+## STAS5 V1 Audit And V2 TZ 2026-07-13
+
+Статус: `STAS5_V1_AUDITED_V2_CONTOUR2_TZ_READY`.
+
+Открыть аудит и ТЗ V2:
+
+```powershell
+ii .\STAS5_ML_CORE\04_STAS5_V1_HARD_AUDIT_RU.md
+ii .\STAS5_ML_CORE\05_STAS5_V2_CONTOUR2_TZ_RU.md
+ii .\STAS5_ML_CORE\README_RU.md
+```
+
+Открыть найденный combo-spectrum слой:
+
+```powershell
+ii .\STAS4_FEATURE_HYPOTHESIS_REVIEW\density_structure_20260501_20260514_combo_spectrum\20260504\STAS4_density_profile+structure_ta_OVERLAY_COMBO_SPECTRUM_20260504_20260710_102322.png
+ii .\STAS4_FEATURE_HYPOTHESIS_REVIEW\density_structure_20260501_20260514_combo_spectrum\SUMMARY_RU.md
+```
+
+Проверить, что combo/STAS4 не входил в v1 model features:
+
+```powershell
+rg -n "\"feature_columns\"|combo|stoch|atr|divergence|density|structure" .\STAS5_ML_CORE\artifacts\features\stas5_feature_snapshot_20260501_20260514_v0.manifest.json .\STAS5_ML_CORE\artifacts\model\stas5_entry_ranker_20260501_20260514_v0.manifest.json
+```
+
+Граница: эти команды только открывают/проверяют аудит. Не запускать новое обучение, Optuna, scorer, target-lock, API/мост Bybit или Stas3/TP.
+
+## STAS5 Entry ML Pipeline Ready 2026-07-10
+
+Статус: `STAS5_ENTRY_ML_PIPELINE_READY_TRAIN_1_14_FORWARD_15_20_NO_OPTUNA_NO_API_NO_STAS3`.
+
+Открыть главный source-of-truth и свежие артефакты:
+
+```powershell
+ii .\STAS5_ML_CORE\README_RU.md
+ii .\STAS5_ML_CORE\03_STAS5_CURRENT_EXECUTION_INSTRUCTION_RU.md
+ii .\STAS5_ML_CORE\artifacts\audit\STAS5_PRE_ML_AUDIT_20260501_20260514_RU.md
+ii .\STAS5_ML_CORE\artifacts\forward
+```
+
+Проверить код STAS5:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\stas5_common.py src\mlbotnav\stas5_ml_ledger_builder.py src\mlbotnav\stas5_feature_snapshot_builder.py src\mlbotnav\stas5_leakage_guard.py src\mlbotnav\stas5_pre_ml_audit.py src\mlbotnav\stas5_entry_ranker_train.py src\mlbotnav\stas5_forward_entry_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_stas5_*.py -q
+```
+
+Пересобрать train-часть `2026-05-01..2026-05-14`:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_ml_ledger_builder
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_feature_snapshot_builder
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_leakage_guard
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_pre_ml_audit
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_entry_ranker_train
+```
+
+Пересобрать blind-forward review `2026-05-15..2026-05-20`:
+
+```powershell
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.stas5_forward_entry_review --start-day 2026-05-15 --end-day 2026-05-20
+```
+
+Ожидаемые контрольные факты: ledger `972` rows, `115 KEEP_DRAFT`, `857 CUT_DRAFT`, `30 KEEP_DRAFT + yellow_x`; feature snapshot `111` model features; leakage guard `PASS`; audit `READY_FOR_CONTROLLED_BASELINE`; model `CONTROLLED_BASELINE_READY`; forward `FORWARD_ENTRY_REVIEW_READY`.
+
+Граница: эти команды не используют Optuna, scorer, target-lock, API/мост Bybit и Stas3/TP/exit. Forward `2026-05-15+` не использовать для обучения, подбора threshold или ручной доводки.
+
+## STAS5 Current Memory 2026-07-10
+
+Статус: `STAS5_MEMORY_REFRESH_CURRENT_NEXT_NO_ML_NO_OPTUNA`.
+
+Открыть текущую рабочую папку STAS-5:
+
+```powershell
+ii .\STAS5_ML_CORE
+ii .\STAS5_ML_CORE\README_RU.md
+ii .\STAS5_ML_CORE\03_STAS5_CURRENT_EXECUTION_INSTRUCTION_RU.md
+```
+
+Проверить состав папки:
+
+```powershell
+Get-ChildItem .\STAS5_ML_CORE -Recurse | Select-Object FullName,Length,LastWriteTime
+```
+
+Проверить, что в памяти зафиксирован текущий next step:
+
+```powershell
+rg -n "STAS5_CURRENT_EXECUTION_INSTRUCTION|STAS5_MEMORY_REFRESH_CURRENT_NEXT|MEMORY_REFRESH_2026_07_10|ML-ledger|pre-entry feature snapshot|KEEP \+ yellow_x" STAS5_ML_CORE docs\codex
+```
+
+Граница: эти команды только открывают и проверяют документы. ML/export/training, Optuna, scorer, target-lock, API и мост Bybit не запускать.
+
+## STAS4 Root Path Check 2026-07-10
+
+Статус: `STAS4_ROOT_HOME_READY_NO_ML_NO_OPTUNA`.
+
+Проверить, что STAS4 находится в корне:
+
+```powershell
+Get-ChildItem -LiteralPath . -Directory | Where-Object { $_.Name -like 'STAS*' } | Select-Object Name,FullName
+```
+
+Проверить главную ручную разметку:
+
+```powershell
+Test-Path .\STAS4_FEATURE_HYPOTHESIS_REVIEW\density_structure_20260501_20260514_combo_spectrum\manual_labels\YELLOW_X_AUDIT_ONLY_RULE_RU.md
+```
+
+Проверить, что в коде и STAS5 нет старого рабочего пути:
+
+```powershell
+rg -n "reports/final_review/stas4_feature_hypothesis_screen_v0|reports\\final_review\\stas4_feature_hypothesis_screen_v0" src scripts STAS5_ML_CORE
+```
+
+Граница: команды только проверяют структуру и ссылки. Они не запускают ML/export/training, Optuna, scorer, target-lock или API.
+
+## STAS5 ML Core Docs 2026-07-10
+
+Статус: `STAS5_ML_ENTRY_ARCHITECTURE_DRAFT_NO_ML_NO_OPTUNA`.
+
+Открыть source-of-truth STAS-5:
+
+```powershell
+ii .\STAS5_ML_CORE\README_RU.md
+ii .\STAS5_ML_CORE\01_STAS5_ML_ENTRY_ARCHITECTURE_RU.md
+ii .\STAS5_ML_CORE\02_ML_LEDGER_AND_FEATURE_CONTRACT_RU.md
+```
+
+Проверить, что STAS-5 docs лежат отдельно и не являются run-артефактами:
+
+```powershell
+Get-ChildItem .\STAS5_ML_CORE -Recurse | Select-Object FullName,Length,LastWriteTime
+```
+
+Граница: эти команды только открывают/проверяют документы. ML/export/training, Optuna, scorer, target-lock и API не запускать.
+
+## Yellow X Audit Only Check 2026-07-10
+
+Статус: `YELLOW_X_AUDIT_ONLY_FIXED_RULE_NO_ML_NO_OPTUNA`.
+
+Проверить, сколько пользовательских KEEP имеют yellow X:
+
+```powershell
+@'
+from pathlib import Path
+import csv
+base = Path(r'STAS4_FEATURE_HYPOTHESIS_REVIEW/density_structure_20260501_20260514_combo_spectrum/manual_labels')
+keep_total = yellow_keep = total = yellow_total = 0
+conflicts = []
+for day in ['20260501','20260502','20260503','20260504','20260505','20260506','20260507','20260508','20260509','20260510','20260511','20260512','20260513','20260514']:
+    rows = list(csv.DictReader((base / f'LABELS_{day}_ALL_ENTRIES_DRAFT.csv').open('r', encoding='utf-8-sig', newline='')))
+    for r in rows:
+        total += 1
+        is_yellow = r.get('stas4_density_structure_yellow_x') == '1'
+        if is_yellow:
+            yellow_total += 1
+        if r['human_label'] == 'KEEP_DRAFT':
+            keep_total += 1
+            if is_yellow:
+                yellow_keep += 1
+                conflicts.append((day, r['candidate_id']))
+print({'total': total, 'keep_total': keep_total, 'yellow_total': yellow_total, 'yellow_keep': yellow_keep})
+print(conflicts)
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидаемый результат: `{'total': 972, 'keep_total': 115, 'yellow_total': 287, 'yellow_keep': 30}`.
+
+Граница: команда только читает ручные CSV и не запускает ML/export/training, Optuna, scorer, target-lock или API.
+
+## STAS4 Manual Labels Draft 2026-07-10 20260501-20260514
+
+Статус: `STAS4_MANUAL_LABELS_20260501_20260514_DRAFT_COMPLETE_NO_ML_NO_OPTUNA`.
+
+Проверить текущие draft-метки:
+
+```powershell
+@'
+from pathlib import Path
+import csv
+base = Path(r'STAS4_FEATURE_HYPOTHESIS_REVIEW/density_structure_20260501_20260514_combo_spectrum/manual_labels')
+total = keep_total = cut_total = 0
+days = ['20260501','20260502','20260503','20260504','20260505','20260506','20260507','20260508','20260509','20260510','20260511','20260512','20260513','20260514']
+for day in days:
+    rows = list(csv.DictReader((base / f'LABELS_{day}_ALL_ENTRIES_DRAFT.csv').open('r', encoding='utf-8-sig', newline='')))
+    keep = sum(1 for r in rows if r['human_label'] == 'KEEP_DRAFT')
+    cut = sum(1 for r in rows if r['human_label'] == 'CUT_DRAFT')
+    total += len(rows); keep_total += keep; cut_total += cut
+    print(day, {'total': len(rows), 'keep': keep, 'cut': cut})
+print('TOTAL', {'total': total, 'keep': keep_total, 'cut': cut_total})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Ожидаемый итог: `TOTAL {'total': 972, 'keep': 115, 'cut': 857}`.
+
+Открыть последний проверочный скрин:
+
+```powershell
+ii .\STAS4_FEATURE_HYPOTHESIS_REVIEW\density_structure_20260501_20260514_combo_spectrum\manual_labels\ANNOTATED_20260514_KEEP_DRAFT.png
+```
+
+Граница: эти команды только проверяют CSV/PNG ручной разметки. Они не запускают ML, Optuna, scorer, target-lock или API.
+
+## STAS4 Manual Labels Draft 2026-07-10 20260501-20260513
+
+Статус: `STAS4_MANUAL_LABELS_20260501_20260513_DRAFT_NO_ML_NO_OPTUNA`.
+
+Проверить текущие draft-метки:
+
+```powershell
+@'
+from pathlib import Path
+import csv
+base = Path(r'STAS4_FEATURE_HYPOTHESIS_REVIEW/density_structure_20260501_20260514_combo_spectrum/manual_labels')
+total = keep_total = cut_total = 0
+for day in ['20260501','20260502','20260503','20260504','20260505','20260506','20260507','20260508','20260509','20260510','20260511','20260512','20260513']:
+    rows = list(csv.DictReader((base / f'LABELS_{day}_ALL_ENTRIES_DRAFT.csv').open('r', encoding='utf-8-sig', newline='')))
+    keep = sum(1 for r in rows if r['human_label'] == 'KEEP_DRAFT')
+    cut = sum(1 for r in rows if r['human_label'] == 'CUT_DRAFT')
+    total += len(rows); keep_total += keep; cut_total += cut
+    print(day, {'total': len(rows), 'keep': keep, 'cut': cut})
+print('TOTAL', {'total': total, 'keep': keep_total, 'cut': cut_total})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Открыть последний проверочный скрин:
+
+```powershell
+ii .\STAS4_FEATURE_HYPOTHESIS_REVIEW\density_structure_20260501_20260514_combo_spectrum\manual_labels\ANNOTATED_20260513_KEEP_DRAFT.png
+```
+
+Граница: эти команды только проверяют CSV/PNG ручной разметки. Они не запускают ML, Optuna, scorer, target-lock или API.
+
+## STAS4 Manual Labels Draft 2026-07-10 20260501-20260512
+
+Статус: `STAS4_MANUAL_LABELS_20260501_20260512_DRAFT_NO_ML_NO_OPTUNA`.
+
+Проверить текущие draft-метки:
+
+```powershell
+@'
+from pathlib import Path
+import csv
+base = Path(r'STAS4_FEATURE_HYPOTHESIS_REVIEW/density_structure_20260501_20260514_combo_spectrum/manual_labels')
+total = keep_total = cut_total = 0
+for day in ['20260501','20260502','20260503','20260504','20260505','20260506','20260507','20260508','20260509','20260510','20260511','20260512']:
+    rows = list(csv.DictReader((base / f'LABELS_{day}_ALL_ENTRIES_DRAFT.csv').open('r', encoding='utf-8-sig', newline='')))
+    keep = sum(1 for r in rows if r['human_label'] == 'KEEP_DRAFT')
+    cut = sum(1 for r in rows if r['human_label'] == 'CUT_DRAFT')
+    total += len(rows); keep_total += keep; cut_total += cut
+    print(day, {'total': len(rows), 'keep': keep, 'cut': cut})
+print('TOTAL', {'total': total, 'keep': keep_total, 'cut': cut_total})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Открыть последний проверочный скрин:
+
+```powershell
+ii .\STAS4_FEATURE_HYPOTHESIS_REVIEW\density_structure_20260501_20260514_combo_spectrum\manual_labels\ANNOTATED_20260512_KEEP_DRAFT.png
+```
+
+Граница: эти команды только проверяют CSV/PNG ручной разметки. Они не запускают ML, Optuna, scorer, target-lock или API.
+
+## STAS4 Manual Labels Draft 2026-07-10
+
+Статус: `STAS4_MANUAL_LABELS_20260501_20260511_DRAFT_NO_ML_NO_OPTUNA`.
+
+Проверить текущие draft-метки:
+
+```powershell
+@'
+from pathlib import Path
+import csv
+base = Path(r'STAS4_FEATURE_HYPOTHESIS_REVIEW/density_structure_20260501_20260514_combo_spectrum/manual_labels')
+for day in ['20260501','20260502','20260503','20260504','20260505','20260506','20260507','20260508','20260509','20260510','20260511']:
+    rows = list(csv.DictReader((base / f'LABELS_{day}_ALL_ENTRIES_DRAFT.csv').open('r', encoding='utf-8-sig', newline='')))
+    keep = sum(1 for r in rows if r['human_label'] == 'KEEP_DRAFT')
+    cut = sum(1 for r in rows if r['human_label'] == 'CUT_DRAFT')
+    print(day, {'total': len(rows), 'keep': keep, 'cut': cut})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Открыть последний проверочный скрин:
+
+```powershell
+ii .\STAS4_FEATURE_HYPOTHESIS_REVIEW\density_structure_20260501_20260514_combo_spectrum\manual_labels\ANNOTATED_20260511_KEEP_DRAFT.png
+```
+
+Граница: эти команды только проверяют CSV/PNG ручной разметки. Они не запускают ML, Optuna, scorer, target-lock или API.
+
+## STAS2/STAS4 Compact Strips 2026-07-10
+
+Статус: `STAS2_STAS4_COMPACT_STRIPS_READY_NO_LOGIC_CHANGE_NO_ML_NO_OPTUNA`.
+
+Проверить код:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py src\mlbotnav\visual_entry_stas4_family_overlay.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas2_market_phase_review.py -q
+```
+
+Повторить smoke Stas2 на `2026-05-11`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-11 --end-day 2026-05-11 --run-label stas2_20260511_visual_half_strips_smoke_v1 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260510_20260512_carry48_for_stas2_v0_20260709_070902 --render-limit 8
+```
+
+Повторить smoke Stas4 overlay:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas4_family_overlay --stas2-run-dir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260511_visual_half_strips_smoke_v1_20260710_073524 --day 2026-05-11 --family pattern+structure_ta --out-dir STAS4_FEATURE_HYPOTHESIS_REVIEW\visual_half_strips_smoke_v1
+```
+
+Открыть контрольные PNG:
+
+```powershell
+ii .\STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260511_visual_half_strips_smoke_v1_20260710_073524\STAS2_DAY_OVERVIEW_20260511.png
+ii .\STAS4_FEATURE_HYPOTHESIS_REVIEW\visual_half_strips_smoke_v1\STAS4_pattern+structure_ta_OVERLAY_20260511_20260710_073654.png
+```
+
+## STAS3 V2 Clean Ready 2026-07-09
+
+Статус: `STAS3_V2_CLEAN_READY_NO_OLD_STAS3_NO_ML_NO_OPTUNA_POST_ENTRY_AUDIT`.
+
+Открыть финальный clean V2:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\open_clean_v2_last_run.ps1 -Open browse
+.\STAS3_PERCENT_LADDER_REVIEW\open_clean_v2_last_run.ps1 -Open xlsx
+.\STAS3_PERCENT_LADDER_REVIEW\open_clean_v2_last_run.ps1 -Open report
+.\STAS3_PERCENT_LADDER_REVIEW\open_clean_v2_last_run.ps1 -Open entries
+.\STAS3_PERCENT_LADDER_REVIEW\open_clean_v2_last_run.ps1 -Open medium
+```
+
+Финальный clean run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_clean_20260510_20260512_long_only_20260709_123622`
+
+Повторить clean V2-прогон:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_clean_v2.ps1 -Day 2026-05-10 -EndDay 2026-05-12 -RunLabel stas3_v2_clean_20260510_20260512_long_only -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260510_20260512_continuous_wave_v2_20260709_081330 -HoldHours 48
+```
+
+Проверить clean V2:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas3_v2_clean_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas3_v2_clean_review.py -q
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas2_market_phase_review.py tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Проверить контракт результата:
+
+```powershell
+@'
+from pathlib import Path
+import csv, json
+from openpyxl import load_workbook
+run = Path(r'STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_clean_20260510_20260512_long_only_20260709_123622')
+payload = json.loads((run/'STAS3_V2_CLEAN_PAYLOAD.json').read_text(encoding='utf-8'))
+context = list(csv.DictReader((run/'STAS3_V2_CLEAN_ENTRY_CONTEXT.csv').open('r',encoding='utf-8-sig',newline='')))
+path = list(csv.DictReader((run/'STAS3_V2_CLEAN_TP_PATH.csv').open('r',encoding='utf-8-sig',newline='')))
+decision = list(csv.DictReader((run/'STAS3_V2_CLEAN_TP_DECISION.csv').open('r',encoding='utf-8-sig',newline='')))
+skipped = list(csv.DictReader((run/'STAS3_V2_CLEAN_SKIPPED_ROWS.csv').open('r',encoding='utf-8-sig',newline='')))
+wb = load_workbook(run/'STAS3_V2_CLEAN_TABLES.xlsx', read_only=True)
+pngs = list(run.rglob('*.png'))
+empty = [p.as_posix() for p in pngs if p.stat().st_size <= 1024]
+ladder = payload['percent_ladder']
+print({
+    'status': payload['status'],
+    'summary': payload['summary'],
+    'rows_match': len(context) == len(path) == len(decision) == 214,
+    'skipped': len(skipped),
+    'has_0p2': 0.2 in ladder,
+    'ladder_first': ladder[:8],
+    'ladder_last': ladder[-1],
+    'entry_price_locked': all(abs(float(r['entry_price_for_calc']) - float(r['entry_price_5bps'])) < 1e-6 for r in context),
+    'direction_scope': sorted(set(r['direction_scope'] for r in context)),
+    'short_context_only': sorted(set(r['short_context_only_flag'] for r in context)),
+    'sheets': wb.sheetnames,
+    'png_count': len(pngs),
+    'empty_png': len(empty),
+})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: clean V2 не использует старый Stas3 как базу. Это LONG-only post-entry audit, не стратегия. `SHORT` только risk-context. `WAVE/GAP/continuous` только hindsight-review. `clean_review_tp_pct` не является live TP, scorer, target-lock или ML-label.
+
+## STAS3 V2 Ready 2026-07-09
+
+Статус: `INVALID_OLD_STAS3_BASE_DRAFT`.
+
+Открыть финальный V2-результат:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open browse
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open tp
+ii .\STAS3_PERCENT_LADDER_REVIEW\runs\stas3_v2_20260510_20260512_long_only_20260709_112925\STAS3_V2_REPORT_RU.md
+```
+
+Финальный run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_20260510_20260512_long_only_20260709_112925`
+
+Источник Stas2:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_continuous_wave_v2_20260709_081330`
+
+Повторить V2-прогон:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-10 -EndDay 2026-05-12 -RunLabel stas3_v2_20260510_20260512_long_only -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260510_20260512_continuous_wave_v2_20260709_081330 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Проверить код и тесты Stas3 V2:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas3_percent_ladder_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas3_percent_ladder_review.py tests\test_visual_entry_low_anchor_suggester.py -q
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas2_market_phase_review.py -q
+```
+
+Проверить V2-контракт результата:
+
+```powershell
+@'
+from pathlib import Path
+import csv, json
+from openpyxl import load_workbook
+
+run = Path(r'STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_20260510_20260512_long_only_20260709_112925')
+payload = json.loads((run / 'STAS3_PAYLOAD.json').read_text(encoding='utf-8'))
+audit = list(csv.DictReader((run / 'STAS3_V2_ENTRY_TP_AUDIT.csv').open('r', encoding='utf-8-sig', newline='')))
+context = list(csv.DictReader((run / 'STAS3_V2_CONTEXT_BUNDLE.csv').open('r', encoding='utf-8-sig', newline='')))
+skipped = list(csv.DictReader((run / 'STAS3_V2_SKIPPED_ROWS.csv').open('r', encoding='utf-8-sig', newline='')))
+wb = load_workbook(run / 'STAS3_PERCENT_LADDER_TABLES.xlsx', read_only=True)
+pngs = list(run.rglob('*.png'))
+empty_png = [p.as_posix() for p in pngs if p.stat().st_size <= 1024]
+ladder = payload['percent_ladder']
+print({
+    'status': payload['status'],
+    'source_ok': payload['v2_contract']['source_stas2_run_required'].endswith('stas2_20260510_20260512_continuous_wave_v2_20260709_081330'),
+    'row_count_parity_ok': payload['summary']['row_count_parity_ok'],
+    'entry_rows': len(audit),
+    'context_rows': len(context),
+    'skipped_rows': len(skipped),
+    'ladder_first': ladder[:8],
+    'ladder_last': ladder[-1],
+    'has_0p2': 0.2 in ladder,
+    'has_20p0': 20.0 in ladder,
+    'entry_price_locked': all(r['entry_price_for_calc'] == r['entry_price_5bps'] for r in audit),
+    'direction_scope': sorted(set(r['direction_scope'] for r in audit)),
+    'short_context_only': sorted(set(r['short_context_only_flag'] for r in audit)),
+    'sheets': [s for s in wb.sheetnames if s.startswith('V2')],
+    'png_count': len(pngs),
+    'empty_png': len(empty_png),
+})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: Stas3 V2 - только LONG post-entry audit. `SHORT` используется только как risk-context. `WAVE/GAP/continuous` - hindsight-review контекст. `MFE MAX` - диагностический факт, не TP/exit. ML/export/training, Optuna, scorer, target-lock и API не запускать без отдельного решения.
+
+## STAS3 V2 Reset TZ 2026-07-09
+
+Статус: `STAS3_V2_TZ_GRID_LONG_ONLY_UPDATED_NO_ML_NO_OPTUNA`.
+
+Открыть новое ТЗ:
+
+```powershell
+ii .\STAS3_PERCENT_LADDER_REVIEW\TZ_STAS3_V2_RESET_RU.md
+```
+
+Проверить ключевые правки ТЗ:
+
+```powershell
+rg -n "entry_price_for_calc|entry_price_5bps|0\.3-0\.9|1\.0-2\.0|0\.1%|2\.0-20\.0|0\.2%|hit_20p0_rate|ideal_review_tp_pct|max_feasible_review_tp_pct|session_time_bucket|hour_background|hour_long_wave|hour_short_wave|short_context_only_flag|SHORT-risk|volume_context|2026-05-10|2026-05-11|2026-05-12|20260510_20260512_continuous_wave_v2" .\STAS3_PERCENT_LADDER_REVIEW\TZ_STAS3_V2_RESET_RU.md
+```
+
+Проверить контракт цены входа в выбранном Stas2 source:
+
+```powershell
+$run='.\STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260510_20260512_continuous_wave_v2_20260709_081330'
+$rows=Import-Csv -Path (Join-Path $run 'STAS2_RECORDS.csv') -Encoding UTF8
+[ordered]@{
+  rows=$rows.Count
+  missing_anchor_low=($rows|Where-Object { [string]::IsNullOrWhiteSpace($_.anchor_low_price)}).Count
+  missing_entry_open=($rows|Where-Object { [string]::IsNullOrWhiteSpace($_.entry_open_price)}).Count
+  missing_entry_5bps=($rows|Where-Object { [string]::IsNullOrWhiteSpace($_.entry_price_5bps)}).Count
+  context_not_before=($rows|Where-Object { $_.context_before_entry_check -ne 'True'}).Count
+} | ConvertTo-Json -Compress
+```
+
+Проверить, что старые Stas3 runs не удалены:
+
+```powershell
+Get-ChildItem .\STAS3_PERCENT_LADDER_REVIEW\runs -Directory | Sort-Object LastWriteTime -Descending | Select-Object -First 10 Name,LastWriteTime
+```
+
+## STAS3 Rebuild From Latest STAS2 2026-07-09
+
+Статус: `STAS3_REBUILT_FROM_STAS2_SHORT_LABELS_V1_NO_ML_NO_OPTUNA_POST_ENTRY_AUDIT`.
+
+Повторить rebuild:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-08 -EndDay 2026-05-12 -RunLabel stas3_20260508_20260512_from_stas2_short_labels_v1 -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260508_20260512_short_labels_v1_20260709_083138 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Открыть актуальный Stas3:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open browse
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open tp
+```
+
+Финальный run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260508_20260512_from_stas2_short_labels_v1_20260709_084730`
+
+Проверка:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas3_percent_ladder_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas3_percent_ladder_review.py tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+## STAS2 Short Strong Wave Labels 2026-07-09
+
+Статус: `STAS2_SHORT_STRONG_WAVE_LABEL_READY_NO_ML_NO_OPTUNA_VISUAL_ONLY`.
+
+Повторить контрольный run `2026-05-08..2026-05-12`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-08 --end-day 2026-05-12 --run-label stas2_20260508_20260512_short_labels_v1 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260510_20260512_carry48_for_stas2_v0_20260709_070902
+```
+
+Открыть `2026-05-12`:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-12
+```
+
+Финальный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260508_20260512_short_labels_v1_20260709_083138`
+
+Проверка коротких сильных волн:
+
+```powershell
+@'
+from pathlib import Path
+import csv
+run = Path(r'STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260508_20260512_short_labels_v1_20260709_083138')
+with (run / 'STAS2_MACRO_WAVES.csv').open('r', encoding='utf-8-sig', newline='') as f:
+    rows = list(csv.DictReader(f))
+for r in rows:
+    dur = float(r.get('macro_wave_duration_min') or 0)
+    pct = float(r.get('macro_wave_visible_move_pct') or r.get('macro_wave_move_pct') or 0)
+    if r.get('day_utc') == '2026-05-12' and dur < 15 and pct >= 1:
+        print(r['macro_wave_no'], r['macro_wave_direction'], r['macro_wave_start_time_utc'], r['macro_wave_end_time_utc'], dur, pct)
+'@ | .\.venv\Scripts\python.exe -
+```
+
+## STAS2 Continuous Wave Ledger 2026-07-09
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_CONTINUOUS_WAVE_READY_NO_ML_NO_OPTUNA_REVIEW_ONLY`.
+
+Проверить код:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas2_market_phase_review.py tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Повторить финальный Stas2 run `2026-05-10..2026-05-12`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-10 --end-day 2026-05-12 --run-label stas2_20260510_20260512_continuous_wave_v2 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260510_20260512_carry48_for_stas2_v0_20260709_070902
+```
+
+Открыть результат:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-10
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-11
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse
+```
+
+Финальный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_continuous_wave_v2_20260709_081330`
+
+Проверить артефакты:
+
+```powershell
+@'
+from pathlib import Path
+import csv, json
+from openpyxl import load_workbook
+run = Path(r'STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_continuous_wave_v2_20260709_081330')
+payload = json.loads((run / 'STAS2_PAYLOAD.json').read_text(encoding='utf-8'))
+with (run / 'STAS2_CONTINUOUS_WAVES.csv').open('r', encoding='utf-8-sig', newline='') as f:
+    continuous = list(csv.DictReader(f))
+with (run / 'STAS2_MACRO_WAVES.csv').open('r', encoding='utf-8-sig', newline='') as f:
+    macro = list(csv.DictReader(f))
+wb = load_workbook(run / 'STAS2_MARKET_PHASE_TABLES.xlsx', read_only=True)
+pngs = list(run.rglob('*.png'))
+empty = [p.as_posix() for p in pngs if p.stat().st_size <= 1024]
+carry = [r for r in macro if str(r.get('macro_wave_carry_from_prev_day')).lower() == 'true' or str(r.get('macro_wave_carry_to_next_day')).lower() == 'true']
+print({'summary': payload['summary'], 'continuous': len(continuous), 'macro': len(macro), 'carry_slices': len(carry), 'sheets': wb.sheetnames, 'png_count': len(pngs), 'empty_png': len(empty)})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: `continuous_wave_*` и `macro_wave_*` являются visual/review слоями. Не использовать их как causal ML feature, scorer, target-lock или TP-логику без отдельного approval.
+
+## STAS2 Macro Wave GAP Segments 2026-07-09
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_WAVE_GAP_SEGMENTS_READY_NO_ML_NO_OPTUNA_REVIEW_ONLY`.
+
+Проверить код:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas2_market_phase_review.py tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Повторить контрольный Stas2 run `2026-05-10..2026-05-12`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-10 --end-day 2026-05-12 --run-label stas2_20260510_20260512_gap_segments_v1 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260510_20260512_carry48_for_stas2_v0_20260709_070902
+```
+
+Открыть результат:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-10
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse
+```
+
+Финальный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_gap_segments_v1_20260709_073810`
+
+Проверить артефакты:
+
+```powershell
+@'
+from pathlib import Path
+import csv, json
+from openpyxl import load_workbook
+run = Path(r'STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_gap_segments_v1_20260709_073810')
+payload = json.loads((run / 'STAS2_PAYLOAD.json').read_text(encoding='utf-8'))
+with (run / 'STAS2_MACRO_WAVES.csv').open('r', encoding='utf-8-sig', newline='') as f:
+    waves = list(csv.DictReader(f))
+wb = load_workbook(run / 'STAS2_MARKET_PHASE_TABLES.xlsx', read_only=True)
+pngs = list(run.rglob('*.png'))
+empty = [p.as_posix() for p in pngs if p.stat().st_size <= 1024]
+print({'summary': payload['summary'], 'macro_rows': len(waves), 'sheets': wb.sheetnames, 'png_count': len(pngs), 'empty_png': len(empty)})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: `GAP` закрывает визуальные пропуски в строке `WAVE`, но не является входом, TP, ML-label или causal feature.
+
+## STAS2 SHORT And Macro Wave Review 2026-07-09
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_SHORT_MACRO_WAVE_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_PLUS_REVIEW_ONLY`.
+
+Проверить код:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas2_market_phase_review.py tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Повторить финальный Stas2 run `2026-05-04..2026-05-09`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-04 --end-day 2026-05-09 --run-label stas2_20260504_20260509_short_macro_wave_v1 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260504_20260509_carry48_for_stas2_v0_20260707_042858
+```
+
+Открыть результат:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-04
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse
+```
+
+Финальный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260504_20260509_short_macro_wave_v1_20260709_064759`
+
+Проверить артефакты:
+
+```powershell
+@'
+from pathlib import Path
+import csv, json
+from openpyxl import load_workbook
+run = Path(r'STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260504_20260509_short_macro_wave_v1_20260709_064759')
+with (run / 'STAS2_HOURLY_PHASES.csv').open('r', encoding='utf-8-sig', newline='') as f:
+    hourly = list(csv.DictReader(f))
+with (run / 'STAS2_MACRO_WAVES.csv').open('r', encoding='utf-8-sig', newline='') as f:
+    waves = list(csv.DictReader(f))
+payload = json.loads((run / 'STAS2_PAYLOAD.json').read_text(encoding='utf-8'))
+wb = load_workbook(run / 'STAS2_MARKET_PHASE_TABLES.xlsx', read_only=True)
+pngs = list(run.rglob('*.png'))
+empty = [p.as_posix() for p in pngs if p.stat().st_size <= 1024]
+print({'status': payload['status'], 'hourly_rows': len(hourly), 'macro_waves': len(waves), 'sheets': wb.sheetnames, 'png_count': len(pngs), 'empty_png': len(empty)})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: `SHORT` по часам является закрытым часовым review-контекстом. `WAVE` является hindsight review по дневному swing. Не использовать как causal ML feature без отдельной causal-разметки.
+
+## STAS3 Percent Ladder Review 2026-07-06
+
+Статус: `STAS3_PERCENT_LADDER_REVIEW_READY_NO_ML_NO_OPTUNA_POST_ENTRY_AUDIT`.
+
+Проверить код:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas3_percent_ladder_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_stas3_percent_ladder_review.py tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Повторить контрольный Stas3 run по финальному Stas2:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas3_percent_ladder_review --start-day 2026-05-02 --end-day 2026-05-03 --run-label stas3_20260502_20260503_tp_ladder_v0 --stas2-run-dir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260502_20260503_setup_quality_no_labels_v0_20260706_172535 --hold-hours 48 --post-plot-minutes 360 --tp-fast-minutes 120 --tp-min-samples 5 --tp-hit-rate-min 0.60 --tp-fast-hit-rate-min 0.50
+```
+
+То же через wrapper:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-02 -EndDay 2026-05-03 -RunLabel stas3_20260502_20260503_tp_ladder_v0 -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260502_20260503_setup_quality_no_labels_v0_20260706_172535 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Повторить расширенный Stas3 run по последнему Stas2 `2026-05-04..2026-05-09`:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-04 -EndDay 2026-05-09 -RunLabel stas3_20260504_20260509_tp_ladder_v0 -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260504_20260509_setup_quality_v0_20260707_043734 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Повторить Stas3 run с явным TP/EXIT overlay на графиках:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-04 -EndDay 2026-05-09 -RunLabel stas3_20260504_20260509_tp_exit_overlay_v0 -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260504_20260509_setup_quality_v0_20260707_043734 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Повторить Stas3 run с раздельными `SIGNAL -> ENTRY -> EXIT`:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-04 -EndDay 2026-05-09 -RunLabel stas3_20260504_20260509_signal_entry_exit_overlay_v0 -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260504_20260509_setup_quality_v0_20260707_043734 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Повторить Stas3 run с красной стрелкой визуальной отработки `ENTRY -> EXIT`:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-04 -EndDay 2026-05-09 -RunLabel stas3_20260504_20260509_signal_entry_tp_move_v0 -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260504_20260509_setup_quality_v0_20260707_043734 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Повторить Stas3 run с анализом больших ходов `SIGNAL/ENTRY -> MFE MAX`:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\run_range.ps1 -Day 2026-05-04 -EndDay 2026-05-09 -RunLabel stas3_20260504_20260509_big_move_review_v2 -Stas2RunDir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260504_20260509_setup_quality_v0_20260707_043734 -HoldHours 48 -PostPlotMinutes 360 -TpFastMinutes 120 -TpMinSamples 5 -TpHitRateMin 0.60 -TpFastHitRateMin 0.50
+```
+
+Открыть последний результат:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open browse
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open tp
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-02
+```
+
+Контрольный run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260502_20260503_tp_ladder_v0_20260706_183011`
+
+Проверить артефакты:
+
+```powershell
+@'
+from pathlib import Path
+import csv, json
+from openpyxl import load_workbook
+run = Path(r'STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260502_20260503_tp_ladder_v0_20260706_183011')
+wb = load_workbook(run / 'STAS3_PERCENT_LADDER_TABLES.xlsx', read_only=True)
+def read_rows(name):
+    with (run / name).open('r', encoding='utf-8-sig', newline='') as f:
+        return list(csv.DictReader(f))
+payload = json.loads((run / 'STAS3_PAYLOAD.json').read_text(encoding='utf-8'))
+pngs = list(run.rglob('*.png'))
+empty = [p.as_posix() for p in pngs if p.stat().st_size <= 1024]
+print({
+    'records': len(read_rows('STAS3_RECORDS.csv')),
+    'entry_phase': len(read_rows('STAS3_ENTRY_PHASE_TABLE.csv')),
+    'actual_movement': len(read_rows('STAS3_ACTUAL_MOVEMENT.csv')),
+    'reasonable_tp': len(read_rows('STAS3_REASONABLE_TP.csv')),
+    'tp_by_phase': len(read_rows('STAS3_TP_LADDER_BY_PHASE.csv')),
+    'summary': payload['summary'],
+    'sheets': wb.sheetnames,
+    'png_count': len(pngs),
+    'empty_png': len(empty),
+})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Проверить хвосты Python:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*visual_entry*' -or $_.CommandLine -like '*Optuna*' -or $_.CommandLine -like '*APTuna*' } | Select-Object ProcessId,CommandLine
+```
+
+Граница: Stas3 смотрит будущее после входа. Не использовать его поля как pre-entry features, ML-label, scorer или target-lock без отдельного approved-ledger.
+
+## STAS2 Closed For STAS3 2026-07-06
+
+Статус: `STAS2_CLOSED_FOR_STAS3_NO_ML_NO_OPTUNA`.
+
+Открыть финальный Stas2 visual-run:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-02
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+```
+
+Финальный visual-run:
+
+```text
+STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_setup_quality_no_labels_v0_20260706_172535
+```
+
+Финальный audit-run фаз/сессий:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260508_session6_daytype_v4_20260706_110942
+```
+
+Следующая работа по ТЗ: Stas3 percent ladder / entry-TP validation. Для Stas3 сначала писать отдельное ТЗ/отчет и не смешивать post-entry расчеты обратно в Stas2.
+
+Запрет: не запускать ML/export/training, Optuna, scorer, target-lock или API без отдельного явного approval.
+
+## STAS2 Setup Quality Layer 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_SETUP_QUALITY_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+Проверка:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py
+```
+
+Полный контрольный run по `2026-05-02..2026-05-03`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-02 --end-day 2026-05-03 --run-label stas2_20260502_20260503_setup_quality_no_labels_v0 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_20260503_carry48_for_stas2_v0_20260706_163543
+```
+
+Открыть последний результат:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-02
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+```
+
+Контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_setup_quality_no_labels_v0_20260706_172535`
+
+Короткая проверка LA045-LA047:
+
+```powershell
+Import-Csv .\STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260502_20260503_setup_quality_no_labels_v0_20260706_172535\STAS2_RECORDS.csv |
+  Where-Object { $_.day_utc -eq '2026-05-02' -and $_.candidate_id -in @('LA045','LA046','LA047') } |
+  Select-Object candidate_id,entry_time_utc,entry_setup_quality_label,entry_setup_quality_reason,stas1_risk_flags
+```
+
+Граница: это visual review/pre-entry слой. На overview текстовые названия возле точек не рисуются; сами точки входа остаются как в Stas1. Не запускать ML/export/training, Optuna, scorer, target-lock или API.
+
+## STAS2 Background And LONG Wave Visual Fix 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_BG_LONG_WAVE_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+Проверка:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Полный run по `2026-05-02..2026-05-03`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-02 --end-day 2026-05-03 --run-label stas2_20260502_20260503_bg_long_wave_v0 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244
+```
+
+Открыть последний результат:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-02
+```
+
+Контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_bg_long_wave_v0_20260706_131201`
+
+Проверка no-lookahead/Excel/PNG:
+
+```powershell
+@'
+from pathlib import Path
+import csv
+from openpyxl import load_workbook
+run = Path(r'STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_bg_long_wave_v0_20260706_131201')
+with (run / 'STAS2_RECORDS.csv').open('r', encoding='utf-8-sig', newline='') as f:
+    rows = list(csv.DictReader(f))
+bad = [r for r in rows if str(r.get('context_before_entry_check')).lower() != 'true']
+wb = load_workbook(run / 'STAS2_MARKET_PHASE_TABLES.xlsx', read_only=True)
+pngs = list(run.rglob('*.png'))
+empty = [p.as_posix() for p in pngs if p.stat().st_size <= 1024]
+print({'rows': len(rows), 'bad_context_before_entry': len(bad), 'sheets': wb.sheetnames, 'png_count': len(pngs), 'empty_png': len(empty)})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: Stas2 показывает `Фон` и `LONG` до входа. TP/exit/percent ladder/MFE/MAE/5m post-entry blocks остаются для Stas3. Не запускать ML/export/training, Optuna, scorer, target-lock или API.
+
+## STAS2 Market Phase Visual Review 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_REVIEW_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+Проверка:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_review.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m pytest tests\test_visual_entry_low_anchor_suggester.py -q
+```
+
+Полный run по `2026-05-02..2026-05-03`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_review --start-day 2026-05-02 --end-day 2026-05-03 --run-label stas2_20260502_20260503_market_phase_review_v0 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244
+```
+
+То же через wrapper:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\run_range.ps1 -Day 2026-05-02 -EndDay 2026-05-03 -RunLabel stas2_20260502_20260503_market_phase_review_v0 -Stas1RunDir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034,STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244
+```
+
+Открыть:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open browse
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-02
+```
+
+Контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_market_phase_review_v0_20260706_124134`
+
+Проверка no-lookahead/Excel:
+
+```powershell
+@'
+from pathlib import Path
+import csv
+from openpyxl import load_workbook
+run = Path(r'STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_market_phase_review_v0_20260706_124134')
+wb = load_workbook(run / 'STAS2_MARKET_PHASE_TABLES.xlsx', read_only=True)
+with (run / 'STAS2_RECORDS.csv').open('r', encoding='utf-8-sig', newline='') as f:
+    rows = list(csv.DictReader(f))
+bad = [r for r in rows if str(r.get('context_before_entry_check')).lower() != 'true']
+print({'sheets': wb.sheetnames, 'csv_rows': len(rows), 'bad_context_before_entry': len(bad)})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Граница: Stas2 pre-entry only. Не запускать ML/export/training, Optuna, scorer, target-lock или API.
+
+## STAS2 Excel-Friendly Run 2026-07-06
+
+Статус: `STAS2_EXCEL_EXPORT_UTF8_BOM_XLSX_READY_NO_ML_NO_OPTUNA`.
+
+Прогон `2026-05-02..2026-05-03` с исправленным Excel-export:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_audit --start-day 2026-05-02 --end-day 2026-05-03 --run-label stas2_20260502_20260503_excel_xlsx_fix --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244
+```
+
+Открыть готовый Excel-файл:
+
+```powershell
+ii .\reports\final_review\visual_entry_v3\fresh_target_led\stas2_market_phase_percent_ladder\stas2_20260502_20260503_excel_xlsx_fix_20260706_112616\STAS2_MARKET_PHASE_TABLES.xlsx
+```
+
+Граница: это report/export fix, не ML/export/training, не Optuna, не scorer, не target-lock и не API.
+
+## STAS2 Market Phase Session Audit 2026-07-06
+
+Статус: `STAS2_MARKET_PHASE_SESSION_AUDIT_READY_NO_ML_NO_OPTUNA`.
+
+Проверить скрипт:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_audit.py
+```
+
+Воспроизвести финальный Stas 2 run по актуальным Stas1 runs:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_audit --start-day 2026-05-02 --end-day 2026-05-08 --run-label stas2_20260502_20260508_session6_daytype_v4 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260504_20260506_browse_by_day_v0_20260706_063954 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260507_20260508_carry48_v0_20260706_084057
+```
+
+Финальный отчет:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260508_session6_daytype_v4_20260706_110942/STAS2_MARKET_PHASE_AUDIT_RU.md`
+
+Сессионная модель: `6` UTC-корзин времени плюс отдельный `day_type=weekday/weekend`; effective-сводка лежит в `STAS2_EFFECTIVE_SESSION_SUMMARY.csv`.
+
+Граница: это отчетный audit-run, не ML/export/training, не Optuna, не scorer, не target-lock и не API.
+
+## STAS1 Block 1 Locked 2026-07-06
+
+Блок 1 уже рабочий: прогоняет день/диапазон, собирает low-кандидаты, сохраняет PNG/CSV/JSON и раскладывает просмотр в `BROWSE_BY_DAY/`.
+
+`+1%`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-07 -EndDay 2026-05-08 -OutcomeLookaheadHours 48 -RunLabel stas1_review_v0 -RenderGoodLimit 0
+```
+
+`+0.5%`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_0p5.ps1 -Day 2026-05-07 -EndDay 2026-05-08 -OutcomeLookaheadHours 48 -RunLabel stas1_review_0p5_v0 -RenderGoodLimit 0
+```
+
+Открыть дневной просмотр:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+```
+
+## STAS1 Carry Outcome 2026-07-06
+
+Два дня с проверкой `+1%` до `48` часов после входа:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-07 -EndDay 2026-05-08 -OutcomeLookaheadHours 48 -RunLabel stas1_20260507_20260508_carry48_v0 -RenderGoodLimit 0
+```
+
+Открыть дневной просмотр последнего run:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+```
+
+Открыть конкретный день:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-07
+```
+
+Проверить carry-счетчики последнего run:
+
+```powershell
+$run = Get-ChildItem STAS1_GOOD_LOW_REVIEW\runs -Directory | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+Import-Csv (Join-Path $run.FullName 'GOOD_1PCT_REVIEW_POOL_RECORDS.csv') | Group-Object outcome_status | Select-Object Count,Name
+```
+
+Проверить хвосты Python:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*visual_entry*' -or $_.CommandLine -like '*Optuna*' -or $_.CommandLine -like '*APTuna*' } | Select-Object ProcessId,CommandLine
+```
+
+## STAS1 Browse By Day 2026-07-06
+
+Открыть индекс последнего run:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open index
+```
+
+Открыть папку дневного просмотра последнего run:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+```
+
+Открыть конкретный день последнего run:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-04
+```
+
+Рабочий прогон `2026-05-04..2026-05-06` без лимита closeup-страниц:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-04 -EndDay 2026-05-06 -RunLabel stas1_20260504_20260506_browse_by_day_v0 -RenderGoodLimit 0
+```
+
+## STAS1 ALL Closeups GOOD+BAD 2026-07-06
+
+Открыть последние closeup-страницы, где вместе показаны GOOD и BAD кандидаты:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open allcloseups
+```
+
+Открыть весь последний визуальный набор: overview, GOOD-only closeups и ALL closeups:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open all
+```
+
+Контрольный запуск `2026-05-03`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-03 -RunLabel stas1_20260503_all_closeups_bad_x_v0 -RenderGoodLimit 80
+```
+
+Проверка хвостов Python после запуска:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*visual_entry*' -or $_.CommandLine -like '*Optuna*' -or $_.CommandLine -like '*APTuna*' } | Select-Object ProcessId,CommandLine
+```
+
+## STAS1 Good Low Review 2026-07-03
+
+Статус: `STAS1_V0_BASELINE_MAIN_LOW_REVIEW_SCRIPT_NO_ML_NO_OPTUNA`.
+
+Один день `+1%`:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-02
+```
+
+Один день `+0.5%`:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\run_day_0p5.ps1 -Day 2026-05-02
+```
+
+Открыть последний результат:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1
+```
+
+Открыть closeup-страницы:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open closeups
+```
+
+Проверить open-script без открытия PNG:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -NoOpen
+```
+
+Граница: команды используют `src/mlbotnav/visual_entry_good_1pct_review_pool.py`; это review-pool, не ML/export/training, не scorer, не target-lock и не Optuna.
+
+## Low Anchor Entry 1pct Label Review V1 13 May 2026-07-02
+
+Статус: `LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Проверить и собрать V1:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_low_anchor_entry_1pct_label_review.py
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_low_anchor_entry_1pct_label_review --day 2026-05-13
+```
+
+Проверить счетчики:
+
+```powershell
+$csv=Import-Csv reports\final_review\visual_entry_v3\fresh_target_led\low_anchor_entry_1pct_label_review_v1_20260513\LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_20260513.csv
+$csv | Group-Object review_label | Sort-Object Count -Descending | Select-Object Count,Name
+```
+
+Артефакты:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_FULL_DAY_20260513.png
+reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_ZOOM_PAGE_01_20260513.png
+reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_20260513.csv
+reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_20260513_RU.md
+```
+
+Граница: V1 является review/dataset-label слоем. Future `+1%` только offline outcome label. No scorer, no target-lock, no ML/export/training, no Optuna.
+
+## DCA Risk Audit V0 W18-W20 2026-07-02
+
+Статус: `DCA_RISK_AUDIT_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_API`.
+
+Проверить и собрать аудит:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_dca_risk_audit_v0.py
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_dca_risk_audit_v0 --pool-run-dir reports\final_review\visual_entry_v3\fresh_target_led\good_1pct_review_pool\W18_W20_learning_20260702_082819 --run-label W18_W20_dca_risk --selected-limit-per-day 10 --late-hold-minutes 360 --overload-open-count 10 --render-top-days 3
+```
+
+Проверить хвосты:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*visual_entry*' -or $_.CommandLine -like '*Optuna*' -or $_.CommandLine -like '*APTuna*' } | Select-Object ProcessId,CommandLine
+```
+
+Главный ранс:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415
+```
+
+Артефакты:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_REPORT_RU.md
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_TRADES.csv
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_DAYS.csv
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_BASKETS.csv
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_SUMMARY.png
+reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415/DCA_RISK_AUDIT_V0_TOP_DAY_20260502.png
+```
+
+Граница: audit only. No scorer, no target-lock, no ML/export/training, no Optuna, no API trading.
+
+## Target 1pct Price Fix V0 2026-07-02
+
+Статус: `TARGET_1PCT_PRICE_FIX_V0_READY_NO_ML_NO_OPTUNA_NO_SCORER`.
+
+Проверить артефакты:
+
+```powershell
+Get-ChildItem reports\final_review\visual_entry_v3\fresh_target_led\target_1pct_price_fix_v0
+Import-Csv reports\final_review\visual_entry_v3\fresh_target_led\target_1pct_price_fix_v0\TARGET_1PCT_PRICE_FIX_V0_20260702.csv | Measure-Object
+```
+
+Проверить русский отчет и хвосты процессов:
+
+```powershell
+rg -n "\?\?\?|\x{0420}\x{040E}|\x{0420}\x{045F}|\x{0421}\x{0453}|\x{0421}\x{201A}|\x{00D0}|\x{FFFD}" reports\final_review\visual_entry_v3\fresh_target_led\target_1pct_price_fix_v0\TARGET_1PCT_PRICE_FIX_V0_20260702_RU.md
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*visual_entry*' -or $_.CommandLine -like '*Optuna*' -or $_.CommandLine -like '*APTuna*' } | Select-Object ProcessId,CommandLine
+```
+
+Граница: это price/outcome reference. No scorer, no target-lock, no ML/export/promotion, no Optuna.
+
 ## V2A Structure Overlay 14 May 2026-07-01
 
 Статус: `V2A_STRUCTURE_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
@@ -4793,6 +9873,38 @@ Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.
 ```powershell
 Get-Content -Encoding UTF8 docs\CALIBRATION_NODE_CURRENT\FRESH_TARGET_LED_RAILS_RU.md
 ```
+
+## Fresh Target-Led Outcome Low Miner V0 2026-07-02
+
+Статус: `OUTCOME_LOW_MINER_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_SCORER`.
+
+Проверка и запуск:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_outcome_low_miner_v0.py
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_outcome_low_miner_v0
+```
+
+Артефакты:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_20260702_RU.md
+reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_CANDIDATES_20260702.csv
+reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260514_20260702.png
+reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260515_20260702.png
+reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_FULL_DAY_20260514_20260702.png
+reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_FULL_DAY_20260515_20260702.png
+```
+
+Граница: future `+1.5%` только offline outcome label. No ML/export/training, no scorer, no target-lock, no Optuna.
+
+Повтор с target `+1.0%`:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_outcome_low_miner_v0 --target-pct 1.0 --out-dir reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0_target_1pct
+```
 ## Fresh Target-Led User Marked Order 2026-06-30
 
 Показанный пользователю zoom-кандидат `M01`:
@@ -4807,3 +9919,497 @@ reports\final_review\visual_entry_v3\fresh_target_led\visual_confirm\M01_user_ma
 ```powershell
 Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*APTuna*' -or $_.CommandLine -like '*visual_entry*' } | Select-Object ProcessId,CommandLine
 ```
+## Good 1pct Review Pool 2026-07-02
+
+Статус: `GOOD_1PCT_REVIEW_POOL_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Проверка:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_good_1pct_review_pool.py
+```
+
+Smoke на один день:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_good_1pct_review_pool --start-day 2026-05-13 --end-day 2026-05-13 --run-label smoke_20260513
+```
+
+Рабочий запуск W18-W20:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_good_1pct_review_pool --start-day 2026-04-27 --end-day 2026-05-17 --run-label W18_W20_learning
+```
+
+VS Code task: `Visual Entry: Good 1pct Review Pool (NO ML/OPTUNA)`.
+
+Проверка хвостов после запуска:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*APTuna*' -or $_.CommandLine -like '*visual_entry*' } | Select-Object ProcessId,CommandLine
+```
+
+Граница: future `+1%` только offline outcome label для review-pool. Не ML, не export, не scorer, не target-lock, не Optuna.
+## Significant Low Calibration V0
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_significant_low_calibration_v0 `
+  --dca-run-dir reports\final_review\visual_entry_v3\fresh_target_led\dca_risk_audit_v0\W18_W20_dca_risk_20260502_userfix_v0_20260702_180352 `
+  --feedback-csv reports\final_review\visual_entry_v3\fresh_target_led\dca_risk_audit_v0\W18_W20_dca_risk_20260502_closeups_20260702_162715\DCA_RISK_AUDIT_V0_20260502_USER_FEEDBACK_V0.csv `
+  --day 2026-05-02 `
+  --run-label siglow_20260502_v0
+```
+
+Последний результат:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_20260502_user_actual_v1c3_20260702_190227`
+
+Актуальный повтор user-layer V1C3:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_significant_low_calibration_v0 `
+  --dca-run-dir reports\final_review\visual_entry_v3\fresh_target_led\dca_risk_audit_v0\W18_W20_dca_risk_20260502_userfix_v0_20260702_180352 `
+  --feedback-csv reports\final_review\visual_entry_v3\fresh_target_led\significant_low_calibration_v0\siglow_20260502_user_actual_v1b_20260702_185032\DCA_RISK_AUDIT_V0_20260502_USER_FEEDBACK_ACTUAL_OVERVIEW_V1C3.csv `
+  --day 2026-05-02 `
+  --run-label siglow_20260502_user_actual_v1c3
+```
+
+## Reanchor Applied V2 RA004 2026-07-03
+
+Актуальный run после пользовательской стрелки на `20:49 UTC`:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904
+```
+
+Главные файлы:
+
+```text
+reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502_CLOSE_ZOOM_RA004.png
+reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502_OVERVIEW.png
+reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502.csv
+reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502.json
+```
+
+Проверки:
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_significant_low_calibration_v0.py src\mlbotnav\visual_entry_low_anchor_suggester.py
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*APTuna*' -or $_.CommandLine -like '*visual_entry*' } | Select-Object ProcessId,CommandLine
+```
+
+Граница: NO_ML, NO_OPTUNA, NO_SCORER, NO_TARGET_LOCK, NO_API.
+
+## Manual Reanchors V0 2026-05-02
+
+```powershell
+$env:PYTHONPATH='src'
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_manual_reanchor_review_v0.py
+.\.venv\Scripts\python.exe -m mlbotnav.visual_entry_manual_reanchor_review_v0 `
+  --config configs\visual_entry\manual_reanchors\SOLUSDT_1m_2026-05-02_SIGNIFICANT_LOW_MANUAL_REANCHORS_V0.json `
+  --run-label siglow_manual_reanchors_v0
+```
+
+Последний результат:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936`
+
+Проверка хвостов после запуска:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'python.exe'" | Where-Object { $_.CommandLine -like '*MLbotNav*' -or $_.CommandLine -like '*mlbotnav*' -or $_.CommandLine -like '*visual_entry*' -or $_.CommandLine -like '*Optuna*' -or $_.CommandLine -like '*APTuna*' } | Select-Object ProcessId,CommandLine
+```
+
+Граница: renderer читает только ручной JSON source-of-truth. Не ML, не Optuna, не scorer, не target-lock, не API.
+
+## STAS1 GOOD_1PCT 2026-05-02 anchor-next-open
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-02 -RunLabel stas1_20260502_1pct_anchor_next_open_fix_v0
+```
+
+Проверка, что вход строго на следующей свече после low:
+
+```powershell
+@'
+import pandas as pd
+p = r'STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034\GOOD_1PCT_REVIEW_POOL_RECORDS.csv'
+df = pd.read_csv(p)
+for c in ['anchor_time_utc', 'entry_time_utc']:
+    df[c] = pd.to_datetime(df[c], utc=True)
+bad = df[(df['entry_time_utc'] - df['anchor_time_utc']).dt.total_seconds() != 60]
+print({'rows': len(df), 'bad_anchor_to_entry': len(bad)})
+'@ | .\.venv\Scripts\python.exe -
+```
+
+Последний результат: `STAS1_GOOD_LOW_REVIEW/runs/stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034`.
+
+Ожидание: `52` строки, `42` GOOD, `10` BAD, `bad_anchor_to_entry=0`.
+
+## Codex/VS Code load audit
+
+Проверить активные Git-процессы:
+
+```powershell
+Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'git.exe' } | Select-Object ProcessId,ParentProcessId,Name,CommandLine | Format-List
+```
+
+Остановить только зависший `git add -A`, если он реально висит:
+
+```powershell
+$gitAdds = Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'git.exe' -and $_.CommandLine -like '* add -A*' }
+$gitAdds | Select-Object ProcessId,ParentProcessId,CommandLine
+foreach ($p in $gitAdds) { Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue }
+if (Test-Path .git/index.lock) { 'INDEX_LOCK_EXISTS' } else { 'NO_INDEX_LOCK' }
+```
+
+Проверить, что STAS run-артефакты игнорируются:
+
+```powershell
+git check-ignore -v STAS1_GOOD_LOW_REVIEW/runs STAS2_MARKET_PHASE_REVIEW/runs STAS3_PERCENT_LADDER_REVIEW/runs
+```
+
+Проверить скорость Git status:
+
+```powershell
+Measure-Command { git status --short --untracked-files=normal | Out-Null } | Select-Object TotalSeconds,TotalMilliseconds
+```
+## STAS4 combo strategies 3 days
+
+Пример запуска одного слоя:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m mlbotnav.visual_entry_stas4_family_overlay `
+  --stas2-run-dir STAS2_MARKET_PHASE_REVIEW\runs\stas2_20260510_20260512_short_macro_wave_review_20260709_071233 `
+  --day 2026-05-10 `
+  --family structure_ta+trend_momentum `
+  --out-dir STAS4_FEATURE_HYPOTHESIS_REVIEW\combo_structure_trend_20260510
+```
+
+Проверка скрипта:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m py_compile src\mlbotnav\visual_entry_stas4_family_overlay.py
+```
+
+Открыть папку с результатами:
+
+```powershell
+Start-Process "C:\Users\007\Desktop\MLbotNav\STAS4_FEATURE_HYPOTHESIS_REVIEW"
+```
+## Codex Startup Disk Load Audit 2026-07-11
+
+Статус: `CODEX_STARTUP_DISK_LOAD_AUDIT_READY_NO_DELETE_NO_CODE_CHANGE`.
+
+Главный отчет:
+
+```powershell
+ii .\docs\codex\CODEX_STARTUP_DISK_LOAD_AUDIT_20260711_RU.md
+```
+
+Проверить процессы Codex/Git после следующей перезагрузки:
+
+```powershell
+Get-CimInstance Win32_Process |
+  Where-Object { $_.Name -match '^(git|Codex|codex|node_repl|python)\.exe$' -or $_.CommandLine -match 'Codex|MLbotNav|git' } |
+  Select-Object ProcessId,ParentProcessId,Name,CommandLine |
+  Format-List
+```
+
+Проверить диск во время старта:
+
+```powershell
+Get-Counter '\PhysicalDisk(_Total)\% Disk Time','\PhysicalDisk(_Total)\Disk Bytes/sec' -SampleInterval 1 -MaxSamples 30
+```
+
+Проверить скорость Git:
+
+```powershell
+Measure-Command { git status --short --untracked-files=normal | Out-Null }
+Measure-Command { git ls-files --others --exclude-standard | Out-Null }
+```
+
+Проверить размеры `.codex`:
+
+```powershell
+$results = foreach ($root in @('C:\Users\007\.codex','C:\Users\007\AppData\Local\OpenAI\Codex')) {
+  if (Test-Path -LiteralPath $root) {
+    foreach ($d in Get-ChildItem -LiteralPath $root -Force -Directory -ErrorAction SilentlyContinue) {
+      $stats = Get-ChildItem -LiteralPath $d.FullName -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum
+      [pscustomobject]@{Root=$root; Name=$d.Name; MB=[math]::Round(($stats.Sum/1MB),1); Items=$stats.Count}
+    }
+  }
+}
+$results | Sort-Object MB -Descending | Format-Table -AutoSize
+```
+
+Граница: команды только диагностические. Не удалять и не переносить историю/кеши без отдельного подтверждения пользователя.
+
+## STAS5 V4 Human-Style Group Ranker
+
+Статус после no-future аудита: команды ниже оставлены для воспроизведения offline review. Не запускать новое обучение старого V4 как live/production, пока не реализован V4L live-safe контур.
+
+Следующий рабочий план:
+
+```powershell
+ii .\STAS5_ML_CORE\08_STAS5_V4L_LIVE_SAFE_GROUP_RANKER_PLAN_RU.md
+```
+
+Обязательный guard перед будущим V4L train:
+
+```text
+LIVE_SAFE_FEATURE_ALLOWLIST
+banned-column scan
+feature_available_time_utc <= entry_time_utc
+prefix invariance
+retroactive_feature_change_count = 0
+retroactive_score_change_count = 0
+retroactive_decision_flip_count = 0
+```
+
+Собрать V4 train dataset `2026-05-01..2026-05-25`:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m mlbotnav.stas5_v4_group_rank_dataset
+```
+
+Обучить V4 group ranker:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m mlbotnav.stas5_v4_group_rank_train
+```
+
+Запустить blind forward `2026-05-26..2026-05-30`:
+
+```powershell
+$env:PYTHONPATH='src'
+python -m mlbotnav.stas5_v4_forward_group_rank_review --start-day 2026-05-26 --end-day 2026-05-30
+```
+
+Актуальные артефакты текущего запуска:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v4\features\STAS5_V4_GROUP_RANK_TRAIN_DATASET_20260501_20260525.manifest.json
+ii .\STAS5_ML_CORE\artifacts\v4\model\runs\stas5_v4_train_20260714_163911\stas5_v4_group_ranker_20260501_20260525_v0.manifest.json
+ii .\STAS5_ML_CORE\artifacts\v4\forward\runs\stas5_v4_forward_20260526_20260530_20260714_164144\STAS5_V4_FORWARD_GROUP_RANK_REVIEW_MANIFEST.json
+ii .\STAS5_ML_CORE\artifacts\v4\forward\runs\stas5_v4_forward_20260526_20260530_20260714_164144\20260526\STAS5_V4_FORWARD_GROUP_RANK_REVIEW_20260526.png
+```
+
+Smoke-проверка V4 тестовых функций без pytest-runner:
+
+```powershell
+$env:PYTHONPATH='src'
+@'
+import importlib.util
+import inspect
+import tempfile
+from pathlib import Path
+for test_path in [Path('tests/test_stas5_v4_group_rank_dataset.py'), Path('tests/test_stas5_v4_group_rank_train.py')]:
+    spec = importlib.util.spec_from_file_location(test_path.stem, test_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    for name, func in sorted(vars(module).items()):
+        if name.startswith('test_') and callable(func):
+            sig = inspect.signature(func)
+            if 'tmp_path' in sig.parameters:
+                with tempfile.TemporaryDirectory() as tmp:
+                    func(Path(tmp))
+            else:
+                func()
+            print('PASS', test_path.name, name)
+'@ | python -
+```
+## Codex CPU Load Check 2026-07-15
+
+Статус: `CODEX_CPU_LOAD_CHECK_READY_NO_KILL_NO_DELETE_NO_CODE_CHANGE`.
+
+Открыть отчет:
+
+```powershell
+ii .\docs\codex\CODEX_CPU_LOAD_CHECK_20260715_RU.md
+```
+
+Проверить текущие Git-процессы Codex:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'git.exe'" |
+  Select-Object ProcessId,ParentProcessId,CommandLine |
+  Format-List
+```
+
+Проверить размер неигнорируемого dirty worktree:
+
+```powershell
+git ls-files --others --exclude-standard | Measure-Object
+git ls-files --others --exclude-standard |
+  ForEach-Object { if (Test-Path -LiteralPath $_ -PathType Leaf) { Get-Item -LiteralPath $_ } } |
+  Measure-Object -Property Length -Sum
+```
+
+Проверить быстрый Git:
+
+```powershell
+Measure-Command { git status --short --untracked-files=normal | Out-Null }
+Measure-Command { git diff --numstat | Out-Null }
+```
+
+Граница: команды диагностические. Не останавливать Codex/Git и не чистить файлы без отдельного решения.
+## Codex Unload Check 2026-07-16
+
+Статус: `CODEX_UNLOAD_APPLIED_NO_DELETE_NO_PROCESS_KILL_CODEX`.
+
+Открыть отчет:
+
+```powershell
+ii .\docs\codex\CODEX_UNLOAD_ACTION_20260716_RU.md
+```
+
+Проверить, что STAS5 generated/run игнорируются:
+
+```powershell
+git check-ignore -v STAS5_ML_CORE/artifacts STAS5_ML_CORE/runs
+```
+
+Проверить размер оставшегося untracked:
+
+```powershell
+git ls-files --others --exclude-standard | Measure-Object
+git ls-files --others --exclude-standard |
+  ForEach-Object { if (Test-Path -LiteralPath $_ -PathType Leaf) { Get-Item -LiteralPath $_ } } |
+  Measure-Object -Property Length -Sum
+```
+
+Проверить Git-процессы:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'git.exe'" |
+  Select-Object ProcessId,ParentProcessId,CommandLine |
+  Format-List
+```
+
+Граница: команды диагностические, без удаления.
+
+## Codex Idle Relief Check 2026-07-16
+
+Статус: `CODEX_IDLE_RELIEF_APPLIED_NO_DELETE_NO_STAS_TOUCH`.
+
+Открыть отчет:
+
+```powershell
+ii .\docs\codex\CODEX_IDLE_RELIEF_20260716_RU.md
+```
+
+Проверить активные Git-процессы:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name = 'git.exe'" |
+  Select-Object ProcessId,ParentProcessId,CommandLine |
+  Format-List
+```
+
+Проверить блокировку Git:
+
+```powershell
+Test-Path .\.git\index.lock
+```
+
+Проверить текущие процессы Codex/VS Code:
+
+```powershell
+Get-Process Codex,codex,Code -ErrorAction SilentlyContinue |
+  Select-Object ProcessName,Id,PriorityClass,WorkingSet64 |
+  Sort-Object ProcessName,Id |
+  Format-Table -AutoSize
+```
+
+Поймать процессный I/O-всплеск:
+
+```powershell
+Get-Counter '\Process(*)\IO Read Bytes/sec','\Process(*)\IO Write Bytes/sec' -SampleInterval 1 -MaxSamples 5 |
+  Select-Object -ExpandProperty CounterSamples |
+  Where-Object { $_.CookedValue -gt 102400 } |
+  Sort-Object CookedValue -Descending |
+  Select-Object -First 30 Path,CookedValue
+```
+
+Граница: это диагностика и мягкая разгрузка, без удаления. Defender (`MsMpEng`) не отключать и исключения не добавлять без отдельного разрешения.
+
+## Codex Update Load Audit 2026-07-22
+
+Статус: `CODEX_UPDATE_LOAD_AUDIT_RELIEF_APPLIED_NO_DELETE`.
+
+Открыть отчет:
+
+```powershell
+ii .\docs\codex\CODEX_UPDATE_LOAD_AUDIT_20260722_RU.md
+```
+
+Проверить версию Codex:
+
+```powershell
+Get-AppxPackage *Codex* | Select-Object Name,PackageFullName,Version,InstallLocation | Format-List
+```
+
+Проверить процессы Codex после обновления:
+
+```powershell
+Get-CimInstance Win32_Process |
+  Where-Object { $_.Name -in @('ChatGPT.exe','codex.exe','Code.exe') } |
+  Select-Object Name,ProcessId,ParentProcessId,CommandLine |
+  Format-Table -AutoSize
+```
+
+Мягко понизить приоритет текущей сессии:
+
+```powershell
+foreach($name in @('ChatGPT','codex','Code','node_repl','codex-code-mode-host')){
+  Get-Process -Name $name -ErrorAction SilentlyContinue | ForEach-Object {
+    $_.PriorityClass = 'Idle'
+  }
+}
+```
+
+Проверить Git и блокировку:
+
+```powershell
+Get-CimInstance Win32_Process -Filter "name='git.exe'" |
+  Select-Object ProcessId,ParentProcessId,CommandLine |
+  Format-List
+Test-Path .\.git\index.lock
+```
+
+Граница: это диагностика и мягкая разгрузка, без удаления. VS Code OpenAI/Codex extension server можно останавливать как процесс, но глобально отключать расширение только отдельным решением пользователя.
+
+## 2026-07-23 Codex VS Code Fix
+
+Проверить сервер расширения VS Code Codex:
+
+```powershell
+Get-CimInstance Win32_Process |
+  Where-Object { $_.Name -in @('codex.exe','codex-code-mode-host.exe') -and $_.CommandLine -like '*openai.chatgpt*' } |
+  Select-Object ProcessId,ParentProcessId,CommandLine |
+  Format-List
+```
+
+Мягко прижать Codex без остановки:
+
+```powershell
+foreach($name in @('ChatGPT','codex','codex-code-mode-host')){
+  Get-Process -Name $name -ErrorAction SilentlyContinue | ForEach-Object {
+    $_.PriorityClass = 'Idle'
+  }
+}
+```
+
+Важно: если нужна рабочая панель Codex в VS Code, не останавливать процесс `openai.chatgpt...\codex.exe app-server`; при ошибке панели использовать кнопку `Перезапустить`.

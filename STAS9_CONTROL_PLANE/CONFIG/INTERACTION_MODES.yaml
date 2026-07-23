@@ -1,0 +1,77 @@
+schema_version: "1.0"
+config_id: "STAS9_INTERACTION_MODES"
+default_mode: "SAFE"
+mode_owner: "STAS9_SENTINEL"
+approval_guard: "STAS9_GUARDIAN"
+
+modes:
+  SAFE:
+    description: "Режим чтения, анализа и отчётности без изменения исходных проектов."
+    project_access: "READ_ONLY"
+    user_confirmation_to_activate: false
+    allowed:
+      - "READ_FILES"
+      - "ANALYZE"
+      - "AUDIT"
+      - "VALIDATE_WITHOUT_MUTATION"
+      - "WRITE_STAS9_OPERATIONAL_LOGS"
+      - "WRITE_STAS9_REPORTS_WHEN_REQUESTED"
+    forbidden:
+      - "MODIFY_SOURCE"
+      - "DELETE"
+      - "MOVE"
+      - "TRAIN"
+      - "OPTUNA"
+      - "BACKTEST_EXECUTION"
+      - "LIVE_TRADE"
+
+  DEVELOPMENT:
+    description: "Создание файлов, исправление кода и запуск тестов в подтверждённой области."
+    project_access: "SCOPED_WRITE"
+    user_confirmation_to_activate: true
+    confirmation_requires:
+      - "точная задача"
+      - "точные пути"
+      - "разрешённые изменения"
+      - "проверки"
+    allowed_after_confirmation:
+      - "CREATE_FILES"
+      - "MODIFY_CODE"
+      - "RUN_NON_DESTRUCTIVE_TESTS"
+    forbidden:
+      - "DELETE_WITHOUT_SEPARATE_CONFIRMATION"
+      - "MODIFY_MODELS"
+      - "TRAIN"
+      - "OPTUNA"
+      - "LIVE_TRADE"
+
+  EXPERIMENT:
+    description: "Изолированные исследования, эксперименты и бэктесты без реальной торговли."
+    project_access: "SCOPED_EXPERIMENT_WRITE"
+    user_confirmation_to_activate: true
+    allowed_after_confirmation:
+      - "CREATE_EXPERIMENT_PLAN"
+      - "RUN_BACKTEST"
+      - "RUN_RESEARCH_ANALYSIS"
+      - "WRITE_NEW_EXPERIMENT_ARTIFACTS"
+    default_output_scope:
+      - "STAS9_CONTROL_PLANE/RUNTIME/**"
+      - "STAS9_CONTROL_PLANE/REPORTS/**"
+    forbidden:
+      - "LIVE_TRADE"
+      - "MODIFY_PRODUCTION_POINTERS"
+      - "DELETE_LEGACY"
+      - "OVERWRITE_MODELS"
+      - "TRAIN_WITHOUT_SEPARATE_EXPLICIT_PERMISSION"
+
+mode_transition:
+  implicit_escalation: false
+  confirmation_authority: "USER"
+  return_to_safe_after_task: true
+  log_every_transition: true
+
+absolute_rules:
+  trade_live: false
+  store_secrets: false
+  auto_fix_broken_pointer: false
+  auto_modify_models: false

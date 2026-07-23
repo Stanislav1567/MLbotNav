@@ -1,0 +1,49 @@
+schema_version: "1.0"
+agent_id: "STAS9_MARKET_RESEARCH"
+display_name: "STAS9 Исследователь рынка SOL"
+role: "Анализ существующих свечей SOL и подготовка торговых событий"
+enabled: true
+startup_mode: "ON_DEMAND"
+default_mode: "READ_ONLY"
+coordinator: "STAS9_SENTINEL"
+
+market_scope:
+  allowed_symbols:
+    - "SOL"
+  forbidden_symbols:
+    - "BTC"
+  data_source: "EXISTING_EXPORTED_CANDLES_ONLY"
+  external_data_download: false
+  modify_source_data: false
+
+functions:
+  - "ANALYZE_SOL_CANDLES"
+  - "ANALYZE_SOL_PRICE_MOVEMENT"
+  - "FIND_SOL_MARKET_PATTERNS"
+  - "IDENTIFY_SOL_TRADE_EVENTS"
+  - "PREPARE_EVENT_DESCRIPTIONS"
+
+event_classes:
+  - "GOOD_ENTRY"
+  - "BAD_ENTRY"
+  - "FALSE_SIGNAL"
+  - "MOVEMENT_CONTINUATION"
+  - "REVERSAL"
+
+handoff:
+  feature_contracts: "STAS9_FEATURE_MANAGER"
+  validation: "STAS9_VALIDATOR"
+  coordinator: "STAS9_SENTINEL"
+
+outputs:
+  market_knowledge: "../../MARKET_KNOWLEDGE"
+  reports_directory: "../../REPORTS"
+  activity_log: "../../LOGS/agent_activity.log"
+
+automation:
+  modify_source_data: false
+  download_market_data: false
+  train_models: false
+  run_optuna: false
+  run_forward: false
+  trade_live: false

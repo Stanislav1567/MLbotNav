@@ -1,0 +1,84 @@
+{
+  "folders": [
+    {
+      "name": "MLbotNav · STAS9",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "chatgpt.openOnStartup": true,
+    "chatgpt.commentCodeLensEnabled": false,
+    "files.encoding": "utf8",
+    "files.autoGuessEncoding": true,
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "git.autorefresh": false,
+    "git.autofetch": false,
+    "git.autoRepositoryDetection": false,
+    "git.openRepositoryInParentFolders": "never",
+    "git.scanRepositories": [],
+    "files.watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/.venv/**": true,
+      "**/__pycache__/**": true,
+      "**/.pytest_cache/**": true,
+      "**/data/**": true,
+      "**/logs/**": true,
+      "**/models/**": true,
+      "**/packs/**": true,
+      "**/reports/**": true,
+      "**/tmp/**": true,
+      "**/_codex_offload_*/**": true,
+      "**/_locked_tmp_*/**": true,
+      "**/STAS1_GOOD_LOW_REVIEW/runs/**": true,
+      "**/STAS2_MARKET_PHASE_REVIEW/runs/**": true,
+      "**/STAS3_PERCENT_LADDER_REVIEW/runs/**": true,
+      "**/STAS4_FEATURE_HYPOTHESIS_REVIEW/**": true,
+      "**/STAS5_ML_CORE/artifacts/**": true,
+      "**/STAS5_ML_CORE/runs/**": true
+    },
+    "search.exclude": {
+      "**/.venv/**": true,
+      "**/__pycache__/**": true,
+      "**/.pytest_cache/**": true,
+      "**/data/**": true,
+      "**/logs/**": true,
+      "**/models/**": true,
+      "**/packs/**": true,
+      "**/reports/**": true,
+      "**/tmp/**": true,
+      "**/_codex_offload_*/**": true,
+      "**/_locked_tmp_*/**": true,
+      "**/STAS1_GOOD_LOW_REVIEW/runs/**": true,
+      "**/STAS2_MARKET_PHASE_REVIEW/runs/**": true,
+      "**/STAS3_PERCENT_LADDER_REVIEW/runs/**": true,
+      "**/STAS4_FEATURE_HYPOTHESIS_REVIEW/**": true,
+      "**/STAS5_ML_CORE/artifacts/**": true,
+      "**/STAS5_ML_CORE/runs/**": true
+    },
+    "python.analysis.exclude": [
+      ".venv",
+      "data",
+      "logs",
+      "models",
+      "packs",
+      "reports",
+      "tmp",
+      "_codex_offload_*",
+      "_locked_tmp_*",
+      "STAS1_GOOD_LOW_REVIEW/runs",
+      "STAS2_MARKET_PHASE_REVIEW/runs",
+      "STAS3_PERCENT_LADDER_REVIEW/runs",
+      "STAS4_FEATURE_HYPOTHESIS_REVIEW",
+      "STAS5_ML_CORE/artifacts",
+      "STAS5_ML_CORE/runs"
+    ],
+    "python.analysis.indexing": false,
+    "python.analysis.autoImportCompletions": false
+  },
+  "extensions": {
+    "recommendations": [
+      "openai.chatgpt"
+    ]
+  }
+}

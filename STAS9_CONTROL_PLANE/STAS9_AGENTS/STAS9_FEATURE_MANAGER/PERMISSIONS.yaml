@@ -1,0 +1,27 @@
+policy_version: "1.0"
+agent_id: "STAS9_FEATURE_MANAGER"
+inherits: "../../PERMISSIONS/GLOBAL_POLICY.yaml"
+default_mode: "READ_ONLY"
+
+read:
+  allowed: true
+  scopes:
+    - "FEATURE_REGISTRY_AND_ALLOWLISTS_READ_ONLY"
+    - "MODEL_MANIFESTS_READ_ONLY"
+    - "STAS9_CONTROL_PLANE/**"
+
+write:
+  default_allowed: false
+  requires_user_confirmation: true
+  scopes_after_confirmation:
+    - "STAS9_CONTROL_PLANE/REPORTS/**"
+    - "STAS9_CONTROL_PLANE/LOGS/**"
+
+prohibited:
+  modify_feature_builders: true
+  modify_allowlists: true
+  rebuild_datasets: true
+  modify_models: true
+  train_models: true
+  run_optuna: true
+  trade_live: true

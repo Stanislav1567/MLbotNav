@@ -1,5 +1,3525 @@
 # Current State
 
+## SOL Event Pipeline Design 2026-07-23
+
+Статус: `safe_schema_dry_run_ready`.
+
+```text
+source: data/core/bybit_ohlcv
+exchange / market: Bybit / linear
+symbol / timeframe: SOLUSDT / 1m
+source contract: ohlcv_v1
+event schema: STAS9_CONTROL_PLANE/MARKET_KNOWLEDGE/EVENT_SCHEMA_RU.md
+event directory: STAS9_CONTROL_PLANE/MARKET_KNOWLEDGE/EVENTS/SOL
+proposed event types: 9
+dry-run: PASS_DRY_RUN_NO_EVENT_RECORDS
+event YAML created: 0
+datasets created: 0
+active mode: SAFE
+protected STAS5/STAS8/data/models: UNCHANGED
+```
+
+Detector thresholds, feature contract, outcome horizons и label contract ещё
+не утверждены. Новый каталог событий содержит только README.
+
+## STAS9 VS Code On-Demand Workflow 2026-07-23
+
+Статус: `safe_ready`.
+
+```text
+primary interface: VS Code + Codex
+workspace: MLbotNav_STAS9.code-workspace
+desktop shortcut: 🤖 STAS9 Workspace
+agent mode: CODEX_ROLE
+execution: ON_DEMAND
+trigger: USER_COMMAND_ONLY
+idle action: NONE
+background process / watcher / folder scan: disabled
+default mode: SAFE
+default access: READ_ONLY
+terminal launcher: diagnostic fallback only
+protected STAS5_ML_CORE / data / models: UNCHANGED
+```
+
+STAS9 не работает как отдельная служба. Содержательная работа начинается
+только после обращения пользователя к `STAS9` или `STAS9_SENTINEL`.
+
+## STAS9 Agent Routing and SOL Preparation 2026-07-23
+
+Статус: `safe_ready`.
+
+```text
+primary role: STAS9_SENTINEL
+registered agents: 8
+on-demand specialists: 7
+new specialist: STAS9_MARKET_RESEARCH
+market scope: existing exported SOL candles only
+task router: STAS9_CONTROL_PLANE/TASK_ROUTER_RU.md
+responsibility memory: STAS9_CONTROL_PLANE/MEMORY/AGENT_RESPONSIBILITIES.yaml
+pipeline stage: EVENTS -> FEATURES -> LABELS -> DATASET
+training stage: NOT_STARTED
+active mode: SAFE
+default access: READ_ONLY
+protected STAS5/STAS8: UNCHANGED
+```
+
+Шаблон `EVENT_SOL_000001.yaml` имеет статус `TEMPLATE_NOT_OBSERVED` и не
+является фактическим рыночным событием. Данные SOL в этой задаче не
+анализировались.
+
+## STAS9 Persistent Memory 2026-07-23
+
+Статус: `ready`.
+
+```text
+runtime role: Codex -> STAS9_SENTINEL
+persistent layer: STAS9_CONTROL_PLANE
+human-readable state: STAS9_CONTROL_PLANE/MEMORY/STAS9_STATE.md
+new-chat guide: STAS9_CONTROL_PLANE/START_HERE_RU.md
+active mode after task: SAFE
+specialists: 6 ON_DEMAND
+protected STAS5-STAS8: UNCHANGED
+```
+
+Текущая реализованная архитектура остаётся управляющим read-only слоем.
+Исполняемые `schemas/adapters/gates/run_plans` по-прежнему являются
+предложением и требуют отдельного ТЗ.
+
+## STAS9 Interactive Assistant 2026-07-23
+
+Статус: `ready`.
+
+```text
+primary interface: VS Code + Codex
+workspace: MLbotNav_STAS9.code-workspace
+desktop shortcut: 🤖 STAS9 Assistant
+primary agent: STAS9_SENTINEL
+default mode: SAFE
+default access: READ_ONLY
+voice input: Windows speech-to-text, Win+H, ru
+text response: PASS
+conversation logs: STAS9_CONTROL_PLANE/LOGS/conversations
+terminal fallback: preserved
+```
+
+## STAS9 Codex Runtime 2026-07-23
+
+Статус: `ready`.
+
+```text
+codex-cli: 0.145.0
+model: gpt-5.6-sol
+reasoning: xhigh
+launcher: PASS
+model smoke: STAS9_MODEL_OK
+protected STAS5/STAS8: UNCHANGED
+```
+
+## STAS9 Multi-Agent Control Layer 2026-07-23
+
+Статус: `safe_multi_agent_layer_ready`.
+
+Текущая точка входа:
+
+```text
+C:\Users\007\Desktop\🤖 STAS9 Главный агент.lnk
+-> STAS9_CONTROL_PLANE/START/start_STAS9.bat
+-> STAS9_SENTINEL
+```
+
+Автоматически запускается только `STAS9_SENTINEL`; `AUDITOR`, `MODEL_MANAGER`, `FEATURE_MANAGER`, `LAB`, `VALIDATOR`, `GUARDIAN` используются `ON_DEMAND`. Все политики по умолчанию `READ_ONLY`; обучение, Optuna, изменение моделей, legacy, STAS5–STAS8, live trading и исправление `BROKEN_POINTER` запрещены.
+
+Проверки: YAML `19/19`, файлы агентов `28/28`, журналы `3/3`, launcher `PASS`, защищённый content-tree SHA256 `UNCHANGED`.
+
+## STAS9 Multi-Agent Structure 2026-07-23
+
+Статус: `directory_skeleton_ready`.
+
+В текущем корне проекта создана заданная структура `STAS9_CONTROL_PLANE/`:
+
+```text
+STAS9_AGENTS/
+  STAS9_SENTINEL/
+  STAS9_AUDITOR/
+  STAS9_MODEL_MANAGER/
+  STAS9_FEATURE_MANAGER/
+  STAS9_LAB/
+  STAS9_VALIDATOR/
+  STAS9_GUARDIAN/
+MEMORY/
+LOGS/
+REPORTS/
+RUNTIME/
+CONFIG/
+PERMISSIONS/
+START/
+```
+
+Существующие файлы `STAS9_CONTROL_PLANE` сохранены. `STAS5_ML_CORE` и вложенные в него артефакты STAS8 не изменены. Отсутствующие корневые `STAS6` и `STAS7` не создавались.
+
+## STAS9 Control Plane 2026-07-23
+
+Статус: `PASS_STAS9_CONTROL_PLANE_REGISTRIES_READY_NO_TRAINING_NO_FORWARD_STAS5_STAS8_UNCHANGED`.
+
+Создан `STAS9_CONTROL_PLANE/` как read-only управляющий слой. Готовы:
+
+```text
+STAS9_CONTROL_PLANE/PROJECT_MAP.md
+STAS9_CONTROL_PLANE/MODEL_REGISTRY.yaml
+STAS9_CONTROL_PLANE/FEATURE_REGISTRY.yaml
+STAS9_CONTROL_PLANE/TASK_REGISTRY.md
+STAS9_CONTROL_PLANE/ARCHIVE_POLICY.md
+STAS9_CONTROL_PLANE/STAS9_ARCHITECTURE_PROPOSAL_RU.md
+```
+
+Аудит зафиксировал неполную нумерацию: STAS6/STAS7 отсутствуют как самостоятельные версии; STAS8 находится внутри STAS5 и не выбран для production. Старый общий active/champion pointer сломан, потому что target joblib отсутствует. Исправление pointer не выполнялось.
+
+Покрытие реестров: `6043` legacy pipeline joblib зарегистрированы тремя полными коллекциями; `37` STAS5 joblib зарегистрированы поштучно; `10` feature contracts/sets; `142` технических задания.
+
+Контроль неизменности STAS5–STAS8: `6196` файлов, metadata SHA256 до/после `367301aa69b966a588fb078f8ff3ee4fd6fa109b688bc848fdeb6154d2f6a506`.
+
+## Codex Project CPU Relief 2026-07-23
+
+Статус: `PASS_CODEX_PROJECT_CPU_RELIEF_APPLIED_NO_DELETE_NO_TRAINING`.
+
+STAS5/ML не грузил CPU: активных Python-процессов не было. Источник - циклический Git scan Codex по generated STAS4 review. Постоянные ignore/exclude применены, текущие процессы Codex переведены в `Idle`. STAS4 untracked scan уменьшен с `258` до `2` Markdown-файлов; общий CPU после стабилизации в среднем `12.3%`. Никакие данные, модели и артефакты не удалялись.
+
+Отчет: `docs/codex/CODEX_PROJECT_CPU_RELIEF_20260723_RU.md`.
+
+## STAS5 V5 Base R2-Style Review Gallery 2026-07-22
+
+Статус: `PASS_V5_BASE_R2_STYLE_REVIEW_GALLERY_READY_NO_TRAINING_NO_FORWARD`.
+
+Создан reusable builder для базовых teacher-графиков в стиле R2/R3/R4:
+
+```text
+src/mlbotnav/stas5_v5_base_review_gallery.py
+STAS5_ML_CORE/run_stas5_v5_base_review_gallery.ps1
+```
+
+Готовая галерея:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/_BASE_R2_STYLE_VISUAL_REVIEW_20260127_20260227
+```
+
+Контроль: `days=32`, `rows=2596`, `GOOD=290`, `BAD=2306`, `no_training=True`, `no_forward=True`. Renderer получил безопасный параметр `title_prefix`, чтобы базовые графики не назывались forward-графиками.
+
+## STAS5 V5C Entry Visual Check Pack 2026-07-22
+
+Статус: `PASS_ENTRY_VISUAL_CHECK_PACKAGE_READY_NO_TRAINING_NO_FORWARD`.
+
+Подготовлена единая папка для ручной проверки всех входов: `BASE 2026-01-27..2026-02-27`, `R2 2026-02-28..2026-03-06`, `R3 2026-03-07..2026-03-13`, `R4 2026-03-14..2026-03-20`. Всего `53` дневных PNG. Это только визуальная подготовка: обучение и forward не запускались.
+
+Пакет:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/_ENTRY_VISUAL_CHECK_CURRENT_20260127_20260320
+```
+
+Индекс:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/_ENTRY_VISUAL_CHECK_CURRENT_20260127_20260320/STAS5_V5C_ENTRY_VISUAL_CHECK_INDEX_RU.md
+```
+
+## STAS5 V5C R4BB Table/ML Audit 2026-07-22
+
+Статус: `PASS_V5C_R4BB_TABLE_ML_AUDIT_NO_FATAL_TABLE_BUG_FOUND`.
+
+Проведен аудит с двумя активными subagents по вопросу, мог ли бардак в таблицах/визуальных preview-баги испортить обучение. Фатальной проблемы в train CSV/allowlist/joblib не найдено: R2/R3/R4 review применились, ENTRY dataset `rows=3285`, `GOOD=517`, `BAD=2768`, `features=463`; RiskGate dataset `rows=627`, `risk_bad_y=400`, `risk_ok=227`, `features=463`. `bb20_*` признаки есть в X (`24`), target/manual/future/STAS8 preview поля в X не входят.
+
+Главный вывод: плохое качество последнего результата сейчас не объясняется потерей ручных правок или старым X439. Причина вероятнее в текущей ML-логике: ENTRY OOF слабый, two-block обучен, но не выбран quality gate, RiskGate обучен слишком широко блокировать, а STAS8/move-capacity пока только preview и не финальный обученный слой.
+
+Отчет:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5C_R4BB_TABLE_ML_AUDIT_20260722_RU.md
+```
+
+## STAS8 Soft Capacity V2 Preview R5
+
+Статус: `PASS_V5C_STAS8_SOFT_CAPACITY_V2_PREVIEW_READY_NO_TRAINING_NO_FORWARD_NO_DECISION_CHANGE`.
+
+Собран read-only preview `STAS8_SOFT_CAPACITY_V2` поверх готового R5 no-risk forward:
+
+```text
+run_id=stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1
+range=2026-03-21..2026-03-27
+rows=564
+features=463
+source_predictions_sha=cd7bc6f7a2855a116d6973ef0a827b160c2843cf9df04c432db4b95b2acfd579
+```
+
+Обучение не запускалось, новый forward не запускался, исходный predictions CSV не переписывался. Bollinger-полосы на этих PNG выключены, чтобы видеть только STAS8-маркеры:
+
+```text
+green circle = final live ENTER after STAS8
+red square = original ENTER demoted to WATCH
+red circle = hard risk block
+hidden SKIP recall = offline audit only, not drawn as live entry
+```
+
+Сравнение режимов:
+
+```text
+before STAS8: ENTER=61, WATCH=166, SKIP=337
+V1 hard preview: ENTER=1, WATCH=20, SKIP=543
+strict:   ENTER=2,  WATCH=118, SKIP=444
+balanced: ENTER=15, WATCH=152, SKIP=397
+wide:     ENTER=36, WATCH=161, SKIP=367
+```
+
+Визуальная семантика исправлена 2026-07-22: раньше зеленые круги ошибочно смешивали финальный live `ENTER`, `WATCH protect` и `SKIP->RECALL_WATCH`. Теперь зеленый круг на цене означает только финальный live `ENTER`. `RECALL_WATCH` остается в CSV/отчете как подсказка для ручного разбора и не рисуется как торговый сигнал.
+
+Маркерные цифры после исправления:
+
+```text
+strict:   green=2,  red_square=6,  red_circle=107, hidden_recall=0
+balanced: green=15, red_square=11, red_circle=60,  hidden_recall=48
+wide:     green=36, red_square=6,  red_circle=30,  hidden_recall=48
+```
+
+Главный вывод глазами: `balanced` уже читается честно, но 2026-03-26 все еще оставляет 1 live `ENTER` в падающем канале; `wide` оставляет 9 live `ENTER` на 2026-03-26 и поэтому слишком мягкий для down-channel. Следующий шаг - настраивать down-channel/no-long и post-knife rebound как логику, а не запускать новое обучение. R5 не добавлять в обучение до ручного review и отдельного OK.
+
+Артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/soft_capacity_v2
+```
+
+## STAS8 R5 Entry/Move Audit
+
+Статус: `STAS8_R5_ENTRY_MOVE_AUDIT_READY_NO_TRAINING_NO_FORWARD_NO_DECISION_CHANGE`.
+
+Актуальная диагностика R5 `2026-03-21..2026-03-27` показала, что проблема не решается одной настройкой процента `1.1/1.2`. Нужно одновременно чинить recall ENTRY и мягкость STAS8.
+
+Ключевые цифры:
+
+```text
+rows=564
+before STAS8: ENTER=61, WATCH=166, SKIP=337
+after STAS8 preview: ENTER=1, WATCH=20, SKIP=543
+all hit_1p2=119
+original ENTER/WATCH hit_1p2=46
+original SKIP hit_1p2=73
+STAS8 blocked good ENTER/WATCH hit_1p2=40
+STAS8 kept bad ENTER/WATCH without hit_1p2=15
+```
+
+Решение по рельсам: текущий `STAS8_MOVE_CAPACITY_AUDIT_V1` не включать как production-фильтр. Следующий технический шаг - read-only preview `STAS8_SOFT_CAPACITY_V2`: жестко резать `NO_MOVE/LOW_MOVE_CHOP/NO_MOVE_DOWN_CHANNEL`, но защищать `POST_KNIFE_RETEST_EDGE/LOCAL_LOW_REBOUND_EDGE/MOVE_OK_1P2/MOVE_OK_1P5`; `HIGH_VOL_DANGER` разделить на активный нож и отскок после ножа.
+
+Отчет:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1/STAS5_V5C_STAS8_R5_ENTRY_MOVE_AUDIT_20260321_20260327_RU.md
+```
+
+## STAS8 R5 Visuals Without Bollinger
+
+Статус: `PASS_STAS8_R5_VISUALS_REBUILT_WITHOUT_BOLLINGER_OVERLAY`.
+
+Актуальные STAS8 audit-preview PNG за `2026-03-21..2026-03-27` теперь собраны без Bollinger-полос. На графиках оставлены свечи, LA-метки, исходные ENTER/WATCH/SKIP, STAS8 зеленые/красные круги и нижние панели силы.
+
+Папка:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1/visual_review
+```
+
+Важно: это не новое обучение и не новый forward; decisions и guard-цифры не менялись. Manifest фиксирует `visual_bollinger_preview=false`.
+
+## STAS8 Move Capacity Audit Preview R5
+
+Статус: `PASS_V5C_STAS8_MOVE_CAPACITY_AUDIT_V1_READY_NO_TRAINING_NO_DECISION_CHANGE`.
+
+STAS8 теперь реализован как audit-preview, но не включен в боевой ENTRY/RiskGate pipeline:
+
+```text
+enabled=false
+selected_for_entry=false
+mode=audit_preview_only_not_selected
+source_forward_run_id=stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1
+range=2026-03-21..2026-03-27
+rows=564
+features=463
+```
+
+Главные выходы:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4bb_forward_20260321_20260327_bollinger_no_risk_v1/stas8_move_capacity_audit/v1
+```
+
+Цифры preview: до STAS8 `ENTER=61`, `WATCH=166`, `SKIP=337`; после STAS8-preview `ENTER=1`, `WATCH=20`, `SKIP=543`. Это не финальный боевой режим: preview полезен как красная подсветка опасных long-зон, но текущие rule-пороги слишком жесткие и требуют настройки по PNG до обучения/включения.
+
+No-future guard PASS: live-часть использует causal X463 и закрытые свечи до входа; teacher-grid `40608` строк с future/hit/time_to/mae хранится отдельно и не является live X.
+
+## STAS8 Live Wave + Move Capacity
+
+Статус: `STAS8_LIVE_WAVE_MOVE_CAPACITY_TZ_LOCKED_NO_CODE_NO_TRAINING`.
+
+`STAS8_MOVE_CAPACITY_GRID_V1` в config обновлен, но остается выключенным: `enabled=false`, `mode=deferred_tz_only`. Новая формулировка: сначала live/no-future подтверждение long-режима, потом ENTRY, потом проверка емкости хода, потом RiskGate.
+
+Ключевые правила:
+
+```text
+R2/R3/R4 = approved train material
+2026-03-21..2026-03-27 = R5 blind-forward/audit-preview, не train до ручного review
+1.1% = мягкий WATCH
+1.2% = основной ENTER
+teacher future/hit/MFE/MAE/time_to запрещены в live X
+```
+
+Актуальный документ:
+
+```text
+STAS5_ML_CORE/10_STAS8_MOVE_CAPACITY_GRID_TZ_RU.md
+```
+
+## STAS5 V5C R4BB Fast Train Audit
+
+Статус: `PASS_V5C_R4BB_FAST_TRAIN_AUDIT_CONFIG_FIXED_NO_IGNORED_FEATURES_FOUND`.
+
+Пользовательский train `stas5_v5c_r4bb_train_20260127_20260320` прошел и создал свежие модели, OOF, metrics, manifest и post-train guards. Аудит подтверждает, что run использовал новый X463/Bollinger contract:
+
+```text
+ENTRY: rows=3285, GOOD=517, BAD=2768, features=463, bb20_*=24
+RiskGate: rows=627, risk_bad_y=1=400, risk_bad_y=0=227, features=463, bb20_*=24
+```
+
+`STAS5_ML_CORE/artifacts/v5c/model/STAS5_V5C_LATEST_TWO_BLOCK_MODEL_RUN.json` указывает на `stas5_v5c_r4bb_train_20260127_20260320`. ENTRY selected model остался `entry_baseline`, потому что two-block не прошел quality gate. Быстрое обучение нормально для текущего объема данных и sklearn-моделей; признаков/датасетов не проигнорировано.
+
+Оговорка из аудита закрыта: в `STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml` блок `active_context.train` теперь указывает на `stas5_v5c_r4bb_train_20260127_20260320` / X463. JSON snapshot пересобран из YAML. Старые check names с привязкой к X439 в коде и текущих R4BB guard/manifests заменены на нейтральные имена.
+
+Актуальный аудит:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/STAS5_V5C_R4BB_FAST_TRAIN_AUDIT_RU.md
+```
+
+## STAS5 V5C Bollinger Layer V1 X463
+
+Статус: `PASS_V5C_BOLLINGER_LAYER_V1_X463_DATASETS_AND_REVIEW_GALLERY_READY_NO_TRAINING`.
+
+На `2026-07-22` Bollinger уже не только preview на PNG. В код добавлен общий causal-слой `BOLLINGER_LAYER_V1`: `24` новых `bb20_*` признака поверх базовых `439`, новый feature contract `X439_PLUS_BB24_V1`, итог `463` features.
+
+Главные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_ML_READY_463F_TARGETS_V1.csv
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_FEATURE_ALLOWLIST_463F_V1.json
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_GUARD_V1.json
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X463_RISK_BAD_Y_V1.csv
+STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r4bb_train_20260127_20260320/
+```
+
+Контрольные цифры:
+
+```text
+ENTRY rows=3285, GOOD=517, BAD=2768, features=463, guard=PASS
+RiskGate rows=627, risk_bad_y=1=400, risk_bad_y=0=227, features=463, guard=PASS
+ENTRY TrainingGuard=PASS
+RiskGate ML TrainingGuard=PASS
+```
+
+No-future: `bb_source_time_utc <= entry_time_utc` PASS для ENTRY `3285/3285` ready rows и RiskGate `627/627` ready rows. Audit-колонки `bb_preview_*` не входят в X.
+
+Визуальная витрина R2/R3/R4 с полосами:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/_ALL_ROUNDS_VISUAL_REVIEW_BOLLINGER20_2SIGMA/
+```
+
+Обучение и forward после X463 не запускались мной. Следующий шаг - пользователь визуально открывает R2/R3/R4 Bollinger gallery; затем при OK запускает train вручную.
+
+## STAS5 V5C R5 Bollinger Block V0 Red Circles
+
+Статус: `PASS_V5C_BOLLINGER_BLOCK_V0_VISUAL_PREVIEW_WEEK_READY_NO_TRAINING`.
+
+Для R5 ENTRY-only/no-risk forward `2026-03-21..2026-03-27` поверх Bollinger `20/2` создан отдельный недельный preview `BB_BLOCK_V0`: красный круг ставится только на `ENTER/WATCH`, если вход выглядит опасным по положению относительно полос или по нисходящему наклону средней полосы. Это не меняет модель и не меняет решения, а только помогает глазами проверить идею блокировки плохих long-входов.
+
+Правильная папка:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r5_entry_only_forward_20260321_20260327_wide_no_risk/visual_review
+```
+
+Итог: `blocked_total=131`, `ENTER=53`, `WATCH=78`. По дням: `7 / 24 / 14 / 23 / 12 / 32 / 19` за `2026-03-21..2026-03-27`. Открывать дневные PNG с именем `STAS5_V5_FORWARD_VISUAL_REVIEW_YYYYMMDD_ENTER_WATCH_BOLLINGER_BLOCK_V0_RED_CIRCLES.png`.
+
+## STAS5 V5C R5 ENTRY-Only No-Risk Bollinger Visual Review
+
+Статус: `PASS_V5C_R5_ENTRY_ONLY_NO_RISK_BOLLINGER_VISUAL_READY_NO_TRAINING`.
+
+Актуальный правильный просмотр для пользователя сейчас находится не в safety-pulse, а в R5 no-risk forward:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r5_entry_only_forward_20260321_20260327_wide_no_risk/visual_review
+```
+
+Внутри каждого дня `20260321..20260327` добавлен PNG `*_ENTER_ARROWS_BOLLINGER20_2SIGMA_PREVIEW.png`. Это визуальный слой Bollinger `20/2` поверх обычных ENTRY-only/no-risk графиков. Train/forward/predictions и решения `ENTER/WATCH/SKIP` не менялись.
+
+## STAS5 V5C Bollinger Visual Preview
+
+Статус: `PASS_V5C_BOLLINGER_VISUAL_PREVIEW_READY_NO_TRAINING`.
+
+Для `2026-03-21..2026-03-27` поверх готового `DOWN_CHANNEL_NO_LONG_V1` preview собраны отдельные графики с Bollinger `20/2`. Это визуальный слой для проверки идеи: где интересные входы стоят относительно нижней/средней/верхней полосы и насколько рынок реально расширяет диапазон.
+
+Файл:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4_forward_20260321_20260327_wide_v1/safety_pulse_preview/down_channel_no_long_v1/
+```
+
+Важно: Bollinger сейчас не входит в `X439`, не запускает train/forward и не меняет `ENTRY_ML_LIVE_DECISION`. Кодовый параметр `bollinger_preview` выключен по умолчанию.
+
+## STAS5 V5C ENTRY-Only Wide R5
+
+Статус: `ENTRY_ONLY_WIDE_R5_COMMANDS_READY_NO_TRAINING_STARTED_BY_CODEX`.
+
+Текущая рабочая идея: сначала раздушить ENTRY baseline/wide на всех ручных правках R2/R3/R4 (`2026-02-28..2026-03-20`) поверх базы `2026-01-27..2026-02-27`, без RiskGate enforce. После этого смотреть графики как ENTRY-only: хорошие/плохие входы, входы на хаях, short-channel, отсутствие движения `1.2%`.
+
+Добавлены ключи:
+
+```text
+-SkipRiskGateML     для Train: не обучать RiskGate ML в этом run
+-DisableRiskGateML  для Forward: не применять RiskGate ML
+-EntryDecisionPolicy WideReview  для большего числа кандидатов по train OOF
+```
+
+No-future остается прежним: live X = только `439` causal features; `entry_y`, `risk_bad_y`, review/manual/future/outcome не входят в X.
+
+## STAS8 Move Capacity Grid TZ
+
+Статус: `STAS8_DEFERRED_TZ_ONLY_NO_CODE_NO_TRAINING`.
+
+На `2026-07-22` зафиксирована будущая рельса `STAS8`: сетка емкости движения цены. Смысл: не путать живую волатильность с полезным long-edge. Если рынок двигается, но идет active dump / falling knife / down-channel без отскока, long нельзя считать хорошим только из-за волатильности.
+
+`STAS8` сейчас только в ТЗ и YAML-комментариях. Он выключен и не участвует в текущем R4/R5 обучении или forward без отдельного OK.
+
+Документы:
+
+```text
+STAS5_ML_CORE/10_STAS8_MOVE_CAPACITY_GRID_TZ_RU.md
+STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml
+```
+
+## STAS5 V5C Down-Channel Safety Pulse Preview
+
+Статус: `PASS_V5C_SAFETY_PULSE_PREVIEW_READY_NO_TRAINING`.
+
+Текущий активный шаг - визуальное согласование preview `DOWN_CHANNEL_NO_LONG_V1` по R4 forward `2026-03-21..2026-03-27`. Это не обучение и не новый forward: исходный predictions CSV сохранен, новые файлы лежат отдельно в `safety_pulse_preview/down_channel_no_long_v1`.
+
+```text
+До RiskGate: ENTER=70, WATCH=176, SKIP=318
+Старый финал с RISKGATE_ML: ENTER=34, WATCH=37, SKIP=493
+DOWN_CHANNEL_NO_LONG_V1 preview: ENTER=40, WATCH=136, SKIP=388
+2026-03-26: ENTER=4, WATCH=16, SKIP=68
+2026-03-27: ENTER=7, WATCH=18, SKIP=51
+```
+
+Пульс использует только causal X439 на момент entry: возвраты/амплитуда, short/long pressure, lower lows/highs, breakdown, knife/grounding/retest/exhaustion. Future/MFE/MAE использовались только для audit-понимания проблемы и не входят в live X.
+
+## STAS5 V5C Safety Pulse Preview
+
+Статус: `PASS_V5C_SAFETY_PULSE_PREVIEW_READY_NO_TRAINING`.
+
+После R4 train/forward по неделе `2026-03-21..2026-03-27` выявлено: `RISKGATE_ML` как единственный safety-layer работает слабо и неровно. Он сильно режет входы, но часть опасных ENTER пропускает. Поэтому перед новым долгим обучением сделан быстрый test-drive без обучения и без пересборки forward:
+
+```text
+Forward run: STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4_forward_20260321_20260327_wide_v1
+Preview root: STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r4_forward_20260321_20260327_wide_v1/safety_pulse_preview/
+```
+
+Сравнение:
+
+```text
+До RiskGate: ENTER=70, WATCH=176, SKIP=318
+Текущий финал с RISKGATE_ML: ENTER=34, WATCH=37, SKIP=493
+BALANCED_SAFETY_V1 preview: ENTER=3, WATCH=162, SKIP=399
+HARD_BLOCK_ONLY_V1 preview: ENTER=27, WATCH=138, SKIP=399
+```
+
+Вывод: `BALANCED_SAFETY_V1` слишком душит зеленые входы. Для визуального согласования сейчас правильнее смотреть `HARD_BLOCK_ONLY_V1`: hard-block смертельных режимов taxonomy, но без принудительного удушения всех WARN в WATCH. Это preview-only слой: модели, train, forward и исходный predictions CSV не изменялись.
+
+## STAS5 V5C RiskGate ML Train Wiring Ready
+
+Статус: `RISKGATE_ML_TRAIN_WIRING_READY_TRAINING_GUARDS_PASS_NO_TRAINING`.
+
+Текущая готовая точка перед ручным обучением: `stas5_v5c_r4_train_20260127_20260320`. Обучение и forward не запускались.
+
+Что готово:
+
+```text
+ENTRY batch: STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_ML_READY_439F_TARGETS_V1.csv
+ENTRY rows=3285, GOOD=517, BAD=2768, features=439
+ENTRY TrainingGuard=PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING
+
+RiskGate dataset: STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X439_RISK_BAD_Y_V1.csv
+RiskGate rows=627, risk_bad_y=1=400, risk_bad_y=0 explicit safe=227, features=439
+RiskGate ML TrainingGuard=PASS_V5C_RISKGATE_ML_TRAINING_GUARD_READY_FOR_TRAINING
+```
+
+Новая кодовая рельса: `-Mode Train` теперь должен обучить ENTRY как раньше и затем отдельный `RISKGATE_ML`. Forward после такого Train применяет RiskGate поверх ENTRY, но сохраняет исходное ENTRY-решение для аудита.
+
+## STAS5 V5C Review-Supervised Datasets Ready
+
+Статус: `REVIEW_SUPERVISED_DATASETS_READY_TRAINING_GUARD_PASS_NO_TRAINING`.
+
+Текущая готовая точка перед обучением: `stas5_v5c_r4_train_20260127_20260320`. Само обучение еще не запускалось, forward после него тоже не запускался.
+
+Собран ENTRY train batch:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260320_ML_READY_439F_TARGETS_V1.csv
+days=53
+rows=3285
+entry_y GOOD=517
+entry_y BAD=2768
+features=439
+guard=PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING
+```
+
+Собран RiskGate train dataset:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_RISKGATE_TRAIN_DATASET_20260127_20260320_X439_RISK_BAD_Y_V1.csv
+rows=627
+risk_bad_y=1=400
+risk_bad_y=0 explicit safe=227
+features=439
+guard=PASS_V5C_RISKGATE_TRAIN_DATASET_GUARD_READY_NO_TRAINING
+```
+
+TrainingGuard уже проверен: `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING`.
+
+Контракт не менялся: live X = только `439` causal features. `entry_y`, `risk_bad_y`, `phase_y`, `state_y`, `reason_y`, review-комментарии, PNG, future/postfact/outcome не являются features.
+
+## STAS5 V5C Dataset Rails Locked
+
+Статус: `REVIEW_PACK_DATASET_RAILS_LOCKED_NO_TRAINING`.
+
+Текущий следующий этап: не training. Нужно собрать `X439_SOURCE`, затем `ENTRY_TRAIN_DATASET` и `RISKGATE_TRAIN_DATASET`, после этого прогнать dataset guards и только потом отдельный training guard.
+
+Основа остается прежняя: `2026-01-27..2026-02-27`, `32` дня, `2596` rows, `entry_y GOOD=290`, `entry_y BAD=2306`, `features=439`.
+
+Поверх нее идет approved review-pack: `2026-02-28..2026-03-20`, `R2/R3/R4`, `21` день, `ENTRY rows=689`, `GOOD=227`, `BAD=462`, `RISK BAD=400`, guard `PASS_V5C_REVIEW_PACK_GUARD_READY_NO_TRAINING`.
+
+Ожидаемый ENTRY train view: `days=53`, `rows=3285`, `GOOD=517`, `BAD=2768`. RiskGate V1: `risk_bad_y=1` positives `400`; negatives только явно безопасные (`explicit_safe_only`), минимум `227` из reviewed ENTRY GOOD. Неразмеченная тишина не является автоматическим safe.
+
+Главный config: `STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml`.
+
+## STAS5 V5C Approved Review Pack R2/R3/R4
+
+Статус: `PASS_V5C_REVIEW_PACK_GUARD_READY_NO_TRAINING`.
+
+Свежий source-of-truth для ручной разметки после R2/R3/R4:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/_APPROVED_REVIEW_PACKS/STAS5_V5C_REVIEW_PACK_R2_R3_R4_20260228_20260320_V1/
+```
+
+В pack вошли `21` день `2026-02-28..2026-03-20`: `ENTRY rows=689`, `GOOD=227`, `BAD=462`, `RISK BAD=400`. Это не обучение и не forward. Это чистый approved teacher/target-пакет для следующей сборки train-данных.
+
+Правило разметки зафиксировано:
+
+```text
+хорошо / вход -> entry_y=1
+плохо -> entry_y=0
+риск плохо -> entry_y=0 + risk_bad_y=1
+```
+
+Guard PASS подтвердил: все 21 дня на месте, все LA найдены в source forward entries, дублей и конфликтов нет, каждый RiskGate BAD уже является ENTRY BAD, PNG не является ML source, ручные поля и target-поля не являются live X439.
+
+Следующая рельса: не запускать training сразу. Сначала отдельным шагом собрать train dataset, который берет базу `2026-01-27..2026-02-27` и поверх нее применяет approved review-pack R2/R3/R4 к ENTRY/RiskGate targets, затем выполнить dataset/training guard.
+
+## STAS5 V5C Current Review Cleanup
+
+Статус: `PASS_V5C_CURRENT_REVIEW_CLEANUP_READY_NO_TRAINING`.
+
+Текущий стандарт дневной review-папки: один PNG в корне для открытия глазами:
+
+```text
+STAS5_V5C_<ROUND>_USER_REVIEW_YYYYMMDD_CURRENT_REVIEW.png
+```
+
+Все прочие PNG (`ALL_ENTRIES`, `ANNOTATED`, preview, старые версии) лежат в `_visual_archive` и не считаются главным графиком. Официальные цифры для будущего ML находятся в `APPROVED.csv/json` и `CURRENT_VISUAL_MANIFEST_V1.json`; PNG не является источником обучения.
+
+Контрольный пересобранный день: `STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260301/`.
+
+## STAS5 V5C Review LA Labels Above Markers
+
+Статус: `PASS_V5C_REVIEW_LA_LABELS_ABOVE_MARKERS_FIXED_NO_TRAINING`.
+
+В review-графиках сохранен привычный вид подписей `LAxxx`, но они теперь рисуются верхним слоем после review-маркеров. Для точек, которые попали в ручной review overlay (`GOOD`, обычный `BAD`, `RISK BAD`), подпись `LAxxx` чуть поднята, чтобы зеленые/красные круги и квадраты не закрывали номер сделки.
+
+Пересобрана общая визуальная витрина R2/R3/R4:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/_ALL_ROUNDS_VISUAL_REVIEW/
+```
+
+Итог витрины: R2 `7` дней, R3 `7` дней, R4 пока `1` день (`2026-03-18`). Это только PNG/визуальный слой для ручной проверки; training, forward и day passport rebuild не запускались.
+
+## STAS5 V5C Review Gallery R2/R3/R4
+
+Готова общая визуальная папка для ручного review:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/_ALL_ROUNDS_VISUAL_REVIEW/
+```
+
+Внутри есть `R2`, `R3`, `R4`. Сейчас собрано `15` дней и `30` PNG: R2 `7` дней, R3 `7` дней, R4 пока `1` день (`2026-03-18`). Это только визуальная витрина, обучение/forward/day rebuild не запускались.
+
+Для R2 открыта папка:
+
+```powershell
+ii .\STAS5_ML_CORE\artifacts\v5c\review\_ALL_ROUNDS_VISUAL_REVIEW\R2
+```
+
+Для диктовки дальше: `крестик хорошо`/`ромбик хорошо`/`хорошо` идут в ENTRY GOOD (`entry_y=1`), обычное `плохо` идет в ENTRY BAD (`entry_y=0`), а `риск плохо` идет сразу в ENTRY BAD + RiskGate BAD (`entry_y=0 + risk_bad_y=1`).
+
+## STAS5 V5C ENTRY/RiskGate Two Targets
+
+Текущий контракт: одна строка кандидата = один causal набор `X439`, но цели разные. `ENTRY_BASELINE_ML` учится по `entry_y`; будущий обучаемый/guard-слой RiskGate должен учиться по отдельной цели `risk_bad_y`.
+
+ENTRY-разметка: хорошая точка, пропущенный крестик/ромбик как хороший вход -> `entry_y=1`; обычное плохо и risk-плохо -> `entry_y=0`.
+
+RiskGate-разметка: только `риск плохо` -> `risk_bad_y=1`. Значит `риск плохо` дает две цели: `entry_y=0` для ENTRY и `risk_bad_y=1` для RiskGate. Ручные review/risk поля, `entry_y`, `risk_bad_y`, `phase_y`, `state_y`, `reason_y` остаются teacher/target/audit-слоем и не входят в live `X439`.
+
+Важно: отсутствие `риск плохо` не означает автоматически безопасный вход. Для будущего RiskGate dataset отрицательные примеры нужно формировать отдельным правилом, чтобы не считать неразмеченную тишину гарантированным `safe`.
+
+Финальная логика после отдельного RiskGate guard: ENTRY ищет возможность, RiskGate запрещает опасный режим. До enforce RiskGate остается safety/audit/training-target слоем.
+
+## STAS5 V5C Quick Review Ladder
+
+Статус: `PASS_V5C_QUICK_REVIEW_LADDER_READY_NO_TRAINING`.
+
+Текущая ручная рельса для новых review-дней:
+
+```text
+14 плохо
+22 ромбик хорошо
+47 крестик вход
+40 риск плохо
+47 треугольник риск плохо
+```
+
+Правило разделения:
+
+```text
+без слова риск -> ENTRY teacher layer
+со словом риск -> RiskGate teacher layer
+риск хорошо -> запрещено
+```
+
+Рабочая команда: `STAS5_ML_CORE/run_stas5_v5c_review_ladder.ps1`. Она пишет ENTRY-ledger и отдельный RiskGate-ledger, а при `-Stage All` передает только ENTRY GOOD ids в старую `run_stas5_v5_day_ladder.ps1`. Ручные review/risk поля не входят в live `X439`.
+
+Для каждого сохраненного review-дня команда также кладет в эту же папку два контрольных PNG: `*_ALL_ENTRIES.png` - чистая копия готового V5C `visual_review`, и `*_ANNOTATED.png` - тот же V5C-график с полосами `Fon/LONG/SHORT/WAVE`, но с подсветкой продиктованных `GOOD/BAD/RISK BAD`. Новый стандарт overlay без стрелок и без индивидуальных плашек: `GOOD` = зеленый круг, `RISK BAD` = ярко-красный круг, обычный `BAD` = красный квадрат. Это только визуальный слой, predictions/training/forward не меняет.
+
+## STAS5 V5C RiskGate Taxonomy V1
+
+Статус: `PASS_V5C_RISKGATE_TAXONOMY_V1_AUDIT_ONLY_READY`.
+
+RiskGate теперь имеет отдельную таксономию режимов: `PRE_DUMP_RISK`, `ACTIVE_DUMP`, `FALLING_KNIFE`, `STRONG_SHORT_PRESSURE`, `SHORT_CONTINUATION`, `PULLBACK_THEN_SHORT`, `SUPPORT_BREAKDOWN`, `CHANNEL_BREAKDOWN`, `POST_PUMP_DUMP`, `LIQUIDATION_CASCADE`.
+
+Важно: это audit-only слой. `ENTRY_BASELINE_ML` продолжает давать входы, `RiskGate` только объясняет и помечает риск поверх готового forward. Production/enforce не включен, `ENTRY_ML_LIVE_DECISION` не меняется.
+
+Официальный пересобранный график/CSV: `STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r3_forward_20260314_20260320_wide_v1/riskgate_audit/20260318/`.
+
+Контроль `2026-03-18`: `ENTER=15`, `BLOCK_HARD=6`, `BLOCK_RISK=3`, `WARN_RISK=3`, `PASS_USER_REBOUND=3`; user-pass `LA059,LA067,LA078`; `RISK_NO_FUTURE_OK=True`.
+
+## STAS5 V5C RiskGate Audit-Only Implemented
+
+Статус: `PASS_V5C_RISKGATE_AUDIT_ONLY_READY`.
+
+RiskGate V0 теперь реализован как отдельный кодовый режим `audit_only`. Он запускается поверх готового V5C forward run, использует только текущий ENTRY score/decision и causal X439 risk-признаки, сохраняет CSV/PNG/RU-отчет рядом с forward run и не меняет predictions.
+
+Активная архитектура:
+
+```text
+ENTRY_BASELINE_ML = ищет возможность входа
+RISK_GATE_RULE_V0 audit_only = помечает опасность входа
+ENTRY_ML_TWO_BLOCK = frozen_not_selected
+```
+
+Проверенный контрольный день `2026-03-18`: `ENTER=15`, `BLOCK_HARD=6`, `BLOCK_RISK=3`, `WARN_RISK=3`, `PASS_USER_REBOUND=3`.
+
+## STAS5 V5C RiskGate Preview 2026-03-18
+
+Статус: `PASS_V5C_RISKGATE_PREVIEW_20260318_AUDIT_ONLY_READY`.
+
+Для R3 forward day `2026-03-18` создан отдельный RiskGate V0 preview в режиме `audit_only`. Он показывает, как поверх `ENTRY_BASELINE_ML` выглядели бы `WARN_RISK`, `BLOCK_RISK`, `BLOCK_HARD` по causal X439 risk-признакам. Это не боевое включение и не изменение predictions.
+
+Главный PNG:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r3_forward_20260314_20260320_wide_v1/riskgate_preview/20260318/STAS5_V5C_RISKGATE_PREVIEW_20260318_V0.png
+```
+
+Итог по `ENTER`: `15` входов, из них `8 BLOCK_HARD`, `3 BLOCK_RISK`, `4 WARN_RISK`, `0 PASS_RISK`.
+
+После пользовательской разметки создана V1 user-pass версия. Пользователь подтвердил проходящие точки: `LA059`, `LA067`, `LA078`. Они сохранены как `PASS_USER_REBOUND`, без изменения модели/predictions.
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r3_forward_20260314_20260320_wide_v1/riskgate_preview/20260318/STAS5_V5C_RISKGATE_PREVIEW_20260318_V1_USER_PASS.png
+```
+
+Новый вывод для будущей логики: RiskGate нельзя строить только как жесткий `knife/dump=1` запрет; нужен слой исключений `GOOD_REBOUND / GOOD_RETEST_AFTER_KNIFE / GROUNDING_AFTER_DUMP`.
+
+## STAS5 V5C ENTRY_ML_TWO_BLOCK Frozen
+
+Статус: `V5C_ENTRY_TWO_BLOCK_FROZEN_BASELINE_RISKGATE_NEXT`.
+
+В главном YAML `STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml` блок `ENTRY_ML_TWO_BLOCK` заморожен: `enabled=false`, `mode=frozen_not_selected`. Активный entry остается `ENTRY_BASELINE_ML`. Следующий рабочий фокус - `RiskGate V0` только в режиме `audit_only`.
+
+## STAS5 V5C YAML Config Commented
+
+Статус: `V5C_YAML_CONTROL_CONFIG_COMMENTED_RU_NO_CODE_WIRING`.
+
+Главный config `STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml` теперь содержит русские комментарии по каждому ML-блоку и guard-разделу. Это только пояснения для ручного управления; значения config, код раннеров, training, forward и predictions не менялись.
+
+## STAS5 V5C Main YAML ML Control Config
+
+Статус: `V5C_MAIN_YAML_CONTROL_CONFIG_READY_NO_CODE_WIRING`.
+
+Главный управляемый config:
+
+```text
+STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.yaml
+```
+
+Руками управляем ML-блоками только через YAML. JSON и RU.md оставлены как справка/снимок и не являются source-of-truth. В YAML текущий active entry = `ENTRY_BASELINE_ML`, two-block обучен, но не выбран, RiskGate V0 выключен и задан как следующий `audit_only` overlay.
+
+## STAS5 V5C ML Control Config Ready
+
+Статус: `V5C_ML_CONTROL_CONFIG_READY_RISKGATE_NOT_IMPLEMENTED`.
+
+Текущая управляющая точка по ML-блокам создана:
+
+```text
+STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1.json
+STAS5_ML_CORE/configs/STAS5_V5C_ML_CONTROL_CONFIG_V1_RU.md
+```
+
+Факт по R3: train `stas5_v5c_r3_train_20260127_20260313` завершен, post-train guard `PASS`, selected entry model = `entry_baseline`. Two-block обучен, но не выбран, потому что quality gate оставил baseline. Forward review week3 `2026-03-14..2026-03-20` существует в режиме `wide_review`; это не production.
+
+Следующий правильный смысловой шаг: не ломать текущий ENTRY, а добавить `RISK_GATE_RULE_V0` сначала как `audit_only` overlay поверх текущих predictions, чтобы увидеть на графиках активные дампы/ножи и не потерять хорошие rebound-входы.
+
+## STAS5 V5C R3 Train PASS
+
+Статус: `PASS_V5_TWO_BLOCK_ML_TRAINED_POST_TRAIN_GUARD_READY_FOR_FORWARD`.
+
+R3 обучение завершено для `TrainRunId=stas5_v5c_r3_train_20260127_20260313`. Train manifest: `STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_r3_train_20260127_20260313/STAS5_V5_TWO_BLOCK_TRAIN_MANIFEST_V1.json`.
+
+Контроль: `rows=3726`, `days=46`, `entry_y 1=432`, `entry_y 0=3294`, `features=439`, post-train guard `PASS`. Модели baseline, phase/state и entry_ml созданы; OOF rows `3726`, null `0`.
+
+Селектор выбрал `entry_baseline`, потому что two-block не улучшил качество по gate. Следующая blind-неделя `2026-03-14..2026-03-20` имеет свечи и готова к forward-запуску пользователем.
+
+## STAS5 V5C R3 Training Guard PASS
+
+Статус: `PASS_V5_TWO_BLOCK_TRAINING_GUARD_READY_FOR_TRAINING_WAIT_USER_TRAIN`.
+
+R3 `TrainingGuard` прошел PASS для `TrainRunId=stas5_v5c_r3_train_20260127_20260313`. Guard использует правильный R3 batch `2026-01-27..2026-03-13`, где уже применены пользовательские правки за `2026-03-07..2026-03-13`.
+
+Проверенные цифры: `days=46`, `rows=3726`, `entry_y 1=432`, `entry_y 0=3294`, `features=439`. В run dir пока нет model/joblib/train manifest; обучение не запускалось. Следующий шаг - пользователь запускает R3 `Train` тем же run_id.
+
+## STAS5 V5C R3 Batch Ready
+
+Статус: `PASS_V5C_R3_BATCH_20260127_20260313_READY_NO_TRAINING_RUN`.
+
+R3-правки пользователя за `2026-03-07..2026-03-13` внедрены. Все продиктованные GOOD/BAD сохранены в approved review-ledger, дневные V5 passports пересобраны, затем собран непрерывный V5C train batch `2026-01-27..2026-03-13`.
+
+Итог batch:
+
+```text
+days=46
+rows=3726
+entry_y 1=432
+entry_y 0=3294
+features=439
+guard=PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING
+```
+
+Главные файлы:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260313_ML_READY_439F_TARGETS_V1.csv
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260313_GUARD_V1.json
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260313_MANIFEST_V1.json
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260313_AUDIT_RU.md
+```
+
+Граница: R3 training не запускался, R3 forward не запускался. Следующий шаг - команда `TrainingGuard`; после PASS пользователь отдельно запускает `Train`.
+
+## STAS5 V5C R3 Review Draft 2026-03-13
+
+Статус: `R3_REVIEW_20260313_DRAFT_WAIT_USER_CONFIRM_CLOSE_DAY`.
+
+Пользователь дал ручную разметку для `2026-03-13` по wide-review run `stas5_v5c_r2q_forward_20260307_20260313_wide_v2`. Сохранен draft-ledger: `STAS5_ML_CORE/artifacts/v5c/review/r3_user_review/20260313/STAS5_V5C_R3_USER_REVIEW_20260313_DRAFT.csv`.
+
+Итог draft: `22` отмеченных строки, `GOOD=9`, `BAD=13`. GOOD ids: `LA003`, `LA014`, `LA030`, `LA032`, `LA037`, `LA042`, `LA043`, `LA048`, `LA054`. BAD ids: `LA012`, `LA013`, `LA044`, `LA045`, `LA046`, `LA047`, `LA049`, `LA050`, `LA051`, `LA052`, `LA053`, `LA058`, `LA073`.
+
+Ключевой вывод дня: пользователь отметил жесткий памп, затем дамп и просадку около `6%`; особенно плохая серия `LA046..LA053`, нужен будущий фильтр `памп-скат/нож`. `LA044` и `LA045` сохранены как явные BAD-контекстные кандидаты у хая перед дампом, хотя model_decision у них `SKIP`. Passport пока не пересобирался, обучение не запускалось.
+
+По состоянию на сейчас draft-разметка сохранена за всю week2: `2026-03-07..2026-03-13`. Следующий шаг: пользователь подтверждает закрытие дней или дает правки; после подтверждения можно делать approved-ledger и пересборку дневных V5 passports.
+
+## STAS5 V5C R3 Review Draft 2026-03-12
+
+Статус: `R3_REVIEW_20260312_DRAFT_WAIT_USER_CONFIRM_CLOSE_DAY`.
+
+Пользователь дал ручную разметку для `2026-03-12` по wide-review run `stas5_v5c_r2q_forward_20260307_20260313_wide_v2`. Сохранен draft-ledger: `STAS5_ML_CORE/artifacts/v5c/review/r3_user_review/20260312/STAS5_V5C_R3_USER_REVIEW_20260312_DRAFT.csv`.
+
+Итог draft: `16` отмеченных строк, `GOOD=12`, `BAD=4`. GOOD ids: `LA015`, `LA021`, `LA025`, `LA033`, `LA049`, `LA050`, `LA053`, `LA054`, `LA055`, `LA058`, `LA070`, `LA086`. BAD ids: `LA006`, `LA008`, `LA052`, `LA067`. `LA015` отмечен как лучший вход после ската; `LA055` сохранен как `yellow_x`/GOOD; `LA070` и `LA086` по predictions являются `WATCH`, поэтому сохранены как `yellow_diamond`/GOOD.
+
+Passport пока не пересобирался, обучение не запускалось. Следующий шаг: пользователь подтверждает `12 марта день закрыт` или дает правки.
+
+## STAS5 V5C R3 Review Draft 2026-03-11
+
+Статус: `R3_REVIEW_20260311_DRAFT_WAIT_USER_CONFIRM_CLOSE_DAY`.
+
+Пользователь дал ручную разметку для `2026-03-11` по wide-review run `stas5_v5c_r2q_forward_20260307_20260313_wide_v2`. Сохранен draft-ledger: `STAS5_ML_CORE/artifacts/v5c/review/r3_user_review/20260311/STAS5_V5C_R3_USER_REVIEW_20260311_DRAFT.csv`.
+
+Итог draft: `12` отмеченных строк, `GOOD=12`, `BAD=0`. GOOD ids: `LA008`, `LA014`, `LA034`, `LA040`, `LA042`, `LA044`, `LA045`, `LA046`, `LA051`, `LA052`, `LA053`, `LA055`. `LA044` и `LA053` сохранены как `yellow_x`/GOOD, то есть пропущенные хорошие входы. `LA058` проверен в predictions, но сохранен только как context note, не как training label, потому что пользователь указал его как границу, после которой входы неинтересны, без финальной оценки хорошо/плохо.
+
+Passport пока не пересобирался, обучение не запускалось. Следующий шаг: пользователь подтверждает `11 марта день закрыт` или дает правки.
+
+## STAS5 V5C R3 Review Draft 2026-03-10
+
+Статус: `R3_REVIEW_20260310_DRAFT_WAIT_USER_CONFIRM_CLOSE_DAY`.
+
+Пользователь дал ручную разметку для `2026-03-10` по wide-review run `stas5_v5c_r2q_forward_20260307_20260313_wide_v2`. Сохранен draft-ledger: `STAS5_ML_CORE/artifacts/v5c/review/r3_user_review/20260310/STAS5_V5C_R3_USER_REVIEW_20260310_DRAFT.csv`.
+
+Итог draft: `16` отмеченных строк, `GOOD=9`, `BAD=7`. GOOD ids: `LA005`, `LA013`, `LA022`, `LA029`, `LA039`, `LA043`, `LA044`, `LA046`, `LA071`. BAD ids: `LA041`, `LA042`, `LA055`, `LA057`, `LA058`, `LA059`, `LA068`. `LA052` проверен в predictions, но сохранен только как context note, не как training label, потому что пользователь упомянул его как хай/контекст без финальной оценки хорошо/плохо.
+
+Passport пока не пересобирался, обучение не запускалось. Следующий шаг: пользователь подтверждает `10 марта день закрыт` или дает правки.
+
+## STAS5 V5C R3 Review Draft 2026-03-09
+
+Статус: `R3_REVIEW_20260309_DRAFT_WAIT_USER_CONFIRM_CLOSE_DAY`.
+
+Пользователь дал ручную разметку для `2026-03-09` по wide-review run `stas5_v5c_r2q_forward_20260307_20260313_wide_v2`. Сохранен draft-ledger: `STAS5_ML_CORE/artifacts/v5c/review/r3_user_review/20260309/STAS5_V5C_R3_USER_REVIEW_20260309_DRAFT.csv`.
+
+Итог draft: `13` отмеченных строк, `GOOD=12`, `BAD=1`. GOOD ids: `LA006`, `LA007`, `LA011`, `LA014`, `LA024`, `LA025`, `LA039`, `LA042`, `LA048`, `LA055`, `LA063`, `LA067`. BAD ids: `LA047`. `LA067` пользователь назвал "треугольник, ромбик"; по predictions это `WATCH`, поэтому marker сохранен как `yellow_diamond`, итоговая метка GOOD.
+
+Passport пока не пересобирался, обучение не запускалось. Следующий шаг: пользователь подтверждает `9 марта день закрыт` или дает правки.
+
+## STAS5 V5C R3 Review Draft 2026-03-08
+
+Статус: `R3_REVIEW_20260308_DRAFT_WAIT_USER_CONFIRM_CLOSE_DAY`.
+
+Пользователь дал ручную разметку для `2026-03-08` по wide-review run `stas5_v5c_r2q_forward_20260307_20260313_wide_v2`. Сохранен draft-ledger: `STAS5_ML_CORE/artifacts/v5c/review/r3_user_review/20260308/STAS5_V5C_R3_USER_REVIEW_20260308_DRAFT.csv`.
+
+Итог draft: `15` отмеченных строк, `GOOD=10`, `BAD=5`. GOOD ids: `LA020`, `LA027`, `LA031`, `LA040`, `LA045`, `LA056`, `LA057`, `LA064`, `LA073`, `LA074`. BAD ids: `LA008`, `LA044`, `LA055`, `LA071`, `LA077`. Крестики `LA027`, `LA031`, `LA064` сохранены как GOOD/пропущенные входы.
+
+Passport пока не пересобирался, обучение не запускалось. Следующий шаг: пользователь подтверждает `8 марта день закрыт` или дает правки.
+
+## STAS5 V5C R3 Review Draft 2026-03-07
+
+Статус: `R3_REVIEW_20260307_DRAFT_WAIT_USER_CONFIRM_CLOSE_DAY`.
+
+Пользователь дал ручную разметку для `2026-03-07` по wide-review run `stas5_v5c_r2q_forward_20260307_20260313_wide_v2`. Сохранен draft-ledger: `STAS5_ML_CORE/artifacts/v5c/review/r3_user_review/20260307/STAS5_V5C_R3_USER_REVIEW_20260307_DRAFT.csv`.
+
+Итог draft: `13` отмеченных строк, `GOOD=9`, `BAD=4`. GOOD ids: `LA006`, `LA011`, `LA021`, `LA027`, `LA046`, `LA051`, `LA054`, `LA063`, `LA064`. BAD ids: `LA005`, `LA044`, `LA057`, `LA062`. Важное уточнение: `LA057` зафиксирован как BAD, потому что пользователь исправил первое "хорошо" на "057 плохо".
+
+Passport пока не пересобирался, обучение не запускалось. Следующий шаг: пользователь подтверждает `7 марта день закрыт` или дает правки.
+
+## STAS5 V5C R2Q WideReview V2 Fixed As R3 Review Source
+
+Статус: `V5C_R2Q_WIDE_V2_READY_FOR_USER_REVIEW_AND_R3_LABELS`.
+
+Последний рабочий прогон для ручного review зафиксирован как `6+ из 10` review-режим, не production: `stas5_v5c_r2q_forward_20260307_20260313_wide_v2`. Диапазон forward `2026-03-07..2026-03-13`, train source `stas5_v5c_r2q_train_20260127_20260306`, selected ENTRY model `entry_baseline`, policy `wide_review`, пороги только по train OOF: `enter=0.3012377066`, `watch=0.1576703673`.
+
+Итоги: `rows=554`, `ENTER=64`, `WATCH=167`, `SKIP=323`, visual PNG `14`, forward guard `PASS`, visual guard `PASS`. Контрольная точка сохранена: `STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_r2q_forward_20260307_20260313_wide_v2/STAS5_V5C_R2Q_WIDE_V2_REVIEW_CONTROL_POINT_RU.md`.
+
+Следующий шаг: пользователь размечает графики `2026-03-07..2026-03-13`; Codex сохраняет review-ledger по дням, пересобирает дневные passports с `GoodIds`, затем готовит R3 train range `2026-01-27..2026-03-13`.
+
+## STAS5 V5C R2Q Decision Policy Fixed After Too Few Entries
+
+Статус: `V5C_R2Q_DECISION_POLICY_WIDENED_WAIT_USER_FORWARD_RERUN`.
+
+Пользователь проверил forward `2026-03-07..2026-03-13` с `-EntryDecisionPolicy Normal` и указал, что входов стало слишком мало. Аудит подтвердил: старый `Normal` использовал train OOF quantile `enter=0.965 / watch=0.815` и на forward-неделе дал только `ENTER=5`, `WATCH=54`, `SKIP=495`. Причина не в обучении и не в X439, а в слишком высоком decision threshold относительно просевшего forward score distribution.
+
+Исправлено в коде: `Normal` теперь `enter=0.90 / watch=0.60`, ожидаемо на том же score даст около `ENTER=25`, `WATCH=148`, `SKIP=381`; `WideReview` теперь `enter=0.80 / watch=0.50`, ожидаемо около `ENTER=64`, `WATCH=167`, `SKIP=323`. Пороги по-прежнему считаются только по train OOF predictions, без forward outcome labels и без подсмотра в будущее.
+
+Проверки: `py_compile PASS`; PowerShell wrapper syntax `PASS`; `pytest tests/test_stas5_v5_continuous_ml.py tests/test_stas5_v5_two_block_ml.py` = `7 passed`.
+
+## STAS5 V5C R2Q Normal Forward Policy Ready
+
+Статус: `V5C_R2Q_NORMAL_FORWARD_POLICY_READY_WAIT_USER_RUN`.
+
+Добавлен режим `-EntryDecisionPolicy Normal` для V5C forward. Он не переобучает модель и не меняет X439/разметку; только берет более широкий порог решения из train OOF score distribution. Forward `2026-03-07..2026-03-13` не используется для threshold tuning.
+
+Проверки: `py_compile PASS`; PowerShell wrapper syntax `PASS`; `pytest tests/test_stas5_v5_two_block_ml.py tests/test_stas5_v5_continuous_ml.py` = `6 passed`.
+
+Следующий шаг: пользователь запускает forward с `-EntryDecisionPolicy Normal` и run_id `stas5_v5c_r2q_forward_20260307_20260313_normal`.
+
+## STAS5 V5C R2Q Train Multiclass Fix Ready
+
+Статус: `V5C_R2Q_TRAIN_MULTICLASS_SOLVER_FIX_READY_RETRY_TRAIN`.
+
+`TrainingGuard` для `stas5_v5c_r2q_train_20260127_20260306` прошел PASS, но первый запуск `Train` упал на `phase_y/state_y` из-за `liblinear`, который не поддерживает multiclass. Это была ошибка выбора модели для `MARKET_PHASE_STATE_ML`, не ошибка batch/guard/разметки.
+
+Исправлено: phase/state теперь используют `PHASE_STATE_MODEL_KIND = "extra_trees_balanced"` во всех местах обучения и аудита. ENTRY binary-кандидаты не изменены. Проверки прошли: `py_compile PASS`, профильный `pytest` = `5 passed`.
+
+Текущий следующий шаг: повторить команду `Train` для того же run_id `stas5_v5c_r2q_train_20260127_20260306`. Forward запускать только после post-train guard PASS.
+
+## STAS5 V5C R2 ML Quality Fix Ready
+
+Статус: `V5C_R2_ML_QUALITY_AUDIT_FIX_READY_NO_NEW_TRAINING`.
+
+R2 train/forward фактически уже существуют и lineage чистый: R2 train `stas5_v5c_r2_train_20260127_20260306` взял batch `2026-01-27..2026-03-06`, R2 forward `stas5_v5c_r2_forward_20260307_20260313` взял этот train manifest. Проблема качества была не в подмене старым R1, а в ML-логике: свежая review-неделя имела обычный вес, ENTER-порог был p90, phase/state SGD шумел, а two-block шел в forward даже когда baseline лучше.
+
+Кодовая рельса исправлена без нового боевого обучения: добавлены sample weights от `2026-02-28`, ENTRY-кандидаты `logistic_balanced/extra_trees_balanced`, precision/Wilson threshold, стабильный phase/state без SGD, raw-proba guard без тихой NaN/inf-очистки и selector baseline vs two-block. Следующий рабочий шаг: пользователь запускает `TrainingGuard -> Train -> Forward` с run_id `stas5_v5c_r2q_train_20260127_20260306` по командам из `docs/codex/commands.md`.
+
+Отчет: `STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_R2_ML_QUALITY_AUDIT_AND_FIX_20260717_RU.md`.
+
+## STAS5 V5C R2 Batch Ready
+
+Статус: `PASS_V5C_R2_BATCH_20260127_20260306_READY_NO_TRAINING_RUN`.
+
+Активный следующий этап: R2 обучение должно идти на `2026-01-27..2026-03-06`, то есть старая база 32 дня плюс закрытая пользователем review-неделя `2026-02-28..2026-03-06`. R2 batch уже собран в `STAS5_ML_CORE/artifacts/v5c/`:
+
+```text
+STAS5_V5C_BATCH_20260127_20260306_ML_READY_439F_TARGETS_V1.csv
+STAS5_V5C_BATCH_20260127_20260306_FEATURE_ALLOWLIST_439F_V1.json
+STAS5_V5C_BATCH_20260127_20260306_MANIFEST_V1.json
+STAS5_V5C_BATCH_20260127_20260306_GUARD_V1.json
+STAS5_V5C_BATCH_20260127_20260306_AUDIT_RU.md
+```
+
+Цифры: `39` дней, `3172` строк, `entry_y 1=359`, `entry_y 0=2813`, `439` causal features. Guard `PASS`: target/manual не в X, forbidden/future/postfact/hit/TP/Stas3/exit/old ML leakage не в X, `cs/fcs` source-time не позже `entry_time_utc`, дублей нет.
+
+Кодовая рельса исправлена: `TrainingGuard` и `Train` теперь принимают `TrainStartDay/TrainEndDay`, а общий two-block helper принимает динамические expected counts. Обучение и новый forward после этого изменения не запускались.
+
+Следующий рабочий порядок:
+
+```text
+1. Пользователь запускает R2 TrainingGuard.
+2. После PASS пользователь запускает R2 Train.
+3. После post-train guard PASS пользователь запускает blind forward week2: 2026-03-07..2026-03-13.
+```
+
+## STAS5 V5C R2 Text Encoding Fixed
+
+Статус: `UTF8_RUSSIAN_TEXT_RESTORED_NO_LABEL_CHANGE`.
+
+Аудит кракозяб по R2 review-слою завершен. Реальные повреждения были в review-ledger файлах за `2026-03-02..2026-03-06`: вместо русских причин стояли question-mark placeholders.
+
+Перезаписаны CSV/JSON/RU.md для всех закрытых дней `2026-02-28..2026-03-06` единым UTF-8 форматом. После фикса:
+
+```text
+review text audit=PASS
+label audit=PASS
+days=7
+GoodIds/BAD/entry_y unchanged
+training=false
+forward=false
+```
+
+Отчет: `STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/STAS5_V5C_R2_TEXT_ENCODING_AUDIT_20260717_RU.md`.
+
+## STAS5 V5C R2 Review Week Closed
+
+Статус: `USER_APPROVED_R2_REVIEW_WEEK_20260228_20260306_CLOSED_FULL_READY`.
+
+День `2026-03-06` закрыт пользователем для R2-разметки. Сохранены review-ledger артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260306/STAS5_V5C_R2_USER_REVIEW_20260306_APPROVED.csv
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260306/STAS5_V5C_R2_USER_REVIEW_20260306_APPROVED.json
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260306/STAS5_V5C_R2_USER_REVIEW_20260306_APPROVED_RU.md
+```
+
+Дневной approved package собран через `run_stas5_v5_day_ladder.ps1`:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260306/
+rows=87
+entry_y 1=6 / 0=81
+features=439
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+GOOD ids: `LA006`, `LA023`, `LA028`, `LA047`, `LA055`, `LA066`. Явные BAD для аудита: `LA019`, `LA050`, `LA051`, `LA053`, `LA054`, `LA059`, `LA062`, `LA072`, `LA078`. Спорное `72/73` разрешено по source predictions: `LA072=ENTER`, `LA073=WATCH`, поэтому зафиксирован `LA072`.
+
+R2 training пока не запускался. Закрыта вся R2 teacher-неделя `2026-02-28..2026-03-06`. Ближайший шаг: собрать R2 batch dataset и отдельный R2 batch guard; не запускать обучение напрямую.
+
+## STAS5 V5C R2 Review 2026-03-05 Closed
+
+Статус: `USER_APPROVED_R2_REVIEW_20260305_CLOSED_FULL_READY`.
+
+День `2026-03-05` закрыт пользователем для R2-разметки. Сохранены review-ledger артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260305/STAS5_V5C_R2_USER_REVIEW_20260305_APPROVED.csv
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260305/STAS5_V5C_R2_USER_REVIEW_20260305_APPROVED.json
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260305/STAS5_V5C_R2_USER_REVIEW_20260305_APPROVED_RU.md
+```
+
+Дневной approved package собран через `run_stas5_v5_day_ladder.ps1`:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260305/
+rows=85
+entry_y 1=11 / 0=74
+features=439
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+R2 training пока не запускался. Закрытые R2 teacher-дни: `2026-02-28`, `2026-03-01`, `2026-03-02`, `2026-03-03`, `2026-03-04`, `2026-03-05`. Ближайший шаг: закрывать следующий forward-день `2026-03-06`.
+
+## STAS5 V5C R2 Review 2026-03-04 Closed
+
+Статус: `USER_APPROVED_R2_REVIEW_20260304_CLOSED_FULL_READY`.
+
+День `2026-03-04` закрыт пользователем для R2-разметки. Сохранены review-ledger артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260304/STAS5_V5C_R2_USER_REVIEW_20260304_APPROVED.csv
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260304/STAS5_V5C_R2_USER_REVIEW_20260304_APPROVED.json
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260304/STAS5_V5C_R2_USER_REVIEW_20260304_APPROVED_RU.md
+```
+
+Дневной approved package собран через `run_stas5_v5_day_ladder.ps1`:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260304/
+rows=72
+entry_y 1=9 / 0=63
+features=439
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+R2 training пока не запускался. Закрытые R2 teacher-дни: `2026-02-28`, `2026-03-01`, `2026-03-02`, `2026-03-03`, `2026-03-04`. Ближайший шаг: закрывать следующий forward-день `2026-03-05`.
+
+## STAS5 V5C R2 Review 2026-03-03 Closed
+
+Статус: `USER_APPROVED_R2_REVIEW_20260303_CLOSED_FULL_READY`.
+
+День `2026-03-03` закрыт пользователем для R2-разметки. Сохранены review-ledger артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260303/STAS5_V5C_R2_USER_REVIEW_20260303_APPROVED.csv
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260303/STAS5_V5C_R2_USER_REVIEW_20260303_APPROVED.json
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260303/STAS5_V5C_R2_USER_REVIEW_20260303_APPROVED_RU.md
+```
+
+Дневной approved package собран через `run_stas5_v5_day_ladder.ps1`:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260303/
+rows=89
+entry_y 1=12 / 0=77
+features=439
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+R2 training пока не запускался. Закрытые R2 teacher-дни: `2026-02-28`, `2026-03-01`, `2026-03-02`, `2026-03-03`. Ближайший шаг: закрывать следующий forward-день `2026-03-04`.
+
+## STAS5 V5C R2 Review 2026-03-02 Closed
+
+Статус: `USER_APPROVED_R2_REVIEW_20260302_CLOSED_FULL_READY`.
+
+День `2026-03-02` закрыт пользователем для R2-разметки. Сохранены review-ledger артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260302/STAS5_V5C_R2_USER_REVIEW_20260302_APPROVED.csv
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260302/STAS5_V5C_R2_USER_REVIEW_20260302_APPROVED.json
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260302/STAS5_V5C_R2_USER_REVIEW_20260302_APPROVED_RU.md
+```
+
+Дневной approved package собран через `run_stas5_v5_day_ladder.ps1`:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260302/
+rows=81
+entry_y 1=12 / 0=69
+features=439
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+R2 training пока не запускался. Закрытые R2 teacher-дни: `2026-02-28`, `2026-03-01`, `2026-03-02`. Ближайший шаг: закрывать следующий forward-день `2026-03-03`.
+
+## STAS5 V5C R2 Review 2026-03-01 Closed
+
+Статус: `USER_APPROVED_R2_REVIEW_20260301_CLOSED_FULL_READY`.
+
+День `2026-03-01` закрыт пользователем для R2-разметки. Сохранены review-ledger артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260301/STAS5_V5C_R2_USER_REVIEW_20260301_APPROVED.csv
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260301/STAS5_V5C_R2_USER_REVIEW_20260301_APPROVED.json
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260301/STAS5_V5C_R2_USER_REVIEW_20260301_APPROVED_RU.md
+```
+
+Дневной approved package собран через `run_stas5_v5_day_ladder.ps1`:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260301/
+rows=81
+entry_y 1=9 / 0=72
+features=439
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+R2 training пока не запускался. Закрытые R2 teacher-дни: `2026-02-28`, `2026-03-01`. Ближайший шаг: закрывать следующий forward-день `2026-03-02`.
+
+## STAS5 V5C R2 Review 2026-02-28 Closed
+
+Статус: `USER_APPROVED_R2_REVIEW_20260228_CLOSED_FULL_READY`.
+
+День `2026-02-28` закрыт пользователем для R2-разметки. Сохранены review-ledger артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260228/STAS5_V5C_R2_USER_REVIEW_20260228_APPROVED.csv
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260228/STAS5_V5C_R2_USER_REVIEW_20260228_APPROVED.json
+STAS5_ML_CORE/artifacts/v5c/review/r2_user_review/20260228/STAS5_V5C_R2_USER_REVIEW_20260228_APPROVED_RU.md
+```
+
+Дневной approved package пересобран через `run_stas5_v5_day_ladder.ps1`:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260228/
+rows=81
+entry_y 1=10 / 0=71
+features=439
+guard=PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY
+```
+
+R2 training пока не запускался. Ближайший шаг: закрывать следующий forward-день `2026-03-01` таким же review-ledger форматом.
+
+## STAS5 V5C WAVE Strip Cumulative Carry Ready
+
+Статус: `USER_APPROVED_V5C_FORWARD_VISUAL_REVIEW_CHARTS_OK`.
+
+Пользователь 2026-07-17 подтвердил: текущие графики норм. Этот формат фиксируется как рабочий visual-standard для V5C forward review.
+
+Текущие графики V5C forward `2026-02-28..2026-03-06` перерисованы. WAVE-полоса теперь покрывает доступный конец свечей каждого дня: `last_wave_end == available_end` для 7/7 дней. Серый/черный служебный хвост после active wave не остается.
+
+Ключевые проверки manifest:
+
+```text
+macro_wave_strip_covers_available_candle_end=PASS
+macro_wave_tail_gap_filled_without_rendering_gap=PASS
+cross_day_wave_labels_use_cumulative_true_start_pct=PASS
+tail_gap_rows_filled_total=7
+tail_gap_minutes_filled_total=298.0
+cross_day_wave_rows_total=13
+rendered_gap_rows_total=0
+```
+
+Пример: `2026-03-02` в начале дня показывает carry из предыдущего дня с cumulative percent, а последняя `SHORT ACTIVE` тянется до `2026-03-03T00:00:00Z`.
+
+## STAS5 V5C Forward Visual Review Updated
+
+Статус: `PASS_V5C_FORWARD_VISUAL_REVIEW_WITH_CONTINUOUS_STRENGTH_STRIP`.
+
+Текущий рабочий визуальный слой для проверки forward `2026-02-28..2026-03-06` теперь находится здесь:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_continuous_forward_20260228_20260306_20260716_155343/visual_review/
+```
+
+В overview PNG добавлен блок `Fon / LONG / SHORT / WAVE` между ценой и score. Для V5C он берется из `ohlcv_contexts`, то есть имеет хвост предыдущего дня и не является 24-часовым сбросом. Серые служебные `GAP` в WAVE не рисуются: `rendered_gap_rows_total=0`.
+
+Проверено: `png_count=14`, все 7 дней используют `CONTINUOUS_CONTEXT_OHLCV`, `context_rows=2160`; predictions CSV не изменился по SHA256 после render.
+
+Граница: это review-only слой, не feature source для ML и не изменение решений модели.
+
+## STAS5 V5C Continuous Train + Forward Done
+
+Статус: `PASS_V5C_CONTINUOUS_TWO_BLOCK_FORWARD_20260228_20260306_BLIND_NO_FUTURE`.
+
+Текущий рабочий контур теперь `V5C_CONTINUOUS`: обучение и blind forward собраны без сброса рыночной структуры на границе дня. Старый дневной V5 сохранен как контрольный run.
+
+Контекстная политика:
+
+```text
+rolling_past_context
+context_start_day=2026-01-27
+context_warmup_minutes=720
+feature_rule=FULL274 -> cs_* -> fcs_*; source_time <= entry_time_utc
+```
+
+V5C batch:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_BATCH_20260127_20260227_ML_READY_439F_TARGETS_V1.csv
+rows=2596
+entry_y 1=290 / 0=2306
+features=439
+guard=PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING
+```
+
+V5C train:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/model/runs/stas5_v5c_continuous_train_20260716_154826
+post-train guard=PASS_V5_TWO_BLOCK_POST_TRAIN_GUARD_READY_FOR_FORWARD
+baseline ROC-AUC=0.6569167389418907 PR-AUC=0.17950987215851025
+two-block ROC-AUC=0.6597878099111762 PR-AUC=0.18064179174496617
+```
+
+V5C forward:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/forward/runs/stas5_v5c_continuous_forward_20260228_20260306_20260716_155343
+rows=576
+ENTER=62 / WATCH=121 / SKIP=393
+visual PNG=14
+```
+
+Контроль midnight-reset: `2026-02-28 LA001` имеет `cs_context_rows=748`, `cs_rows_240m=240`, `fcs_context_before_entry=1`. Значит forward реально использует хвост прошлого дня и не стартует структуру с нуля в 00:00.
+
+Главный отчет:
+
+```text
+STAS5_ML_CORE/artifacts/v5c/STAS5_V5C_CONTINUOUS_TRAIN_FORWARD_20260716_RU.md
+```
+
+Следующий шаг: открыть `visual_review` текущего V5C forward, глазами проверить `62 ENTER`, затем сравнить V5C continuous с дневным V5 run и baseline.
+
+## STAS5 V5 Forward Visual Review With All LA Labels
+
+Статус: `PASS_V5_FORWARD_VISUAL_REVIEW_READY_ALL_LA_LABELS_ENTER_TRIANGLES`.
+
+Для текущего V5 forward `2026-02-28..2026-03-06` создан визуальный review-слой:
+
+```text
+STAS5_ML_CORE/artifacts/v5/forward/runs/stas5_v5_forward_20260228_20260306_20260716/visual_review/
+```
+
+Итог: `14` PNG = `7` дневных overview с желтыми `LAxxx` по всем кандидатам + `7` closeup-листов по входам. День `2026-02-28` и `2026-03-04` визуально проверены: длинные зеленые стрелки/боксы убраны; `ENTER` виден зеленым треугольником, `WATCH` желтым ромбом, `SKIP` желтым X.
+
+Последняя правка layout: подписи `LAxxx` отсортированы по номеру кандидата и соединены с точкой тонкой желтой линией, чтобы `LA001 -> LA002 -> ...` читались последовательно, а не хаотично.
+
+Манифест:
+
+```text
+STAS5_ML_CORE/artifacts/v5/forward/runs/stas5_v5_forward_20260228_20260306_20260716/visual_review/STAS5_V5_FORWARD_VISUAL_REVIEW_MANIFEST_V1.json
+```
+
+Граница: это только отрисовка готовых predictions и OHLCV. Обучение не запускалось заново, решения модели не менялись.
+
+## STAS5 V5 Two-Block Train + Forward Done
+
+Статус: `PASS_TRAIN_AND_FORWARD_DONE_REVIEW_REQUIRED`.
+
+Обучение V5 two-block выполнено на `2026-01-27..2026-02-27`: `2596` rows, `290` GOOD, `2306` BAD, `X439`.
+
+Blind/no-future forward выполнен на `2026-02-28..2026-03-06`: `576` rows, `ENTER=20`, `WATCH=120`, `SKIP=436`.
+
+Главный отчет:
+
+```text
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_TWO_BLOCK_TRAIN_FORWARD_20260716_RU.md
+```
+
+Главный training run:
+
+```text
+STAS5_ML_CORE/artifacts/v5/model/runs/stas5_v5_two_block_train_20260716_32d/
+```
+
+Главный forward run:
+
+```text
+STAS5_ML_CORE/artifacts/v5/forward/runs/stas5_v5_forward_20260228_20260306_20260716/
+```
+
+Важный ML-вывод: по OOF baseline лучше two-block (`ROC-AUC 0.6564` против `0.6377`, `PR-AUC 0.1813` против `0.1561`). Two-block пока не production-победитель; нужен review forward ENTER и baseline-forward сравнение.
+
+## STAS5 V5 Two-Block ML TZ Ready
+
+Статус: `TZ_DRAFT_READY_FOR_USER_REVIEW_NO_TRAINING`.
+
+Следующий этап V5 ML расписан в ТЗ:
+
+```text
+STAS5_ML_CORE/09_STAS5_V5_TWO_BLOCK_ML_TZ_RU.md
+```
+
+Текущая утвержденная база остается прежней: `2026-01-27..2026-02-27`, `32` дня, `2596` rows, `entry_y 1=290 / 0=2306`, `439` causal features, batch guard `PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING`.
+
+Архитектура следующего этапа:
+
+```text
+ENTRY_BASELINE_ML: X439 -> entry_y
+MARKET_PHASE_STATE_ML: X439 -> phase_y/state_y
+ENTRY_ML: X439 + OOF/live phase/state predictions -> entry_y
+```
+
+Training и forward еще не запускались. Следующий правильный шаг: не обучение, а реализация отдельного training guard `STAS5_V5_TWO_BLOCK_TRAINING_GUARD_V1`.
+
+## STAS5 V5 Batch Dataset 2026-01-27..2026-02-27 Ready
+
+Статус: `PASS_V5_BATCH_GUARD_READY_FOR_TWO_BLOCK_ML_NO_TRAINING`.
+
+Текущий главный batch-источник для будущего V5 training:
+
+```text
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_ML_READY_439F_TARGETS_V1.csv
+```
+
+Счетчики batch: `32` дня, `2596` строк, `entry_y 1=290 / 0=2306`, `439` features = `274 old causal + 81 cs_* + 84 fcs_*`.
+
+Контрольные файлы:
+
+```text
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_FEATURE_ALLOWLIST_439F_V1.json
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_MANIFEST_V1.json
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_GUARD_V1.json
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_BATCH_20260127_20260227_AUDIT_RU.md
+```
+
+Guard подтвердил: allowlist одинаковый у всех дней; `entry_y/phase_y/state_y/reason_y/entry_label/rank_label/manual teacher` не входят в `X`; future/postfact/hit_/TP/Stas3/exit/old ML/full-group leakage в `X` нет; `cs_*` и `fcs_*` source time не позже `entry_time_utc`; дублей нет; model/forward V5 не стартовали.
+
+Следующий правильный шаг: не forward и не прямой entry training, а отдельный training guard и two-block схема `MARKET_PHASE_STATE_ML` -> `ENTRY_ML` с OOF phase/state predictions на train и live predictions на forward.
+
+## STAS5 V5 Range 2026-01-27..2026-02-27 Full-Ready
+
+Статус: `PASS_V5_RANGE_AUDIT_READY_FOR_BATCH_DATASET`.
+
+Текущая V5-база закрыта по диапазону:
+
+```text
+2026-01-27..2026-02-27
+```
+
+Итог диапазона: `32/32` full-ready дня, `2596` строк, `entry_y 1=290 / 0=2306`, feature-контракт `274 -> 355 -> 439`, problem count `0`.
+
+Во время аудита была найдена и исправлена дырка: `2026-02-07` имел FULL274 run, но не имел V5 market passport. День дозаполнен по ранее утвержденным GOOD ids, пересобран full causal слой и карта. После исправления общий folder audit:
+
+```text
+PASS_V5_FOLDER_AUDIT_NO_TRAINING
+full-ready=32
+partial/not-ready=1
+model=False
+forward=False
+```
+
+Единственный `partial/not-ready` сейчас вне текущей базы: старый `2026-04-01` FULL274 run без V5 market passport.
+
+Главный отчет диапазона:
+
+```text
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_RANGE_AUDIT_20260127_20260227_RU.md
+```
+
+Следующий правильный шаг: собрать единый V5 batch dataset из 32 дневных `ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv`, затем сделать batch leakage/no-future guard. Training и forward V5 еще не запускались.
+
+## STAS5 V5 2026-02-01 Audit And Six Full-Ready Days
+
+Статус: `PASS_V5_FOLDER_AUDIT_NO_TRAINING`.
+
+Текущий полный V5-пакет дня:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260201/
+```
+
+Главный CSV дня:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260201/STAS5_V5_MARKET_PASSPORT_20260201_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv
+```
+
+Счетчики `2026-02-01`: `89` кандидатов, `entry_y 1=14 / 0=75`, `GOOD_APPROVED=14`, `BAD_IN_GROUP=47`, `NO_TRADE_ZONE=28`, feature-контракт `274 -> 355 -> 439`.
+
+GOOD ids в финальной таблице: `LA007`, `LA014`, `LA026`, `LA040`, `LA041`, `LA045`, `LA053`, `LA058`, `LA060`, `LA066`, `LA079`, `LA082`, `LA084`, `LA087`. Пользовательский порядок отличается только тем, что `LA026` был назван раньше `LA014`; CSV идет по времени.
+
+Структурные артефакты дня: `levels=34`, `channels=89`, `regimes=64`, `events=3402`. Guard-и baseline/cs/full все `PASS`; `cs_max_source_time_utc` и `fcs_max_source_time_utc` не уходят за `entry_time_utc`.
+
+V5 folder audit сейчас: `full-ready=6`, `partial/not-ready=27`, `model=False`, `forward=False`. Full-ready дни: `2026-01-27`, `2026-01-28`, `2026-01-29`, `2026-01-30`, `2026-01-31`, `2026-02-01`.
+
+Два ML-блока пока не обучались. Это будущая схема: `MARKET_PHASE_STATE_ML` предсказывает фазу/состояние, `ENTRY_ML` предсказывает вход; второму блоку можно давать только OOF/live-предсказания первого блока, а не ручные `phase_y/state_y`.
+
+## STAS5 V5 2026-01-28 Full-Ready
+
+Статус: `PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY`.
+
+Текущая рабочая папка дня:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260128/
+```
+
+Пользователь утвердил GOOD ids:
+
+```text
+LA020, LA037, LA042, LA045, LA051, LA059, LA069, LA078, LA084
+```
+
+Собрано по той же V5-лестнице:
+
+```text
+FULL274 93 rows -> approved targets 274F -> cs_* 355 features -> fcs_* 439 features
+```
+
+Главный файл для будущего batch dataset:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260128/STAS5_V5_MARKET_PASSPORT_20260128_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv
+```
+
+Счетчики: `entry_y 1=9 / 0=84`, `levels=16`, `channels=93`, `regimes=66`, `events=3181`. Guard-и baseline/cs/full все `PASS`. V5 folder audit: `full-ready=2`, `partial/not-ready=31`, `model=False`, `forward=False`.
+
+Обучение и forward V5 по-прежнему не запускались.
+
+## STAS5 V5 Day Ladder And Folder Audit
+
+Статус: `PASS_V5_FOLDER_AUDIT_NO_TRAINING`.
+
+Добавлена главная лесенка для следующего дня:
+
+```text
+STAS5_ML_CORE/run_stas5_v5_day_ladder.ps1
+```
+
+Главная команда:
+
+```powershell
+.\STAS5_ML_CORE\run_stas5_v5_day_ladder.ps1 -Day 2026-01-28 -Stage All -OpenFolder
+```
+
+Контракт команды:
+
+```text
+FULL274 -> stop for manual approved passport -> cs_* -> fcs_* -> folder audit
+```
+
+Если approved passport/targets отсутствует, команда останавливается и показывает недостающие файлы. Она не создает fake GOOD/BAD и не запускает обучение.
+
+Добавлен полный аудит V5-папки:
+
+```text
+src/mlbotnav/stas5_v5_folder_audit.py
+STAS5_ML_CORE/run_stas5_v5_folder_audit.ps1
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_FOLDER_AUDIT_20260715_RU.md
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_FOLDER_AUDIT_20260715.json
+```
+
+Последний аудит: `full-ready=1`, `partial/not-ready=32`, `model=False`, `forward=False`. `2026-01-27` full-ready; `2026-01-28` имеет FULL274 run, но еще не имеет approved V5 passport.
+
+## STAS5 V5 Full Causal Market-Structure Builder 2026-01-27
+
+Статус: `PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY`.
+
+Текущий главный V5-пакет дня:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/
+```
+
+Открывать первым:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/00_OPEN_FIRST_RU.md
+```
+
+Главный CSV для будущего обучения теперь:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1.csv
+```
+
+В нем `75` строк, `439` разрешенных feature columns: `355` признаков до full-слоя (`274 + cs_*`) и `84` новых `fcs_*` признака. Targets: `entry_y 1=11 / 0=64`.
+
+Новые full-causal артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_FULL_STRUCTURE_CANDIDATE_FEATURES_CAUSAL_V1.csv
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_LEVELS_CAUSAL_V1.csv
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_CHANNELS_CAUSAL_V1.csv
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_REGIMES_CAUSAL_V1.csv
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_EVENTS_CAUSAL_V1.csv
+```
+
+Главная карта:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/DAY_MARKET_PASSPORT_20260127_FULL_CAUSAL_STRUCTURE_MAP_V1.png
+```
+
+Builder:
+
+```text
+src/mlbotnav/stas5_v5_full_causal_structure_builder.py
+STAS5_ML_CORE/run_stas5_v5_full_causal_structure_builder.ps1
+```
+
+Guard:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_FULL_CAUSAL_STRUCTURE_GUARD_V1.json
+```
+
+Guard `PASS`: `rows_match`, `merge_one_to_one`, `source_time_before_entry`, `forbidden_*_absent`, `targets_not_in_features`, `fcs_values_not_missing`, `events_known_inside_day`, `visual_sources_exist`.
+
+Счетчики: `levels=19`, `channels=75`, `regimes=53`, `events=2833`.
+
+Главное правило осталось тем же: ручной паспорт является учителем `y`, а не входным признаком `X`. В `X` разрешены только старые causal-признаки, `cs_*` и новые `fcs_*`, которые пересчитаны из прошлого до `entry_time_utc`. Обучение V5 и V5 forward не запускались.
+
+## STAS5 V5 Structure Map 2026-01-27
+
+Статус: `VISUAL_STRUCTURE_MAP_V4_READY_NO_TRAINING`.
+
+Для дня `2026-01-27` добавлен главный график обсуждения структуры:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/DAY_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_MAP_V4_CLEAN.png
+```
+
+Он показывает полный каркас: manual support/resistance bands как teacher-context, causal S/R линии из `cs_nearest_support/resistance`, локальные trendlines, `KNIFE ACTIVE`, danger-down, bottom/base, pump-continuation, chop/no-edge, pressure/trend и target row. Таблица тегов:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_MAP_TAGS_V4.csv
+```
+
+Обучение не запускалось.
+
+## STAS5 V5 Causal Market-Structure Builder 2026-01-27 Previous `cs_*` Layer
+
+Статус: `PASS_NO_TRAINING_CAUSAL_STRUCTURE_READY`. Это предыдущий `cs_*` слой. Текущий главный слой находится выше: `PASS_NO_TRAINING_FULL_CAUSAL_STRUCTURE_READY`.
+
+Текущий главный V5-пакет дня:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/
+```
+
+Открывать первым:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/00_OPEN_FIRST_RU.md
+```
+
+Предыдущий `cs_*` CSV, который используется как source/base для full-слоя:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_PLUS_CAUSAL_STRUCTURE_TARGETS_V1.csv
+```
+
+В нем `75` строк, `274` старых causal-признака, `81` новый `cs_*` market-structure признак, всего `355` feature columns. Targets: `entry_y 1=11 / 0=64`, `GOOD_APPROVED=11`, `BAD_IN_GROUP=50`, `NO_TRADE_ZONE=14`, `phase_y=5` фаз.
+
+Добавлен builder:
+
+```text
+src/mlbotnav/stas5_v5_causal_structure_builder.py
+STAS5_ML_CORE/run_stas5_v5_causal_structure_builder.ps1
+```
+
+Guard:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_CAUSAL_STRUCTURE_GUARD_V1.json
+```
+
+Guard `PASS`: `rows_match`, `merge_one_to_one`, `source_time_before_entry`, `forbidden_*_absent`, `targets_not_in_features`, `causal_values_not_missing`.
+
+Главное правило: ручной паспорт является учителем `y`, а не входным признаком `X`. В этом предыдущем слое `X` = старые `274` causal-признака + `cs_*`, которые builder пересчитывает из OHLCV только до `entry_time_utc`. Для текущей работы использовать full-слой `274 + cs_* + fcs_*`. Обучение V5 и V5 forward не запускались.
+
+Проектный аудит:
+
+```text
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_PROJECT_AUDIT_20260715_RU.md
+STAS5_ML_CORE/artifacts/v5/STAS5_V5_PROJECT_AUDIT_20260715.json
+```
+
+## STAS5 V5 Навигация По Пакету 2026-01-27
+
+Чтобы не путаться в похожих файлах `V1/V2/V3`, в текущую папку дня добавлен файл:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/00_OPEN_FIRST_RU.md
+```
+
+Его нужно открывать первым. Текущая рабочая версия: `PLUS_FULL_CAUSAL_STRUCTURE_TARGETS_V1`; старые `V1/V2/V3/V4` и промежуточные файлы оставлены как история/source/base.
+
+## STAS5 V5 Market Passport 2026-01-27 Phase/State/Reason Ready
+
+Статус: `PASS_NO_TRAINING_PHASE_STATE_REASON_READY`.
+
+По дню `2026-01-27` поверх user-approved V3 создан финальный V5 target-слой для нового контура:
+
+```text
+entry_y  = good/bad для входа
+phase_y  = 5 крупных ручных фаз дня
+state_y  = детальное состояние рынка на кандидате
+reason_y = причина good/bad/no-trade
+```
+
+Актуальный ML-ready файл:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_ENTRY_PHASE_STATE_REASON_TARGETS_V2.csv
+```
+
+Актуальный allowlist:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/STAS5_V5_MARKET_PASSPORT_20260127_FEATURE_ALLOWLIST_274_ENTRY_PHASE_STATE_REASON_V2.json
+```
+
+Проверка: `rows=75`, `feature_count=274`, `entry_y 1=11 / 0=64`, `phase_y=5` фаз, forbidden feature columns `[]`. GOOD ids: `LA002`, `LA018`, `LA026`, `LA042`, `LA044`, `LA047`, `LA049`, `LA054`, `LA055`, `LA058`, `LA062`.
+
+Ключевое правило: `entry_y/phase_y/state_y/reason_y` - это teacher-target, не live-feature. `X` для обучения остается строго `274` causal-признака из allowlist. Обучение не запускалось.
+
+## STAS5 V5 Market Passport 2026-01-27 User Approved V3
+
+Статус: `USER_APPROVED_V3_NO_TRAINING`.
+
+Актуальный день для новой работы: `2026-01-27`, не апрель. Пользователь проверил график и подтвердил: оставить только его `11` входов, остальные кандидаты не лучше, а хуже.
+
+GOOD-входы: `LA002`, `LA018`, `LA026`, `LA042`, `LA044`, `LA047`, `LA049`, `LA054`, `LA055`, `LA058`, `LA062`.
+
+По run `STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857` собран user-approved ledger на `75/75` кандидатов. Разметка V3: `GOOD_APPROVED=11`, `BAD_IN_GROUP=50`, `NO_TRADE_ZONE=14`. `GOOD_ALT` и `REVIEW_ONLY` больше не используются для этого дня; бывшие спорные точки переведены в negative.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/DAY_MARKET_PASSPORT_LEDGER_20260127_USER_APPROVED_V3.csv
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/DAY_MARKET_PASSPORT_20260127_USER_APPROVED_RU.md
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/DAY_MARKET_PASSPORT_20260127_USER_APPROVED_V3_ANNOTATED_TOP.png
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/DAY_MARKET_PASSPORT_20260127_PHASE_STATS_USER_APPROVED_V3.csv
+```
+
+Важное правило: future используется только для офлайн-разметки истории. В обучение/live нельзя передавать `future`, `postfact`, `hit_*`, `TP/Stas3/exit`, старые `ML_DECISION/ML_KEEP_SCORE`; уже поставленный live-вход нельзя "заменять" более поздним кандидатом задним числом.
+
+День дополнительно упакован в отдельную V5-папку, чтобы не путать `runs/...` с финальной числовой базой:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/
+```
+
+Главные файлы пакета:
+
+```text
+STAS5_V5_MARKET_PASSPORT_20260127_ML_READY_274F_LABELS_V1.csv
+STAS5_V5_MARKET_PASSPORT_20260127_FEATURE_ALLOWLIST_274_V1.json
+STAS5_V5_MARKET_PASSPORT_20260127_MARKET_STRUCTURE_NUMERIC_V1.csv
+STAS5_V5_MARKET_PASSPORT_20260127_274F_LABELS_PLUS_STRUCTURE_CONTEXT_V1.csv
+STAS5_V5_MARKET_PASSPORT_20260127_PACKAGE_MANIFEST.json
+README_RU.md
+```
+
+Проверка пакета: `PASS_NO_TRAINING`, `rows=75`, `feature_count=274`, `train_label_binary: 1=11 / 0=64`, запрещенных future/TP/Stas3/old-ML feature columns в allowlist нет.
+
+Уточнение по структуре рынка: ручные фазы/поддержки/сопротивления уже переведены в цифру и используются как teacher/source-of-truth для labels. Для прямого использования как feature в forward/live нужен отдельный causal market-structure builder, который строит такие же фазы и зоны только по данным до `entry_time_utc`. Это зафиксировано в:
+
+```text
+STAS5_ML_CORE/artifacts/v5/market_passports/20260127/TRAINING_SCHEMA_RU.md
+```
+
+Следующий шаг: использовать пакет как approved numeric label source при сборке общей январской базы. Обучение в этом шаге не запускалось.
+
+## STAS5 V5 Market Passport Trial 2026-01-27
+
+Статус: `USER_DESIRED_V1_DRAFT_NO_TRAINING`.
+
+По run `STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857` создан пробный паспорт рынка для `2026-01-27`, `SOLUSDT`, `1m`. Run подтвержден как `PASS`: `75` кандидатов, `274` causal-признака, `UNLABELED_VISUAL_ONLY`, обучение/API/TP/Stas3 не запускались.
+
+Созданы артефакты:
+
+```text
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_ANNOTATED_FULL.png
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_ANNOTATED_TOP.png
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_DRAFT_ZONES.csv
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_RU.md
+```
+
+Пользователь уточнил согласованный список желательных входов: `LA002`, `LA018`, `LA026`, `LA042`, `LA044`, `LA047`, `LA049`, `LA054`, `LA055`, `LA058`, `LA062`. Предыдущий trial-слой с no-buy оценками оставлен только как черновая история; актуальный слой для согласования - `USER_DESIRED_V1`, без автоматической браковки соседей.
+
+Новые артефакты:
+
+```text
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_USER_DESIRED_V1.csv
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_USER_DESIRED_V1_ANNOTATED_TOP.png
+STAS5_ML_CORE/runs/full274_feature_collect_20260127_20260715_090857/market_passport_trial_20260127/STAS5_V5_MARKET_PASSPORT_TRIAL_20260127_USER_DESIRED_V1_RU.md
+```
+
+Следующий шаг - вокруг этих `11` желательных входов отдельно разобрать соседние плохие/альтернативные кандидаты. Обучение не запускалось.
+
+## STAS5 FULL274 Feature Collect 2026-07-15
+
+Статус: `PASS`.
+
+Добавлен отдельный wrapper:
+
+```text
+STAS5_ML_CORE/run_stas5_full274_feature_collect.ps1
+```
+
+Назначение: собрать один день до обучения в отдельный `STAS5_ML_CORE/runs/...` без перезаписи старых прогонов.
+
+Контрольный запуск:
+
+```text
+STAS5_ML_CORE/runs/full274_feature_collect_20260401_20260715_084509/
+rows=81
+features=274
+v1_features=111
+v2_features=163
+training_started=false
+```
+
+График строится через `stas5_v2_feature_visual_approval.py`; CUT-маркеры и подписи LAxxx сделаны ярко-желтыми для читаемости. Обучение, API, TP/Stas3 не запускались.
+
+## Актуальный источник правды STAS5 V4
+
+Текущее состояние V4 group-rank брать из верхних свежих секций и из guard/unified ledger:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1_GUARD.json
+STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv
+```
+
+Актуальный unified ledger: `738` строк, `BEST_GOOD=64`, `GOOD_ALT=42`, `BAD_IN_GROUP=433`, `NO_TRADE_GROUP=199`, guard `PASS`. Старые секции ниже оставлены как журнал промежуточных шагов и могут иметь устаревшие счетчики.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-25 Checked
+
+Текущий статус: `STAS5_V4_20260525_USER_CHECKED_PASS_NO_TRAINING`.
+
+`2026-05-25` сверен с пользовательским скрином. Два красных круга совпали с текущей таблицей:
+
+```text
+LA020 = BEST_GOOD, pre-London нижний pullback; на старом графике был серый/skip-кандидат без подписи
+LA019 = GOOD_ALT, хороший соседний вход, но выше LA020
+LA038 = BEST_GOOD, late-London pullback/retest
+```
+
+CSV day25 не изменялся. Актуальные winners day25: `LA014`, `LA020`, `LA038`, `LA059`, `LA066`. Counts: `68` строк, `BEST_GOOD=5`, `GOOD_ALT=4`, `BAD_IN_GROUP=40`, `NO_TRADE_GROUP=19`.
+
+Unified ledger остается после day23: `738` строк, `BEST_GOOD=64`, `GOOD_ALT=42`, `BAD_IN_GROUP=433`, `NO_TRADE_GROUP=199`, guard `PASS`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-24 Checked
+
+Текущий статус: `STAS5_V4_20260524_USER_CHECKED_PASS_NO_TRAINING`.
+
+`2026-05-24` сверен с пользовательским скрином. Два больших круга и поздняя нижняя зона совпали с текущей таблицей:
+
+```text
+LA015 = BEST_GOOD, pre-London lower entry
+LA042 = BEST_GOOD, overlap crash deep low
+LA065 = BEST_GOOD, late deep low/retest
+LA067 = GOOD_ALT, хороший поздний pullback, но не главный low группы
+```
+
+CSV day24 не изменялся. Актуальные winners day24: `LA009`, `LA015`, `LA024`, `LA042`, `LA065`. Counts: `70` строк, `BEST_GOOD=5`, `GOOD_ALT=5`, `BAD_IN_GROUP=54`, `NO_TRADE_GROUP=6`.
+
+Unified ledger остается после day23: `738` строк, `BEST_GOOD=64`, `GOOD_ALT=42`, `BAD_IN_GROUP=433`, `NO_TRADE_GROUP=199`, guard `PASS`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-23 Checked
+
+Текущий статус: `STAS5_V4_20260523_USER_CORRECTED_V1_NO_TRAINING`.
+
+`2026-05-23` сверен с пользовательским скрином. Видимые красные круги показали, что draft слишком широко сгруппировал recovery-участок `LA034..LA042`: `LA034` и `LA042` были занижены относительно человеческой логики отдельных входов.
+
+Исправление:
+
+```text
+LA034 = BEST_GOOD в отдельной первой recovery pullback micro-group
+LA036 = BEST_GOOD, остается отдельным winner
+LA042 = BEST_GOOD, повышен из GOOD_ALT как pre-breakout retest
+LA051 = BEST_GOOD, остается поздним continuation-base winner
+```
+
+Актуальные winners day23: `LA007`, `LA022`, `LA033`, `LA034`, `LA036`, `LA042`, `LA051`. Counts day23: `63` строки, `BEST_GOOD=7`, `GOOD_ALT=4`, `BAD_IN_GROUP=40`, `NO_TRADE_GROUP=12`.
+
+Unified ledger теперь: `738` строк, `BEST_GOOD=64`, `GOOD_ALT=42`, `BAD_IN_GROUP=433`, `NO_TRADE_GROUP=199`, guard `PASS`. Risk audit: `GOOD_ALT_MAY_NEED_MICRO_GROUP=39`, `BEST_GOOD_FROM_OLD_NON_ENTER=28`, `OLD_ENTER_DEMOTED_TO_BAD_OR_NO_TRADE=118`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-22 Checked
+
+Текущий статус: `STAS5_V4_20260522_USER_CORRECTED_V1_NO_TRAINING`.
+
+`2026-05-22` сверен со свежим пользовательским скрином. Видимая ошибка была не в количестве входов, а в выборе главного входа внутри pre-London группы: пользователь отметил поздний ретест `LA024`, а не ранний low `LA022`.
+
+Исправление:
+
+```text
+LA022 = GOOD_ALT, первый low зоны
+LA024 = BEST_GOOD, пользовательски отмеченный ретест/подбор перед продолжением вверх
+```
+
+Актуальные winners day22: `LA007`, `LA024`, `LA036`, `LA047`, `LA061`. Counts day22: `75` строк, `BEST_GOOD=5`, `GOOD_ALT=4`, `BAD_IN_GROUP=55`, `NO_TRADE_GROUP=11`.
+
+Unified ledger остается: `738` строк, `BEST_GOOD=62`, `GOOD_ALT=43`, `BAD_IN_GROUP=434`, `NO_TRADE_GROUP=199`, guard `PASS`. Risk audit totals не изменились. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-21 Checked
+
+Текущий статус: `STAS5_V4_20260521_USER_CORRECTED_V1_NO_TRAINING`.
+
+`2026-05-21` сверен с пользовательским скрином. Четыре круга означают: `LA006` уже совпадал с winner, а `LA039`, `LA050`, `LA057` были задавлены слишком широкими группами.
+
+Исправление:
+
+```text
+LA039 = BEST_GOOD в первой sell-wave basin micro-group
+LA045 = BEST_GOOD в отдельной overlap-flush micro-group
+LA050 = BEST_GOOD в отдельной post-flush retest micro-group
+LA057 = BEST_GOOD в первой pre-breakout pullback micro-group
+LA059 = BEST_GOOD в следующей lower pre-breakout retest micro-group
+```
+
+Актуальные winners day21: `LA006`, `LA019`, `LA039`, `LA045`, `LA050`, `LA057`, `LA059`, `LA066`. Counts: `81` строка, `BEST_GOOD=8`, `GOOD_ALT=4`, `BAD_IN_GROUP=54`, `NO_TRADE_GROUP=15`.
+
+Unified ledger теперь: `738` строк, `BEST_GOOD=62`, `GOOD_ALT=43`, `BAD_IN_GROUP=434`, `NO_TRADE_GROUP=199`, guard `PASS`. Risk audit: `GOOD_ALT_MAY_NEED_MICRO_GROUP=40`, `BEST_GOOD_FROM_OLD_NON_ENTER=26`, `OLD_ENTER_DEMOTED_TO_BAD_OR_NO_TRADE=118`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-20 Checked
+
+Текущий статус: `STAS5_V4_20260520_USER_CORRECTED_V1_NO_TRAINING`.
+
+`2026-05-20` сверен с новым пользовательским скрином. В зоне `13:19-14:26` было две отмеченные точки: нижняя уже совпадала с `LA037`, верхняя была серым/skip-кандидатом `LA038`, который draft ошибочно держал как `BAD_AFTER_BOUNCE_TOO_HIGH`.
+
+Исправление:
+
+```text
+LA037 = BEST_GOOD в crash-low группе LA033..LA037
+LA038 = BEST_GOOD в отдельной rebound/pullback micro-group LA038..LA039
+LA035 = GOOD_ALT
+LA036 = BAD_IN_GROUP
+LA039 = BAD_IN_GROUP
+```
+
+Актуальные winners day20: `LA011`, `LA037`, `LA038`, `LA045`, `LA053`, `LA057`. Counts: `68` строк, `BEST_GOOD=6`, `GOOD_ALT=4`, `BAD_IN_GROUP=27`, `NO_TRADE_GROUP=31`.
+
+Unified ledger теперь: `738` строк, `BEST_GOOD=59`, `GOOD_ALT=44`, `BAD_IN_GROUP=436`, `NO_TRADE_GROUP=199`, guard `PASS`. Risk audit: `GOOD_ALT_MAY_NEED_MICRO_GROUP=41`, `BEST_GOOD_FROM_OLD_NON_ENTER=24`, `OLD_ENTER_DEMOTED_TO_BAD_OR_NO_TRADE=118`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-19 Checked
+
+Текущий статус: `STAS5_V4_20260519_USER_CORRECTED_V1_NO_TRAINING`.
+
+`2026-05-19` сверен с новым пользовательским скрином. Красная обводка в overlap/retest зоне означает отдельный retest/base вход после `LA042`. Старый draft ошибочно держал эту точку как `GOOD_ALT` внутри широкой группы `LA034..LA047`.
+
+Исправление:
+
+```text
+LA042 = BEST_GOOD в отдельной flush-группе LA034..LA042
+LA046 = BEST_GOOD в отдельной retest/base micro-group LA043..LA047
+LA047 = GOOD_ALT
+LA045 = BAD_IN_GROUP
+```
+
+Важно: подпись со старым score `0.86` на скрине соответствует строке `LA046` в CSV; `LA045` в CSV имеет старый score около `0.07`.
+
+Актуальные winners day19: `LA005`, `LA016`, `LA032`, `LA042`, `LA046`, `LA063`. Counts: `65` строк, `BEST_GOOD=6`, `GOOD_ALT=3`, `BAD_IN_GROUP=39`, `NO_TRADE_GROUP=17`.
+
+Unified ledger теперь: `738` строк, `BEST_GOOD=58`, `GOOD_ALT=44`, `BAD_IN_GROUP=437`, `NO_TRADE_GROUP=199`, guard `PASS`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-18 Checked
+
+Текущий статус: `STAS5_V4_20260518_USER_CORRECTED_V1_NO_TRAINING`.
+
+`2026-05-18` сверен с пользовательским скрином с красными обводками. Исправлены две ошибки старого draft:
+
+```text
+LA036 = BEST_GOOD, отдельный pullback/retest после импульса вверх
+LA066 = BEST_GOOD, отдельный late NY retest после вертикального движения
+```
+
+Актуальные winners day18: `LA006`, `LA019`, `LA034`, `LA036`, `LA049`, `LA061`, `LA066`. Counts: `73` строки, `BEST_GOOD=7`, `GOOD_ALT=7`, `BAD_IN_GROUP=52`, `NO_TRADE_GROUP=7`.
+
+Unified ledger теперь: `738` строк, `BEST_GOOD=57`, `GOOD_ALT=44`, `BAD_IN_GROUP=438`, `NO_TRADE_GROUP=199`, guard `PASS`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-17 Checked
+
+Текущий статус: `STAS5_V4_20260517_USER_CHECKED_V1_NO_TRAINING`.
+
+`2026-05-17` сверен с пользовательским скрином. Актуальные winners в таблице совпадают с красными нижними отметками на графике: `LA004`, `LA006`, `LA036`, `LA046`, `LA063`. Это пять отдельных human-style входов дня; `LA003`, `LA005`, `LA044` остаются `GOOD_ALT`, а не отдельными главными входами.
+
+CSV не менялся: текущий `STAS5_V4_GROUP_RANK_LEDGER_20260517_DRAFT.csv` уже соответствует скрину. Создан только проверочный отчет `STAS5_V4_GROUP_RANK_REVIEW_20260517_USER_CHECKED_V1_RU.md`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-16 Checked
+
+Текущий статус: `STAS5_V4_20260516_USER_CORRECTED_V1_NO_TRAINING`.
+
+`2026-05-16` сверен с пользовательским скрином. Актуальные winners: `LA016`, `LA027`, `LA038`, `LA041`. `LA049` снят из winners и переведен в no-trade context вместе с группой `LA043..LA049`, потому что на скрине нет отдельной красной отметки в этой зоне.
+
+Unified ledger теперь: `BEST_GOOD=55`, `GOOD_ALT=43`, `BAD_IN_GROUP=437`, `NO_TRADE_GROUP=203`, guard `PASS`. Обучение и group features не запускались.
+
+## Current State 2026-07-14 STAS5 V4 Micro-Group Correction
+
+Текущий статус: `STAS5_V4_FORWARD_REVIEW_MICRO_GROUP_V2_NO_TRAINING`.
+
+`2026-05-15` исправлен после пользовательского уточнения по скрину: целевой вход может быть старым `UNSURE` или `SKIP`, если он является человечески отмеченной нижней точкой выбора. V4 учится ранжировать внутри human-style group/micro-group, а не копировать старый цвет маркера.
+
+Актуальная разметка `2026-05-15`: `LA004`, `LA007`, `LA021`, `LA024`, `LA054`, `LA061` являются `BEST_GOOD`. `LA004` и `LA007` больше не конкурируют в одной большой группе: они разделены на две micro-groups.
+
+Unified ledger `2026-05-15..2026-05-25` обновлен и проходит guard:
+
+```text
+rows=738
+BEST_GOOD=55
+GOOD_ALT=43
+BAD_IN_GROUP=437
+NO_TRADE_GROUP=203
+guard=PASS
+```
+
+Для `2026-05-16..2026-05-25` создан и обновлен risk audit. После правки `2026-05-18` следующий правильный шаг - смотреть оставшиеся `GOOD_ALT_MAY_NEED_MICRO_GROUP=41`, а не пересобирать все дни подряд. Обучение V4, group features, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 Screenshot Artifact Inventory
+
+Текущий статус: `STAS5_V4_SCREENSHOT_ARTIFACT_INVENTORY_DONE_NO_TRAINING`.
+
+Создана папка для ручного просмотра скриншотов и зафиксированных V4-блоков:
+
+```text
+STAS5_ML_CORE/artifacts/v4/review_navigation/20260714_artifact_inventory
+```
+
+Собраны три контакт-листа:
+
+```text
+CONTACT_SHEET_20260501_20260514_TRAIN_VISUAL_APPROVAL.png
+CONTACT_SHEET_20260515_20260525_FORWARD_SOURCE.png
+CONTACT_SHEET_20260515_20260525_V4_GROUP_BLOCKS.png
+```
+
+Индекс файлов:
+
+```text
+STAS5_SCREENSHOT_INDEX_20260501_20260525.csv
+STAS5_SCREENSHOT_INDEX_20260501_20260525.json
+```
+
+Проверка наличия файлов прошла без пропусков. `2026-05-01..2026-05-14` сейчас представлены как train visual approval PNG. `2026-05-15..2026-05-25` имеют исходные forward PNG и V4 group-rank annotated PNG. Это только инвентаризация и визуальная навигация, без обучения и без изменения ledger.
+
+## Current State 2026-07-14 STAS5 V4 Unified Forward Review 2026-05-15..2026-05-25
+
+Текущий статус: `STAS5_V4_FORWARD_REVIEW_20260515_20260525_DRAFT_NO_TRAINING`.
+
+`2026-05-15` включен в общий forward-review блок `2026-05-15..2026-05-25`, а не ведется отдельным карантинным/approved днем. База `2026-05-01..2026-05-14` остается отдельной train-base рамкой.
+
+Уточнен дневной ориентир V4: `2..5` входов не является жестким потолком. Количество лучших входов должно быть адаптивным по режиму дня: спокойный день может дать `2..3`, активный `4..6`, сильный волатильный день может дать больше, вплоть до `8..12`, если это разные понятные winner/alt-группы. Запрещается не большое число само по себе, а шумные зеленые стрелки без group winner/reason-code.
+
+Единый ledger:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515_20260525/STAS5_V4_GROUP_RANK_LEDGER_20260515_20260525_FORWARD_REVIEW_V1.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv
+```
+
+Итог пакета после ручных правок `2026-05-16`, `2026-05-18`, `2026-05-19`, `2026-05-20` и `2026-05-21`: `738` строк, `BAD_IN_GROUP=434`, `GOOD_ALT=43`, `BEST_GOOD=62`, `NO_TRADE_GROUP=199`; `62` winners, guard по ledger-структуре `PASS`. Group/reason/winner coverage сходится, forbidden old-ML/future/TP/Stas3/exit columns отсутствуют. Group features еще не построены, поэтому обучение V4 остается заблокированным.
+
+Старый 15-only главный ledger сохранен как superseded-копия и не является текущей рабочей точкой.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-15 Quarantine Removed
+
+Текущий статус: `STAS5_V4_20260515_APPROVED_V1_NO_TRAINING`.
+
+День `2026-05-15` снят с карантина по решению пользователя. На базе `USER_CORRECTED_V1` создан approved ledger: `41` строка, `BAD_IN_GROUP=26`, `NO_TRADE_GROUP=6`, `BEST_GOOD=5`, `GOOD_ALT=4`.
+
+Approved winners: `LA007`, `LA021`, `LA024`, `LA054`, `LA061`. Good-alt: `LA004`, `LA005`, `LA053`, `LA060`.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_REVIEW_20260515_APPROVED_V1_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_LEDGER_20260515_APPROVED_V1.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv
+```
+
+Календарь V4 теперь `base_25_days = 2026-05-01..2026-05-25`. Общий approved ledger сейчас содержит только `2026-05-15`; draft-дни `2026-05-16..2026-05-25` не переведены в approved без отдельного подтверждения.
+
+Граница: обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-25 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260525_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому V3 forward-скриншоту `2026-05-25` создан V4 draft-разбор по группам выбора: `group_id -> winner -> bad neighbours with reason`. День разложен на `7` групп и `68` строк: `BAD_IN_GROUP=40`, `NO_TRADE_GROUP=19`, `BEST_GOOD=5`, `GOOD_ALT=4`.
+
+Актуальные winners: `LA014`, `LA020`, `LA038`, `LA059`, `LA066`. Good-alt: `LA006`, `LA015`, `LA019`, `LA067`. Важный смысл дня: старые V3 `ENTER` `LA012`, `LA030`, `LA053`, `LA057`, `LA068` не должны выигрывать у более нижних/поздних V4 winner-зон.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260525/STAS5_V4_GROUP_RANK_REVIEW_20260525_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260525/STAS5_V4_GROUP_RANK_LEDGER_20260525_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260525/STAS5_V4_GROUP_RANK_REVIEW_20260525_ANNOTATED_DRAFT.png
+```
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-24 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260524_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому V3 forward-скриншоту `2026-05-24` создан V4 draft-разбор по группам выбора: `group_id -> winner -> bad neighbours with reason`. День разложен на `6` групп и `70` строк: `BAD_IN_GROUP=54`, `NO_TRADE_GROUP=6`, `GOOD_ALT=5`, `BEST_GOOD=5`.
+
+Актуальные winners: `LA009`, `LA015`, `LA024`, `LA042`, `LA065`. Good-alt: `LA005`, `LA008`, `LA014`, `LA023`, `LA067`. Важный смысл дня: старые V3 `ENTER` в середине лондонского движения и overlap/NY ножа не должны выигрывать у нижних ретестов `LA024`, `LA042`, `LA065`.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260524/STAS5_V4_GROUP_RANK_REVIEW_20260524_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260524/STAS5_V4_GROUP_RANK_LEDGER_20260524_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260524/STAS5_V4_GROUP_RANK_REVIEW_20260524_ANNOTATED_DRAFT.png
+```
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-23 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260523_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому V3 forward-скриншоту `2026-05-23` создан V4 draft-разбор по группам выбора: `group_id -> winner -> bad neighbours with reason`. День разложен на `6` групп и `63` строки: `BAD_IN_GROUP=41`, `NO_TRADE_GROUP=12`, `GOOD_ALT=5`, `BEST_GOOD=5`.
+
+Актуальные winners: `LA007`, `LA022`, `LA033`, `LA036`, `LA051`. Good-alt: `LA002`, `LA014`, `LA025`, `LA042`, `LA046`. Важный смысл дня: `LA017..LA021` не должны выигрывать у `LA022`, потому что это входы в падающий нож до финального low; поздняя post-spike зона `LA052..LA063` оставлена no-trade.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_REVIEW_20260523_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_LEDGER_20260523_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_REVIEW_20260523_ANNOTATED_DRAFT.png
+```
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-22 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260522_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому V3 forward-скриншоту `2026-05-22` создан V4 draft-разбор по группам выбора. День разложен на `6` групп и `75` строк: `BAD_IN_GROUP=55`, `NO_TRADE_GROUP=11`, `BEST_GOOD=5`, `GOOD_ALT=4`.
+
+Актуальные winners: `LA007`, `LA022`, `LA036`, `LA047`, `LA061`. Good-alt: `LA005`, `LA024`, `LA043`, `LA062`. Важный смысл дня: старые V3 `ENTER` в зоне `LA056..LA058` не должны выигрывать у финального deep low `LA061`; поздний weak-hours low `LA075` оставлен no-trade.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260522/STAS5_V4_GROUP_RANK_REVIEW_20260522_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260522/STAS5_V4_GROUP_RANK_LEDGER_20260522_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260522/STAS5_V4_GROUP_RANK_REVIEW_20260522_ANNOTATED_DRAFT.png
+```
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-21 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260521_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому V3 forward-скриншоту `2026-05-21` создан V4 draft-разбор по группам выбора: `group_id -> winner -> bad neighbours with reason`. День разложен на `6` групп и `81` строку: `BAD_IN_GROUP=56`, `NO_TRADE_GROUP=15`, `GOOD_ALT=5`, `BEST_GOOD=5`.
+
+Актуальные winners: `LA006`, `LA019`, `LA045`, `LA059`, `LA066`. Good-alt: `LA004`, `LA021`, `LA040`, `LA048`, `LA057`. Важный смысл дня: старые V3 `ENTER` в середине падения и на вершине spike не должны выигрывать у нижних basin/retest-зон.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260521/STAS5_V4_GROUP_RANK_REVIEW_20260521_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260521/STAS5_V4_GROUP_RANK_LEDGER_20260521_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260521/STAS5_V4_GROUP_RANK_REVIEW_20260521_ANNOTATED_DRAFT.png
+```
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-20 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260520_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому скриншоту `2026-05-20` создан V4 draft-разбор по группам выбора: не построчный `KEEP/CUT`, а `group_id -> winner -> bad neighbours with reason`. День разложен на `7` групп и `68` строк: `NO_TRADE_GROUP=31`, `BAD_IN_GROUP=28`, `BEST_GOOD=5`, `GOOD_ALT=4`.
+
+Актуальные winners: `LA011`, `LA037`, `LA045`, `LA053`, `LA057`. Good-alt: `LA002`, `LA035`, `LA040`, `LA052`. Важный смысл дня: раннюю базу брать через финальный ретест `LA011`, лондонскую середину не превращать в good из-за старого ML score, после NY-движения выбирать нижние pullback/retest-зоны.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260520/STAS5_V4_GROUP_RANK_REVIEW_20260520_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260520/STAS5_V4_GROUP_RANK_LEDGER_20260520_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260520/STAS5_V4_GROUP_RANK_REVIEW_20260520_ANNOTATED_DRAFT.png
+```
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-19 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260519_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому скриншоту `2026-05-19` создан V4 draft-разбор по группам выбора с учетом красного нисходящего канала. День разложен на `7` групп и `65` строк: `BAD_IN_GROUP=40`, `NO_TRADE_GROUP=17`, `BEST_GOOD=5`, `GOOD_ALT=3`.
+
+Актуальные winners: `LA005`, `LA016`, `LA032`, `LA042`, `LA063`. Good-alt: `LA046`, `LA061`, `LA062`. Важный смысл дня: не брать середину/верх нисходящего канала; хорошие входы должны быть у нижней границы канала или после deep low.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260519/STAS5_V4_GROUP_RANK_REVIEW_20260519_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260519/STAS5_V4_GROUP_RANK_LEDGER_20260519_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260519/STAS5_V4_GROUP_RANK_REVIEW_20260519_ANNOTATED_DRAFT.png
+```
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-18 Draft Group Review
+
+Текущий статус: `SUPERSEDED_BY_20260518_USER_CORRECTED_V1_NO_TRAINING`.
+
+Первый V4 draft-разбор по `2026-05-18` разложил день на `6` групп и `73` строки: `BAD_IN_GROUP=51`, `NO_TRADE_GROUP=11`, `GOOD_ALT=6`, `BEST_GOOD=5`. После пользовательских обводок он superseded актуальной версией `USER_CORRECTED_V1`, где добавлены `LA036` и `LA066` как отдельные micro-group winners.
+
+Актуальные winners: `LA006`, `LA019`, `LA034`, `LA049`, `LA061`. Близкие хорошие, но не главные: `LA005`, `LA014`, `LA022`, `LA048`, `LA050`, `LA059`. Поздний участок `LA063..LA073` оставлен no-trade после V-отскока.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260518/STAS5_V4_GROUP_RANK_REVIEW_20260518_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260518/STAS5_V4_GROUP_RANK_LEDGER_20260518_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260518/STAS5_V4_GROUP_RANK_REVIEW_20260518_ANNOTATED_DRAFT.png
+```
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-17 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260517_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому скриншоту `2026-05-17` создан такой же V4 draft-разбор по группам выбора: не построчный `KEEP/CUT`, а `group_id -> winner -> bad neighbours with reason`. Красные зоны оформлены как draft winners: `LA004`, `LA006`, `LA036`, `LA046`, `LA063`; близкие хорошие, но не главные: `LA003`, `LA005`, `LA044`.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260517/STAS5_V4_GROUP_RANK_REVIEW_20260517_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260517/STAS5_V4_GROUP_RANK_LEDGER_20260517_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260517/STAS5_V4_GROUP_RANK_REVIEW_20260517_ANNOTATED_DRAFT.png
+```
+
+CSV содержит `63` строки: `NO_TRADE_GROUP=30`, `BAD_IN_GROUP=25`, `BEST_GOOD=5`, `GOOD_ALT=3`. Ключевой V4-контраст дня: `LA056/LA062` старый ML зеленит до финального пролива, а правильный group winner - `LA063`.
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 Review Encoding Fix
+
+Текущий статус: `STAS5_V4_REVIEW_ENCODING_FIX_DONE`.
+
+После замечания пользователя про кракозябры проверены V4 Markdown-разборы `2026-05-15` и `2026-05-16` в папке `STAS5_ML_CORE/artifacts/v4/group_rank_review`. Файлы читаются как нормальный UTF-8: длинные цепочки вопросительных знаков, `U+FFFD` и CJK-мусор в трех review-файлах не найдены.
+
+Граница: исправление касалось только читаемости Markdown/командной памятки. CSV-ledger, PNG-разметка, признаки, обучение, threshold tuning, Optuna, API, TP/Stas3/exit не менялись и не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-16 Draft Group Review
+
+Текущий статус: `STAS5_V4_20260516_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По пользовательскому скриншоту `2026-05-16` создан V4 draft-разбор по группам выбора, по той же логике, что для `2026-05-15`: не построчный `KEEP/CUT`, а `group_id -> winner -> bad neighbours with reason`.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260516/STAS5_V4_GROUP_RANK_REVIEW_20260516_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260516/STAS5_V4_GROUP_RANK_LEDGER_20260516_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260516/STAS5_V4_GROUP_RANK_REVIEW_20260516_ANNOTATED_DRAFT.png
+```
+
+CSV содержит `71` строку: `NO_TRADE_GROUP=38`, `BAD_IN_GROUP=27`, `BEST_GOOD=5`, `GOOD_ALT=1`. Winners: `LA016`, `LA027`, `LA038`, `LA041`, `LA049`. Ключевые обучающие контрасты: `LA034` плохой высокий вход в третьей волне, а `LA038` правильный lower missed-good; `LA021/LA024/LA025/LA026` плохие до более глубокого `LA027`.
+
+Граница: это `DRAFT`, не approved train ledger. Обучение V4, threshold tuning, Optuna, API, TP/Stas3/exit не запускались.
+
+## Current State 2026-07-14 STAS5 V4 2026-05-15 User-Corrected V1
+
+Текущий статус: `SUPERSEDED_BY_20260515_APPROVED_V1_NO_TRAINING`.
+
+По уточнению пользователя первый разбор `2026-05-15` исправлен: день разложен не как `90` отдельных входов, а как `6` групп выбора, где красная линия означает хороший вход, а соседние кандидаты вокруг него становятся обучающими плохими примерами.
+
+Актуальные артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_REVIEW_20260515_USER_CORRECTED_V1_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_LEDGER_20260515_USER_CORRECTED_V1.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_REVIEW_20260515_USER_CORRECTED_V1_ANNOTATED.png
+```
+
+CSV содержит `41` строку: `BAD_IN_GROUP=26`, `NO_TRADE_GROUP=6`, `BEST_GOOD=5`, `GOOD_ALT=4`. Winners: `LA007`, `LA021`, `LA024`, `LA054`, `LA061`; `LA004` сохранен как `GOOD_ALT`, потому что внутри группы 1 более глубокий winner - `LA007`. Группа 4 оформлена как `NO_TRADE_GROUP`, потому что это пила без выбранного хорошего входа. Предыдущий `SCREENSHOT_DRAFT` остается архивной черновой версией, но актуальная рабочая версия для 15 мая теперь `USER_CORRECTED_V1`.
+
+Граница: эта user-corrected версия сохранена как источник истории и superseded by approved V1. Актуальный approved ledger: `STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_LEDGER_20260515_APPROVED_V1.csv`.
+
+## Current State 2026-07-14 STAS5 V4 Human-Style Group Ranker TZ
+
+Текущий статус: `STAS5_V4_20260515_SCREENSHOT_GROUP_REVIEW_DRAFT_NO_TRAINING`.
+
+По решению пользователя зафиксирован новый V4-контур: не построчный `KEEP/CUT` классификатор, а group ranker, который выбирает лучший вход внутри локальной группы кандидатов и объясняет, почему соседние входы хуже.
+
+Главный документ:
+
+```text
+STAS5_ML_CORE/07_STAS5_V4_HUMAN_STYLE_GROUP_RANKER_TZ_RU.md
+```
+
+Создана V4-папка и схема будущего ledger:
+
+```text
+STAS5_ML_CORE/v4/README_RU.md
+STAS5_ML_CORE/schemas/STAS5_V4_GROUP_RANK_LEDGER.schema.json
+```
+
+Новый источник истины будущей разметки:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_ledger/STAS5_V4_GROUP_RANK_LEDGER.csv
+```
+
+Календарь: базовые `24` дня = `2026-05-01..2026-05-14 + 2026-05-16..2026-05-25`; день `2026-05-15` остается карантинным до approved group ledger. Если `2026-05-15` будет включен после утверждения, календарь станет `25` дней.
+
+Граница: обучение, threshold tuning, Optuna, API, TP/Stas3/exit не запускались. Следующий практический шаг - оформить групповой ledger, начиная с карантинного `2026-05-15` и перевода уже размеченных `2026-05-16..2026-05-20` в формат `group_id + reason_code + winner`.
+
+По пользовательскому скриншоту `2026-05-15` с красными подчеркиваниями создан первый draft group-review:
+
+```text
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_REVIEW_20260515_DRAFT_RU.md
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_LEDGER_20260515_SCREENSHOT_DRAFT.csv
+STAS5_ML_CORE/artifacts/v4/group_rank_review/20260515/STAS5_V4_GROUP_RANK_REVIEW_20260515_ANNOTATED_DRAFT.png
+```
+
+Draft CSV содержит `41` строк: `BEST_GOOD=5`, `GOOD_ALT=3`, `BAD_IN_GROUP=22`, `NO_TRADE_GROUP=11`. Черновые winners: `LA004`, `LA007`, `LA021`, `LA054`, `LA061`; если нужен жесткий режим `2..3` входа в день, главный кандидатный набор: `LA021`, `LA054`, `LA061`. Этот слой остается `DRAFT`, день `2026-05-15` все еще не включен в train.
+
+## Current State 2026-07-14 STAS5 V3 Review Train Forward 21-25
+
+Текущий статус: `STAS5_V3_REVIEW_TRAIN_FORWARD_21_25_READY`.
+
+Собран и проверен V3-контур:
+
+```text
+train = 2026-05-01..2026-05-14 + user review 2026-05-16..2026-05-20
+excluded = 2026-05-15
+holdout/blind-forward = 2026-05-21..2026-05-25
+feature_set = full_v2_all_274
+feature_count = 274
+```
+
+Факты: ledger `135` строк, train rows `134`; dataset `1106` строк; guard `PASS`; wrapper-run `stas5_v3_wrapper_smoke2_20260714` дал `5/5` PNG за `2026-05-21..2026-05-25`.
+
+Forward totals:
+
+```text
+ENTER=79
+UNSURE=31
+SKIP=247
+```
+
+Рабочая папка графиков:
+
+```text
+STAS5_ML_CORE/artifacts/v3/forward/runs/stas5_v3_wrapper_smoke2_20260714/
+```
+
+Главный отчет и команда:
+
+```text
+STAS5_ML_CORE/06_STAS5_V3_REVIEW_TRAIN_FORWARD_RESULT_RU.md
+STAS5_ML_CORE/run_stas5_v3_review_train_forward_21_25.ps1
+```
+
+Граница: TP/Stas3/API/Optuna/threshold tuning не запускались.
+
+## Current State 2026-07-13 STAS5 V2 Full274 Run Check
+
+Текущий статус: `STAS5_V2_FULL274_RUN_CHECK_PASS_TECHNICAL_REVIEW_REQUIRED`.
+
+Последний full274 run:
+
+```text
+stas5_v2_full274_20260713_203703
+```
+
+Технически все сошлось: model/forward pointers совпадают, `model_feature_set=full_v2_all_274`, `feature_count=274`, guard `PASS`, forward `435` строк за `2026-05-15..2026-05-20`, все 6 PNG готовы.
+
+Forward counts:
+
+```text
+ENTER=77, UNSURE=24, SKIP=334
+```
+
+Отчет:
+
+```text
+STAS5_ML_CORE/artifacts/v2_audit/STAS5_V2_FULL274_RUN_CHECK_20260713_203703_RU.md
+```
+
+Ограничение: full274 не является автоматически лучшим вариантом; train AUC `0.649292`, baseline `v1_plus_risk_gate` AUC `0.684988`. Следующий шаг - визуальный review PNG.
+
+## Current State 2026-07-13 STAS5 V2 Full 274 Wrapper
+
+Текущий статус: `STAS5_V2_FULL_274_WRAPPER_READY`.
+
+Добавлен безопасный wrapper для полного прогона `full_v2_all_274`:
+
+```text
+STAS5_ML_CORE/run_stas5_v2_full_274_train_forward.ps1
+```
+
+Он делает один связанный запуск: пересборка train V2 combo features, train snapshot, leakage guard, pre-ML audit, numeric coverage audit, forward V2 combo features, обучение `full_v2_all_274`, затем blind-forward `2026-05-15..2026-05-20`. В конце wrapper проверяет, что model manifest реально имеет `model_feature_set=full_v2_all_274` и `feature_count=274`.
+
+Сам тяжелый full-прогон не запускался. Проверены только PowerShell-синтаксис wrapper и `py_compile` нужных Python-модулей.
+
+## Current State 2026-07-13 STAS5 V2 Graph To Feature Audit
+
+Текущий статус: `STAS5_V2_GRAPH_TO_FEATURE_AUDIT_READY`.
+
+Проверен train-график `2026-05-04` из batch:
+
+```text
+STAS5_ML_CORE/artifacts/v2/visual_approval/runs/stas5_v2_train_visual_20260713_14d/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.png
+```
+
+Итог: график полностью состыкован с full snapshot (`74` строки, `9 KEEP`, `65 CUT`, feature columns `274`), но latest controlled model использует только `126` признаков набора `v1_plus_risk_gate`. В текущую модель не входят `stas4_v2_combo_*`, `stas4_v2_density_*`, `stas4_v2_structure_*`, `stas4_v2_block_*`, `stas4_v2_pattern_*`, `stas5_v2_short_wave_*`, `stas4_v2_volume_*`, `stas4_v2_div_*`.
+
+Отчет:
+
+```text
+STAS5_ML_CORE/artifacts/v2_audit/STAS5_V2_GRAPH_TO_FEATURE_AUDIT_20260504_RU.md
+```
+
+Граница: это audit-only. Никакое новое обучение, TP/Stas3, API, Optuna или threshold tuning не запускались.
+
+## Current State 2026-07-13 STAS5 V2 Train Visual Batch
+
+Текущий статус: `STAS5_V2_TRAIN_VISUAL_BATCH_READY_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+Train-графики теперь покрывают все `14` дней обучения, а не только `2026-05-04`.
+
+Путь:
+
+```text
+STAS5_ML_CORE/artifacts/v2/visual_approval/runs/stas5_v2_train_visual_20260713_14d/
+```
+
+Manifest:
+
+```text
+STAS5_ML_CORE/artifacts/v2/visual_approval/runs/stas5_v2_train_visual_20260713_14d/STAS5_V2_TRAIN_VISUAL_BATCH_MANIFEST.json
+```
+
+Проверенные факты: `14/14` PNG, rows `972`, `KEEP=115`, `CUT=857`, latest pointer создан. STAS5 tests `34 passed`.
+
+## Current State 2026-07-13 STAS5 V2 Run Isolation
+
+Текущий статус: `STAS5_V2_RUN_ISOLATION_READY`.
+
+Повторные V2-прогоны больше не должны писаться поверх старых дневных папок. CLI запускается с общим `--run-id`; обучение пишет в `artifacts/v2/model/runs/<run_id>/`, forward пишет в `artifacts/v2/forward/runs/<run_id>/`.
+
+Проверочный run:
+
+```text
+stas5_v2_run_20260713_190743
+```
+
+Latest pointers:
+
+```text
+STAS5_ML_CORE/artifacts/v2/model/STAS5_V2_LATEST_MODEL_RUN.json
+STAS5_ML_CORE/artifacts/v2/forward/STAS5_V2_LATEST_FORWARD_RUN.json
+```
+
+Проверки: STAS5 tests `34 passed`.
+
+## Current State 2026-07-13 STAS5 V2 Controlled Forward
+
+Текущий статус: `STAS5_V2_CONTROLLED_FORWARD_READY_NO_TP_NO_API_NO_STAS3`.
+
+V2 контур доведен до результата после numeric coverage:
+
+1. ablation baseline готов;
+2. selected controlled model обучена на `v1_plus_risk_gate`;
+3. blind-forward `2026-05-15..2026-05-20` готов;
+4. CSV/PNG по каждому forward-дню готовы.
+
+Модель: `126` features, LOO AUC `0.684988`, train LOO decisions `ENTER=201`, `UNSURE=114`, `SKIP=657`.
+
+Forward: `ENTER=106`, `UNSURE=45`, `SKIP=284`.
+
+Артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v2/model/STAS5_V2_CONTROLLED_MODEL_AND_FORWARD_REPORT_RU.md
+STAS5_ML_CORE/artifacts/v2/model/stas5_v2_entry_ranker_20260501_20260514_v0.manifest.json
+STAS5_ML_CORE/artifacts/v2/forward/STAS5_V2_FORWARD_ENTRY_REVIEW_MANIFEST.json
+STAS5_ML_CORE/artifacts/v2/forward/20260515/STAS5_V2_FORWARD_ENTRY_REVIEW_20260515.png
+```
+
+Граница: forward postfact только audit-only. Forward не использован для обучения или threshold tuning. TP/Stas3/API/Optuna не запускались.
+
+Следующий шаг: пользователь смотрит PNG и выбирает реальные/шумные входы для следующего улучшения.
+
+## Current State 2026-07-13 STAS5 V2 Numeric Coverage
+
+Текущий статус: `STAS5_V2_NUMERIC_COVERAGE_READY_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+Закрыт аудит вопроса пользователя: “ML видит только цифры, значит надо проверить, что все индикаторы/фичи/стратегии с графика передаются численно”. Проверка велась на train-дне `2026-05-04`.
+
+Численно подключено:
+
+1. STAS4 strategy blocks: `stas4_v2_block_density_structure_*`, `stas4_v2_block_pattern_structure_*`, `stas4_v2_block_structure_volume_*`, `stas4_v2_block_structure_trend_*`;
+2. pattern layer: `stas4_v2_pattern_*`;
+3. causal SHORT/WAVE layer: `stas5_v2_short_wave_*`.
+
+Проверенные факты: V2 combo features `163`; полный train snapshot `274` feature columns; train rows `972`; forward rows `435`; forbidden feature columns `{}`; `KEEP_DRAFT + yellow_x = 30`; guard `PASS`.
+
+Артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v2_audit/STAS5_V2_NUMERIC_COVERAGE_AUDIT_20260504_RU.md
+STAS5_ML_CORE/artifacts/v2_audit/stas5_v2_numeric_coverage_audit_20260504_v0.json
+```
+
+Граница: это не обучение и не final decision. PNG, human labels, yellow X/conflict, postfact, TP/Stas3/exit не являются ML features. Следующий шаг после подтверждения пользователя - V2 ablation baseline.
+
+## Current State 2026-07-13 STAS5 V2 Strategy Audit Strip
+
+Текущий статус: `STAS5_V2_FEATURE_VISUAL_APPROVAL_WITH_STRATEGY_AUDIT_READY_WAIT_USER_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+Approval-график `2026-05-04` обновлен: добавлена полоса `STAS4 Audit` с четырьмя стратегиями `density_profile+structure_ta`, `pattern+structure_ta`, `structure_ta+volume_flow`, `structure_ta+trend_momentum`. Это визуальный audit-only слой, не hard-filter и не ML-решение.
+
+Артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.png
+STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.manifest.json
+```
+
+Manifest фиксирует strategy audit counts: `22/2`, `38/1`, `52/1`, `59/4` по четырем стратегиям. Основные маркеры не изменены: `KEEP_DRAFT=9` зеленые, `CUT_DRAFT=65` красные, `yellow_x_cut=18`, `KEEP+yellow_conflict=4` голубая накладка поверх зеленого KEEP.
+
+Граница: обучение, ablation, threshold tuning, Optuna/API и Stas3/TP не запускались. Следующий шаг - пользователь визуально проверяет PNG.
+
+## Current State 2026-07-13 STAS5 V2 Feature Visual Approval
+
+Текущий статус: `STAS5_V2_FEATURE_VISUAL_APPROVAL_READY_WAIT_USER_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+Перед пунктом 8 V2 ТЗ добавлен обязательный визуальный контроль признаков: train-день `2026-05-04` отрисован в стиле старого STAS4 overlay, но с V2 feature snapshot и ручными labels.
+
+Артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.png
+STAS5_ML_CORE/artifacts/v2/visual_approval/20260504/STAS5_V2_FEATURE_VISUAL_APPROVAL_20260504.manifest.json
+```
+
+На графике есть свечи, volume, session shading, `FON/LONG/SHORT/WAVE`, все LA-кандидаты, human `KEEP/CUT`, yellow X, `KEEP + yellow_x`, density/structure, risk/gate, V2 combo snapshot и старый `COMBO SPECTRUM`. Visual rule: все `KEEP_DRAFT=9` рисуются зелеными, а `KEEP + yellow_x_conflict=4` получают голубую накладку поверх зеленого KEEP.
+
+Проверенные факты: `74` кандидата, `KEEP_DRAFT=9`, `CUT_DRAFT=65`, yellow X `22`, conflicts `4`, PNG `4960x4262`, pixel-check не пустой.
+
+Проверки: `py_compile` PASS; `tests/test_stas5_v2_feature_visual_approval.py` PASS `3 passed`; render command PASS.
+
+Граница: это visual approval only. Обучение, ablation, threshold tuning, production permission, Optuna/API и Stas3/TP не запускались. Следующий шаг - пользователь смотрит PNG и дает добро или правки.
+
+## Current State 2026-07-13 STAS5 V2 Pre-ML Audit
+
+Текущий статус: `STAS5_V2_PRE_ML_AUDIT_READY_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+По основному ТЗ V2 закрыт раздел 14, пункт 7: создан `src/mlbotnav/stas5_v2_pre_ml_audit.py`.
+
+V2 pre-ML audit сравнивает:
+
+1. train `KEEP/CUT` по `214` признакам из V2 feature snapshot;
+2. группы признаков V1/V2;
+3. forward error classes из `stas5_forward_error_ledger_20260515_20260520_v0.csv`;
+4. guard/ledger статусы перед любым следующим modeling шагом.
+
+Артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v2_audit/STAS5_V2_PRE_ML_AUDIT_20260501_20260520_RU.md
+STAS5_ML_CORE/artifacts/v2_audit/stas5_v2_pre_ml_audit_20260501_20260520_v0.json
+```
+
+Проверенные факты: status `READY_FOR_V2_ABLATION_BASELINE`, train rows `972`, `KEEP_DRAFT=115`, `CUT_DRAFT=857`, `KEEP_DRAFT + yellow_x = 30`, feature count `214`, guard `PASS`, forward error ledger `PASS`, forbidden feature columns `{}`. Forward audit: bad green `55`, good green `48`, missed good SKIP `65`. Сильные группы: `v1_stas1_candidate`, `v1_stas2_pre_windows`, `v2_combo_indicator`, `v2_structure`.
+
+Проверки: `py_compile` PASS; `tests/test_stas5_v2_pre_ml_audit.py` PASS `3 passed`; явный STAS5 test pack PASS `24 passed`.
+
+Граница: audit не обучает модель, не подбирает threshold, не делает trading permission и не использует Stas3/TP/exit. Следующий пункт строго по ТЗ: раздел 14, пункт 8 - ablation baseline.
+
+## Current State 2026-07-13 STAS5 V2 Forward Error Ledger
+
+Текущий статус: `STAS5_V2_FORWARD_ERROR_LEDGER_READY_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+По основному ТЗ V2 закрыт раздел 14, пункт 6: создан `src/mlbotnav/stas5_v2_forward_error_ledger.py`.
+
+Forward error ledger соединяет:
+
+1. V1 forward decisions `ML_DECISION/ML_KEEP_SCORE` за `2026-05-15..2026-05-20`;
+2. postfact audit поля `hit_0p5`, `hit_1p0`, `max_up`, `max_drawdown`;
+3. V2 combo/risk/gate features;
+4. опциональные `USER_KEEP_FORWARD_AUDIT` из user-review CSV, если пользователь их заполнит.
+
+Артефакты:
+
+```text
+STAS5_ML_CORE/artifacts/v2_audit/stas5_forward_error_ledger_20260515_20260520_v0.csv
+STAS5_ML_CORE/artifacts/v2_audit/stas5_forward_error_ledger_20260515_20260520_v0.manifest.json
+```
+
+Проверенные факты: `PASS`, `435` строк, join V1/V2 без потерь, duplicate keys `0`. V1 decisions: `ENTER=103`, `UNSURE=55`, `SKIP=277`. Error classes: `GREEN_BAD_FALLING_KNIFE=46`, `GREEN_BAD_NO_REVERSAL=9`, `GREEN_GOOD=48`, `YELLOW_BAD=34`, `YELLOW_GOOD=21`, `SKIP_CORRECT=212`, `SKIP_MISSED_GOOD=65`. V2 expected decisions: `ENTER=35`, `UNSURE=121`, `SKIP=279`.
+
+Проверки: `py_compile` PASS; `tests/test_stas5_v2_forward_error_ledger.py` PASS `3 passed`; явный STAS5 test pack PASS `21 passed`.
+
+Граница: ledger audit-only. Postfact и user-review поля не являются feature columns, train labels или threshold tuning input. Следующий пункт строго по ТЗ: раздел 14, пункт 7 - V2 pre-ML audit.
+
+## Current State 2026-07-13 STAS5 V2 Leakage Guard
+
+Текущий статус: `STAS5_V2_LEAKAGE_GUARD_READY_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+По основному ТЗ V2 закрыт раздел 14, пункт 5: создан `src/mlbotnav/stas5_v2_leakage_guard.py`.
+
+Guard проверяет V2 train snapshot `2026-05-01..2026-05-14`:
+
+1. feature columns из manifest, не весь CSV;
+2. отсутствие `future/postfact/outcome/Stas3/TP/exit/yellow/strategy` в feature columns;
+3. `v2_combo_feature_time_utc < entry_time_utc`;
+4. отсутствие forward-дней `2026-05-15+` в train snapshot;
+5. сохранение `KEEP_DRAFT + yellow_x = 30`;
+6. row parity с manifest и ledger.
+
+Артефакт:
+
+```text
+STAS5_ML_CORE/artifacts/v2/guard/stas5_v2_leakage_guard_20260501_20260514_v0.json
+```
+
+Проверенные факты: `PASS`, `972` строк, `214` feature columns, forbidden feature columns `{}`, label/metadata columns in features `[]`, missing required metadata `[]`, duplicate keys `0`, feature time not before entry `0`, forward days present `0`, label counts `KEEP_DRAFT=115`, `CUT_DRAFT=857`.
+
+Проверки: `py_compile` PASS; `tests/test_stas5_v2_leakage_guard.py` PASS `4 passed`; явный STAS5 test pack PASS `18 passed`.
+
+Следующий пункт строго по ТЗ: раздел 14, пункт 6 - создать `stas5_v2_forward_error_ledger.py`. Не переходить к обучению, threshold tuning, Stas3/TP, API/Optuna или V2 PNG до закрытия forward error ledger и pre-ML audit.
+
+## Current State 2026-07-13 STAS5 V2 Feature Snapshot
+
+Текущий статус: `STAS5_V2_FEATURE_SNAPSHOT_READY_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+По основному ТЗ V2 закрыт раздел 14, пункт 4: создан `src/mlbotnav/stas5_v2_feature_snapshot_builder.py`.
+
+Snapshot объединяет:
+
+1. v1 ledger/labels `2026-05-01..2026-05-14`;
+2. v1 Stas2 feature snapshot `111` признаков;
+3. V2 combo feature layer `103` признака.
+
+Артефакты:
+
+1. `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_feature_snapshot_20260501_20260514_v0.csv`;
+2. `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_feature_snapshot_20260501_20260514_v0.manifest.json`.
+
+Проверенные факты: `PASS`, `972` строк, `214` feature columns, `lost_after_combo_join=0`, `lost_after_ledger_check=0`, `entry_time_mismatch=0`, `anchor_time_mismatch=0`, `v2_combo_feature_available_before_entry_false=0`, forbidden columns `{}`, `KEEP_DRAFT + yellow_x = 30` сохранены.
+
+Проверки: `py_compile` PASS; `tests/test_stas5_v2_feature_snapshot_builder.py` PASS; явный STAS5 test pack `14 passed`.
+
+Следующий пункт строго по ТЗ: раздел 14, пункт 5 - создать `stas5_v2_leakage_guard.py`. Не переходить к user-review 15 мая, forward labels, обучению или threshold, пока leakage guard и pre-ML audit не закрыты.
+
+## Current State 2026-07-13 STAS5 V2 Forward User Review
+
+Текущий статус: `STAS5_V2_FORWARD_USER_REVIEW_READY_WAIT_USER_3_KEEP_IDS`.
+
+После V2 combo exporter создан крупный review-renderer:
+
+```text
+src/mlbotnav/stas5_v2_forward_user_review.py
+```
+
+Он рисует `2026-05-15` страницами по 3 часа, с крупными свечами, LA-id, `knife_risk`, `short_pressure`, `long_recovery` и combo-панелью. Это нужно, чтобы пользователь выбрал примерно 3 реальных входа из 90 кандидатов дня.
+
+Артефакты:
+
+1. `STAS5_ML_CORE/artifacts/v2/user_review/20260515/STAS5_V2_USER_REVIEW_20260515_FULL.png`;
+2. `STAS5_ML_CORE/artifacts/v2/user_review/20260515/STAS5_V2_USER_REVIEW_20260515_PAGE_01_0000_0300.png`;
+3. `STAS5_ML_CORE/artifacts/v2/user_review/20260515/STAS5_V2_USER_REVIEW_20260515_PAGE_02_0300_0600.png`;
+4. `STAS5_ML_CORE/artifacts/v2/user_review/20260515/STAS5_V2_USER_REVIEW_20260515_PAGE_05_1200_1500.png`;
+5. `STAS5_ML_CORE/artifacts/v2/user_review/20260515/STAS5_V2_USER_REVIEW_TEMPLATE_20260515.csv`;
+6. `STAS5_ML_CORE/artifacts/v2/user_review/20260515/STAS5_V2_USER_REVIEW_20260515.manifest.json`.
+
+Проверенные факты: `90` forward-кандидатов; buckets: `54 HIGH_RISK`, `30 CAUTION`, `5 LOW_RISK`, `1 BLOCKED`; command status `PASS`.
+
+Следующий практический шаг: пользователь называет точные LA-id трех реальных входов. После этого заполнить `user_review_label`: выбранные как `USER_KEEP_FORWARD_AUDIT`, остальные как `NOISE_FORWARD_AUDIT`, затем сделать comparison audit `3 vs 87`.
+
+Граница: это forward audit-only. Не использовать `2026-05-15` для обучения, threshold tuning или финального trading permission.
+
+## Current State 2026-07-13 STAS5 V2 Combo Feature Exporter
+
+Текущий статус: `STAS5_V2_COMBO_FEATURE_EXPORT_READY_NO_TRAINING_NO_TP_NO_API_NO_STAS3`.
+
+Первый практический шаг STAS5 V2 / contour 2 выполнен: создан `src/mlbotnav/stas5_v2_combo_feature_exporter.py`, который превращает STAS4 combo-spectrum из визуального нижнего блока в реальные causal ML-признаки.
+
+Главный контракт:
+
+```text
+feature_time_utc = anchor_time_utc < entry_time_utc
+```
+
+Экспортер берет OHLCV из `data/core/bybit_ohlcv`, пересчитывает STAS4 indicators/density/structure/divergence до сигнальной свечи и не использует PNG, future outcome, Stas3/TP/exit, yellow X или strategy votes как признаки.
+
+Готовые артефакты:
+
+1. train: `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260501_20260514_v0.csv`;
+2. train manifest: `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260501_20260514_v0.manifest.json`;
+3. forward: `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260515_20260520_forward_v0.csv`;
+4. forward manifest: `STAS5_ML_CORE/artifacts/v2/features/stas5_v2_combo_features_20260515_20260520_forward_v0.manifest.json`.
+
+Проверенные факты: train `972/972`, forward `435/435`, feature count `103`, forbidden columns `{}`, `feature_available_before_entry_false=0`, tests `11 passed`.
+
+Следующий практический шаг: собрать V2 feature snapshot, который объединит v1 ledger/Stas2 context и новый combo feature layer, затем запустить V2 leakage guard и pre-ML audit. Финальную V2 ML-модель пока не обучать.
+
+## Current State 2026-07-13 STAS5 V1 Hard Audit And V2 TZ
+
+Текущий статус: `STAS5_V1_AUDITED_V2_CONTOUR2_TZ_READY_NO_OPTUNA_NO_API_NO_STAS3`.
+
+Проведен жесткий аудит STAS5 v1 с тремя read-only агентами и локальными расчетами по forward CSV `2026-05-15..2026-05-20`.
+
+Главный вывод: STAS5 v1 технически собран правильно, но не годится как финальный production entry permission. Причина не в поломке pipeline, а в неполном составе признаков и отсутствии permission/risk gate. Combo-spectrum/STAS4 indicator block был найден в `STAS4_FEATURE_HYPOTHESIS_REVIEW/density_structure_20260501_20260514_combo_spectrum`, но в STAS5 v1 он был только `visual/audit layer`, не ML training feature.
+
+Новые source-of-truth документы:
+
+1. `STAS5_ML_CORE/04_STAS5_V1_HARD_AUDIT_RU.md`;
+2. `STAS5_ML_CORE/05_STAS5_V2_CONTOUR2_TZ_RU.md`.
+
+Проверенные факты v1: ledger `972`, `115 KEEP_DRAFT`, `857 CUT_DRAFT`, `30 KEEP_DRAFT + yellow_x`, feature count `111`, combo/STAS4 features in model `0`, leakage guard `PASS`, model `CONTROLLED_BASELINE_READY`.
+
+Forward audit: `ENTER` `103` rows, `hit0.5=74.8%`, `hit1.0=46.6%`, median `max_up=0.951%`, median drawdown `-1.453%`. Проблемные дни: `2026-05-15` и `2026-05-16`; по `2026-05-15` `ENTER hit1.0=14.3%`, median drawdown `-2.834%`.
+
+Следующий практический шаг: реализовывать STAS5 V2 / contour 2 только после утверждения ТЗ. V2 должен добавить combo feature exporter, phase gate, long permission gate, risk/noise filter, forward error ledger, ablation и calibration audit.
+
+Граница: не использовать v1 как торговое разрешение; не подбирать threshold по forward `15+`; не превращать yellow X в hard-cut; не запускать Optuna/scorer/target-lock/API/Stas3 в этом контуре.
+
+## Current State 2026-07-10 STAS5 Entry ML Pipeline Ready
+
+Текущий статус: `STAS5_ENTRY_ML_PIPELINE_READY_TRAIN_1_14_FORWARD_15_20_NO_OPTUNA_NO_API_NO_STAS3`.
+
+STAS-5 по входам собран как отдельный контур внутри текущего проекта. Source-of-truth: `STAS5_ML_CORE/`.
+
+Готово:
+
+1. ML-ledger: `STAS5_ML_CORE/artifacts/ledger/stas5_ml_ledger_20260501_20260514_v0.csv`;
+2. feature snapshot: `STAS5_ML_CORE/artifacts/features/stas5_feature_snapshot_20260501_20260514_v0.csv`;
+3. leakage guard: `STAS5_ML_CORE/artifacts/guard/stas5_leakage_guard_20260501_20260514_v0.json`;
+4. pre-ML audit: `STAS5_ML_CORE/artifacts/audit/STAS5_PRE_ML_AUDIT_20260501_20260514_RU.md`;
+5. controlled baseline: `STAS5_ML_CORE/artifacts/model/stas5_entry_ranker_20260501_20260514_v0.joblib`;
+6. forward CSV/PNG: `STAS5_ML_CORE/artifacts/forward/20260515..20260520/`.
+
+Проверенные факты: ledger `972` rows, `115 KEEP_DRAFT`, `857 CUT_DRAFT`, `30 KEEP_DRAFT + yellow_x`; feature snapshot `111` model features; leakage guard `PASS`; audit `READY_FOR_CONTROLLED_BASELINE`; baseline `CONTROLLED_BASELINE_READY`; forward `FORWARD_ENTRY_REVIEW_READY`.
+
+Baseline является черновым controlled ranker по entry-only задаче: `candidate + pre-entry features -> human KEEP/CUT -> ML_KEEP_SCORE -> ENTER/UNSURE/SKIP`. Train window только `2026-05-01..2026-05-14`. Forward `2026-05-15..2026-05-20` не использован для обучения или threshold tuning.
+
+Метрики baseline из leave-one-day-out: AUC `0.6828`, KEEP recall по `ENTER` `0.4087`, KEEP recall по `ENTER+UNSURE` `0.5652`, CUT precision по `SKIP` `0.9226`, KEEP+yellow_x recall по `ENTER+UNSURE` `0.4667`.
+
+Граница: Optuna, scorer, target-lock, API/мост Bybit и Stas3/TP/exit не запускались и не входят в STAS-5 entry ML. Postfact-поля в forward CSV являются audit-only, не feature и не threshold input.
+
+## Current State 2026-07-10 STAS5 Current Work
+
+Текущий статус: `STAS5_TZ_TRAIN_1_14_FORWARD_15_PLUS_NO_TP_NO_API`.
+
+Рабочая папка STAS-5 находится в корне проекта: `STAS5_ML_CORE/`.
+
+Новая текущая инструкция: `STAS5_ML_CORE/03_STAS5_CURRENT_EXECUTION_INSTRUCTION_RU.md`.
+
+Что делаем сейчас: готовим supervised-контур для ML по входам. Train/manual label window: `2026-05-01..2026-05-14`. Forward/blind check window: `2026-05-15+`; эти дни не используются для обучения, подбора threshold или ручной доводки. Forward PNG должен помечать каждую кандидатную точку как `ENTER/UNSURE/SKIP`.
+
+Что уже есть для базы: `115` `KEEP_DRAFT`, `857` `CUT_DRAFT`, `30` пользовательских `KEEP_DRAFT` с yellow X. Поэтому yellow X не может быть фильтром, target-меткой или причиной удаления строки.
+
+Главная формула остается:
+
+```text
+candidate entry + pre-entry features -> human KEEP / CUT
+```
+
+Следующий практический шаг: создать `src/mlbotnav/stas5_ml_ledger_builder.py`, который соберет `STAS5_ML_CORE/artifacts/ledger/stas5_ml_ledger_20260501_20260514_v0.csv` из ручных labels и `STAS2_RECORDS.csv`, проверит `972` rows, `115/857`, `30` `KEEP_DRAFT + yellow_x`, row parity и совпадение `record_id/entry_time`. После ledger идут feature snapshot, leakage guard, controlled baseline и `stas5_forward_entry_review.py` для PNG на `2026-05-15+`.
+
+Граница: Optuna, scorer, target-lock, API/мост Bybit и Stas3 TP/exit сейчас не запускать. Future outcome можно считать только после факта для audit/backtest, не как feature/target/filter/threshold input.
+
+## Current State 2026-07-10 STAS4 Moved To Root
+
+Текущий статус: `STAS4_ROOT_HOME_READY_NO_ML_NO_OPTUNA`.
+
+STAS4 перенесен из старого скрытого пути `reports/final_review/stas4_feature_hypothesis_screen_v0` в корень проекта:
+
+```text
+STAS4_FEATURE_HYPOTHESIS_REVIEW
+```
+
+Новый источник правды для STAS4: `STAS4_FEATURE_HYPOTHESIS_REVIEW/README_RU.md`.
+
+Главная ручная разметка: `STAS4_FEATURE_HYPOTHESIS_REVIEW/density_structure_20260501_20260514_combo_spectrum/manual_labels`.
+
+Генератор `src/mlbotnav/visual_entry_stas4_family_overlay.py` теперь по умолчанию пишет в `STAS4_FEATURE_HYPOTHESIS_REVIEW`.
+
+В старом `reports/final_review` оставлен указатель `STAS4_MOVED_TO_ROOT_RU.md`. Если старый каталог `reports/final_review/stas4_feature_hypothesis_screen_v0` временно виден, это остаточные пустые директории, которые Windows не дал удалить из-за открытого просмотрщика/проводника. Источником правды они не являются.
+
+Граница: перенос структуры и обновление ссылок. Stas1/Stas2/Stas4 логика, ML/export/training, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-10 STAS5 ML Entry Architecture Draft
+
+Текущий статус: `STAS5_ML_ENTRY_ARCHITECTURE_DRAFT_NO_ML_NO_OPTUNA`.
+
+Новый видимый source-of-truth для STAS-5 лежит в корне проекта: `STAS5_ML_CORE/`.
+
+Смысл STAS-5: обучать ML выбирать хорошие входы из Stas1/Stas2-кандидатов `LAxxx` по pre-entry признакам Stas2/Stas4 и решению человека `KEEP/CUT`. Стратегии и желтый `X` являются контекстом/audit vote, но не label и не hard-filter.
+
+Текущая база обсуждения: ручная разметка `2026-05-01..2026-05-14`, всего `972` входа, `115` `KEEP_DRAFT`, `857` `CUT_DRAFT`. `30` пользовательских `KEEP_DRAFT` имеют yellow X, поэтому hard-cut по yellow X запрещен.
+
+Первый STAS-5 ML-ledger должен хранить отдельно: `human_label`, `label_status`, `strategy_votes`, `yellow_x_role=AUDIT_ONLY`, `yellow_x_conflict`. Первый baseline должен исключать yellow-поля из feature matrix.
+
+Следующая работа: собрать единый ML-ledger, затем causal feature snapshot до входа и audit признаков без запуска ML.
+
+Граница: Stas3, TP, exit, MFE/MAE и post-entry ladder не входят в STAS-5 entry ML. ML/export/training, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-10 Yellow X Audit Only Rule
+
+Текущий статус: `YELLOW_X_AUDIT_ONLY_FIXED_RULE_NO_ML_NO_OPTUNA`.
+
+Зафиксировано правило для будущей ML-подготовки входов: желтый `X` стратегии `density_profile+structure_ta` не является плохой сделкой, запретом входа, причиной закрытия или ML-target. Его роль только `AUDIT_ONLY`.
+
+Приоритет: `human KEEP_APPROVED` выше любого `strategy yellow X`. Если пользователь оставил вход, а стратегия поставила желтый `X`, строка остается положительным примером для ML с флагами `stas4_density_structure_yellow_x = 1` и `yellow_x_conflict = 1`.
+
+По текущей 14-дневной пачке `2026-05-01..2026-05-14`: `115` KEEP_DRAFT, из них `30` имеют желтый `X`. Поэтому hard-cut по `yellow_x = 1` уже доказанно режет хорошие пользовательские входы и запрещен.
+
+Правило записано в `STAS4_FEATURE_HYPOTHESIS_REVIEW/density_structure_20260501_20260514_combo_spectrum/manual_labels/YELLOW_X_AUDIT_ONLY_RULE_RU.md`.
+
+Граница: ML/export/training, Optuna, scorer, target-lock и API не запускались. Stas1/Stas2/Stas4 логика не менялась.
+
+## Current State 2026-07-10 STAS4 Manual Labels Draft 20260501-20260514 Complete
+
+Текущий статус: `STAS4_MANUAL_LABELS_20260501_20260514_DRAFT_COMPLETE_NO_ML_NO_OPTUNA`.
+
+Пользователь вручную подчеркивал на PNG те Stas2/Stas4-входы, которые нужно оставить как `KEEP_DRAFT`; остальные входы дня в этом черновом проходе помечены `CUT_DRAFT`.
+
+Готова вся 14-дневная пачка `2026-05-01..2026-05-14`: суммарно `972` входа, `115` KEEP_DRAFT и `857` CUT_DRAFT.
+
+Последний обработанный день `2026-05-14`: `11` KEEP из `77` входов. KEEP: `LA014`, `LA015`, `LA032`, `LA039`, `LA046`, `LA047`, `LA048`, `LA049`, `LA053`, `LA055`, `LA056`. Желтый `X` среди выбранных: `LA047`, `LA053`.
+
+Файлы дня:
+- `KEEP_20260514_FROM_RED_UNDERLINES_DRAFT.csv`;
+- `LABELS_20260514_ALL_ENTRIES_DRAFT.csv`;
+- `KEEP_20260514_FROM_RED_UNDERLINES_DRAFT.json`;
+- `ANNOTATED_20260514_KEEP_DRAFT.png`.
+
+Граница: это не финальная ML-обучающая выборка, а черновой human-review ledger. Stas1/Stas2/Stas4 логика не менялась. ML/export/training, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-10 STAS4 Manual Labels Draft 20260501-20260513
+
+Текущий статус: `STAS4_MANUAL_LABELS_20260501_20260513_DRAFT_NO_ML_NO_OPTUNA`.
+
+Пользователь вручную подчеркивает на PNG те Stas2/Stas4-входы, которые нужно оставить как `KEEP_DRAFT`; все остальные входы дня в этом черновом проходе помечаются `CUT_DRAFT`.
+
+Готово `13` дней из текущей 14-дневной пачки `2026-05-01..2026-05-14`: всего `104` KEEP и `791` CUT по дням `2026-05-01..2026-05-13`, суммарно `895` входов.
+
+Последний обработанный день `2026-05-13`: `4` KEEP из `86` входов. KEEP: `LA002`, `LA043`, `LA058`, `LA072`. Файлы дня:
+- `KEEP_20260513_FROM_RED_UNDERLINES_DRAFT.csv`;
+- `LABELS_20260513_ALL_ENTRIES_DRAFT.csv`;
+- `KEEP_20260513_FROM_RED_UNDERLINES_DRAFT.json`;
+- `ANNOTATED_20260513_KEEP_DRAFT.png`.
+
+Граница: это не финальная ML-обучающая выборка, а черновой human-review ledger. Stas1/Stas2/Stas4 логика не менялась. ML/export/training, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-10 STAS4 Manual Labels Draft 20260501-20260512
+
+Текущий статус: `STAS4_MANUAL_LABELS_20260501_20260512_DRAFT_NO_ML_NO_OPTUNA`.
+
+Пользователь вручную подчеркивает на PNG те Stas2/Stas4-входы, которые нужно оставить как `KEEP_DRAFT`; все остальные входы дня в этом черновом проходе помечаются `CUT_DRAFT`.
+
+Готово `12` дней из текущей 14-дневной пачки `2026-05-01..2026-05-14`: всего `100` KEEP и `709` CUT по дням `2026-05-01..2026-05-12`, суммарно `809` входов.
+
+Последний обработанный день `2026-05-12`: `6` KEEP из `76` входов. KEEP: `LA006`, `LA012`, `LA036`, `LA038`, `LA051`, `LA055`. Файлы дня:
+- `KEEP_20260512_FROM_RED_UNDERLINES_DRAFT.csv`;
+- `LABELS_20260512_ALL_ENTRIES_DRAFT.csv`;
+- `KEEP_20260512_FROM_RED_UNDERLINES_DRAFT.json`;
+- `ANNOTATED_20260512_KEEP_DRAFT.png`.
+
+Граница: это не финальная ML-обучающая выборка, а черновой human-review ledger. Stas1/Stas2/Stas4 логика не менялась. ML/export/training, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-10 STAS4 Manual Labels Draft
+
+Текущий статус: `STAS4_MANUAL_LABELS_20260501_20260511_DRAFT_NO_ML_NO_OPTUNA`.
+
+Пользователь вручную подчеркивает на PNG те Stas2/Stas4-входы, которые нужно оставить как `KEEP_DRAFT`; все остальные входы дня в этом черновом проходе помечаются `CUT_DRAFT`.
+
+Готово `11` дней из текущей 14-дневной пачки `2026-05-01..2026-05-14`: всего `94` KEEP и `639` CUT по дням `2026-05-01..2026-05-11`.
+
+Последний обработанный день `2026-05-11`: `10` KEEP из `76` входов. Файлы дня:
+- `KEEP_20260511_FROM_RED_UNDERLINES_DRAFT.csv`;
+- `LABELS_20260511_ALL_ENTRIES_DRAFT.csv`;
+- `KEEP_20260511_FROM_RED_UNDERLINES_DRAFT.json`;
+- `ANNOTATED_20260511_KEEP_DRAFT.png`.
+
+Граница: это не финальная ML-обучающая выборка, а черновой human-review ledger. Stas1/Stas2/Stas4 логика не менялась.
+
+## Current State 2026-07-10 STAS2/STAS4 Compact Strips
+
+Текущий статус визуального слоя: `STAS2_STAS4_COMPACT_STRIPS_READY_NO_LOGIC_CHANGE_NO_ML_NO_OPTUNA`.
+
+Дневные overview/overlay теперь рисуют строки `ФОН`, `LONG`, `SHORT`, `WAVE` компактнее: высоты полос уменьшены примерно в 2 раза через общие `OVERVIEW_HEIGHT_RATIOS`. Цена занимает больше вертикального пространства, объем остается снизу.
+
+Ось времени снизу переведена на общий helper `_set_day_time_axis`: тики идут `00:00, 02:00, ..., 22:00, 00:00`, где последний `00:00` - правая граница следующего дня.
+
+Контрольные картинки:
+
+- Stas2: `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260511_visual_half_strips_smoke_v1_20260710_073524/STAS2_DAY_OVERVIEW_20260511.png`
+- Stas4: `STAS4_FEATURE_HYPOTHESIS_REVIEW/visual_half_strips_smoke_v1/STAS4_pattern+structure_ta_OVERLAY_20260511_20260710_073654.png`
+
+Граница: расчеты фаз, волн, entry rows, CSV/XLSX, Stas1 и Stas3 не менялись.
+
+## Current State 2026-07-09 STAS3 V2 Clean Ready
+
+Текущий статус: `STAS3_V2_CLEAN_READY_NO_OLD_STAS3_NO_ML_NO_OPTUNA_POST_ENTRY_AUDIT`.
+
+Предыдущий V2 run `STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_20260510_20260512_long_only_20260709_112925` помечен как `INVALID_OLD_STAS3_BASE_DRAFT`, потому что был собран через доработку старого Stas3. Его не использовать как принятый V2.
+
+Актуальный clean run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_clean_20260510_20260512_long_only_20260709_123622`
+
+Источник: `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_continuous_wave_v2_20260709_081330`; дни `2026-05-10`, `2026-05-11`, `2026-05-12`.
+
+Реализация: новый модуль `src/mlbotnav/visual_entry_stas3_v2_clean_review.py`, без импорта/наследования старого Stas3. Runner: `STAS3_PERCENT_LADDER_REVIEW/run_clean_v2.ps1`. Открытие: `STAS3_PERCENT_LADDER_REVIEW/open_clean_v2_last_run.ps1`.
+
+Результат: `214` входов, `214` обработано, `0` skipped, row parity `true`, `157` hit 1%, `79` clean medium TP `>=1%`, `111` wrong 1% TP, `38` good-entry-but-wrong-1% TP, `99` noise, `41` строк phase ladder, `66` PNG, пустых PNG нет.
+
+Главные артефакты: `STAS3_V2_CLEAN_ENTRY_CONTEXT.csv`, `STAS3_V2_CLEAN_TP_PATH.csv`, `STAS3_V2_CLEAN_TP_DECISION.csv`, `STAS3_V2_CLEAN_PHASE_LADDER.csv`, `STAS3_V2_CLEAN_WRONG_TP.csv`, `STAS3_V2_CLEAN_NOISE.csv`, `STAS3_V2_CLEAN_REPORT_RU.md`, `STAS3_V2_CLEAN_TABLES.xlsx`.
+
+Проверено: `py_compile`, `pytest tests/test_visual_entry_stas3_v2_clean_review.py -q`, `pytest tests/test_visual_entry_stas2_market_phase_review.py tests/test_visual_entry_low_anchor_suggester.py -q`, full clean run, CSV/XLSX/PNG acceptance. Guardrails: `NO_OLD_STAS3_BASE`, `LONG_ONLY`, `SHORT_RISK_CONTEXT_ONLY`, `WAVE/GAP/continuous` только hindsight-review, без ML/Optuna/API/scorer/target-lock.
+
+## Current State 2026-07-09 STAS3 V2 Ready
+
+Текущий статус: `INVALID_OLD_STAS3_BASE_DRAFT`.
+
+Этот блок является историей ошибки. Этот V2 run был собран через доработку старого Stas3, поэтому не является принятым Stas3 V2. Stas3 V1 не удалялся и остается архивным review-only слоем.
+
+Финальный V2 run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_v2_20260510_20260512_long_only_20260709_112925`
+
+Источник Stas2: `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_continuous_wave_v2_20260709_081330`; дни `2026-05-10`, `2026-05-11`, `2026-05-12`.
+
+Результат: `214` входов, `0` skipped, row parity `true`, `157` hit 1%, `93` reasonable TP, `76` wrong 1% TP, `46` noise, `122` wrong/noise review rows, `55` PNG, пустых PNG нет. Рабочая сетка V2: `0.3-0.9%`, `1.0-2.0%` шаг `0.1%`, `2.2-20.0%` шаг `0.2%`; `0.2%` отсутствует как TP-уровень.
+
+Главные артефакты: `STAS3_V2_ENTRY_TP_AUDIT.csv`, `STAS3_V2_CONTEXT_BUNDLE.csv`, `STAS3_V2_TP_LADDER_BY_PHASE.csv`, `STAS3_V2_WRONG_TP_REVIEW.csv`, `STAS3_V2_SKIPPED_ROWS.csv`, `STAS3_V2_REPORT_RU.md`, `STAS3_PERCENT_LADDER_TABLES.xlsx`.
+
+Проверено: `py_compile`, `pytest tests/test_visual_entry_stas3_percent_ladder_review.py tests/test_visual_entry_low_anchor_suggester.py -q`, `pytest tests/test_visual_entry_stas2_market_phase_review.py -q`, полный V2 run, acceptance CSV/XLSX/PNG. Guardrails: `LONG_ONLY`, `SHORT_RISK_CONTEXT_ONLY`, без short-входов/short-TP/short-ladder, без ML/Optuna/API/scorer/target-lock. `MFE MAX` только diagnostic/hindsight fact, не TP/exit.
+
+## Current State 2026-07-09 STAS3 V2 Reset TZ
+
+Текущий статус: `STAS3_V1_ARCHIVED_STAS3_V2_TZ_DRAFT_READY_NO_ML_NO_OPTUNA`.
+
+Stas3 V1 заморожен как архивный review-only слой. Причина: текущие `MFE MAX`, big-move pages и reasonable TP визуально/смыслово начали превращаться в псевдостратегию и вызывать путаницу с подсмотром будущего.
+
+Новый source-of-truth для продолжения:
+
+`STAS3_PERCENT_LADDER_REVIEW/TZ_STAS3_V2_RESET_RU.md`
+
+ТЗ уточнено по новой правке пользователя: Stas3 V2 работает только по LONG, точки входа не придумываются, а берутся из `STAS2_RECORDS.csv`: `anchor_time_utc`, `anchor_low_price`, `entry_time_utc`, `entry_open_price`, `entry_price_5bps`. Расчетная цена входа: `entry_price_for_calc = entry_price_5bps`. Быстрые TP: `0.3-0.9%`. Средние LONG-ходы: `1.0-2.0%` с шагом `0.1%`, затем `2.0-20.0%` с шагом `0.2%` и дедубликацией `2.0%`. Источник первого V2-разбора: `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_continuous_wave_v2_20260709_081330`, рабочие дни `2026-05-10`, `2026-05-11`, `2026-05-12`. По каждой LONG-сделке нужно собрать единый context bundle: сессия, фон, LONG, `SHORT`-risk% как риск-фон, WAVE, волатильность/процентные блоки, volume-context. Short-входы, short-TP, short-ladder и short-статистика в Stas3 V2 запрещены. `ideal_review_tp_pct` и `max_feasible_review_tp_pct` являются hindsight-review полями, не стратегией. Сделку нельзя искусственно резать по `24h`, если LONG-волна продолжается на следующий день.
+
+Следующая работа: не удалять старые runs, а реализовать Stas3 V2 как чистую процентную лестницу движения и TP-audit по фазам. ML/export/training, Optuna, scorer, target-lock и API запрещены.
+
+## Current State 2026-07-09 STAS3 Rebuild From Latest STAS2
+
+Текущий статус: `STAS3_REBUILT_FROM_STAS2_SHORT_LABELS_V1_NO_ML_NO_OPTUNA_POST_ENTRY_AUDIT`.
+
+Актуальный Stas3 run после обновления Stas2:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260508_20260512_from_stas2_short_labels_v1_20260709_084730`
+
+Источник:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260508_20260512_short_labels_v1_20260709_083138`
+
+Сводка: `214` entries, `0` skipped, `157` hit 1%, `93` reasonable TP, `89` mismatch к 1% TP, `46` noise, `9` fast clean, `68` late-pump dependent. `53` PNG, пустых PNG нет.
+
+Открыть:
+
+```powershell
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open browse
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open xlsx
+.\STAS3_PERCENT_LADDER_REVIEW\open_last_run.ps1 -Open tp
+```
+
+Ограничение текущей версии: Stas3 использует новый `STAS2_RECORDS.csv`, но не делает join отдельных Stas2 wave-ledger таблиц. Поэтому `WAVE/SHORT` видны в Stas2-графиках, а в Stas3 пока остаются только обычные Stas2 entry-context поля. Следующий возможный шаг: добавить review-only WAVE-context join в Stas3.
+
+## Current State 2026-07-09 STAS2 Short Strong Wave Labels
+
+Текущий статус визуального слоя: `STAS2_SHORT_STRONG_WAVE_LABEL_READY_NO_ML_NO_OPTUNA_VISUAL_ONLY`.
+
+В `WAVE`-строке теперь не теряются проценты у коротких, но сильных волн: если confirmed WAVE короче `15m`, но видимый ход `>= 1%` и длительность `>= 5m`, на квадрате выводится компактная подпись вида `1.34%`.
+
+Актуальный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260508_20260512_short_labels_v1_20260709_083138`
+
+Открыть:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-12
+```
+
+Проверено на `W38 LONG 12:32-12:40`: в CSV `1.336303%`, на PNG теперь есть компактная подпись. ML, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-09 STAS2 Continuous Wave Ledger
+
+Текущий статус Stas2-графика: `STAS2_MARKET_PHASE_REVIEW_CONTINUOUS_WAVE_READY_NO_ML_NO_OPTUNA_REVIEW_ONLY`.
+
+Волны больше не привязаны к `day_utc`. Основной источник волн - `STAS2_CONTINUOUS_WAVES.csv`: глобальные `LONG/SHORT/GAP` сегменты с началом, концом, полным процентом и статусом. Дневной overview продолжает быть 24h-картинкой, но строка `WAVE` теперь берет срезы из continuous-ledger и показывает carry через полночь.
+
+Актуальный run для просмотра:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_continuous_wave_v2_20260709_081330`
+
+Открыть:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-10
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-11
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+```
+
+Что смотреть: на `2026-05-10` в конце дня `W08 SHORT >`, на `2026-05-11` в начале дня `< W08 SHORT`; это одна и та же волна, а не два независимых дневных блока. В таблице это связано общим `continuous_wave_id`.
+
+Проверено: `py_compile`, `pytest tests/test_visual_entry_stas2_market_phase_review.py tests/test_visual_entry_low_anchor_suggester.py -q`, полный run `2026-05-10..2026-05-12`, `openpyxl` load workbook, `80` PNG без пустых файлов.
+
+Граница: continuous-wave - это review/hindsight слой, не входной ML-признак и не TP-логика. ML, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-09 STAS2 Macro Wave GAP Segments
+
+Текущий статус Stas2-графика: `STAS2_MARKET_PHASE_REVIEW_WAVE_GAP_SEGMENTS_READY_NO_ML_NO_OPTUNA_REVIEW_ONLY`.
+
+В `src/mlbotnav/visual_entry_stas2_market_phase_review.py` строка `WAVE` теперь показывает не только подтвержденные macro-wave блоки, но и серые `GAP`-сегменты там, где день не покрыт подтвержденной волной. Для `GAP` считается `range_pct` внутри промежутка, подпись выводится прямо в квадрате. Подтвержденные волны не пересчитаны и не переименованы.
+
+Актуальный run для просмотра:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_gap_segments_v1_20260709_073810`
+
+Открыть:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-10
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+```
+
+Проверено: `py_compile`, `pytest tests/test_visual_entry_stas2_market_phase_review.py tests/test_visual_entry_low_anchor_suggester.py -q`, полный run `2026-05-10..2026-05-12`, `openpyxl` load workbook, `80` PNG без пустых файлов.
+
+Граница: `GAP` - это учет/визуализация пропуска, не новая точка входа и не causal ML feature. ML, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-09 STAS2 SHORT And Macro Wave Review
+
+Текущий статус Stas2-графика: `STAS2_MARKET_PHASE_REVIEW_SHORT_MACRO_WAVE_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_PLUS_REVIEW_ONLY`.
+
+В `src/mlbotnav/visual_entry_stas2_market_phase_review.py` добавлены:
+
+1. `SHORT` по закрытым часам: `hour_short_wave_*`, движение `high -> subsequent low`.
+2. `hour_direction_bias`: `LONG_DOMINANT`, `SHORT_DOMINANT`, `TWO_WAY_VOLATILE`, `FLAT`.
+3. `WAVE` по дневным swing-блокам с порогом разворота `1%`: `macro_wave_*`.
+4. Новый CSV `STAS2_MACRO_WAVES.csv`, дневные `*_STAS2_MACRO_WAVES.csv`, лист Excel `Macro waves`.
+5. Дневной overview теперь рисует `Фон`, `LONG`, `SHORT`, `WAVE`, объем и Stas1-точки без текстового шума возле входов.
+
+Актуальный run для просмотра:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260504_20260509_short_macro_wave_v1_20260709_064759`
+
+Открыть:
+
+```powershell
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-04
+.\STAS2_MARKET_PHASE_REVIEW\open_last_run.ps1 -Open xlsx
+```
+
+Проверено: `py_compile`, `pytest tests/test_visual_entry_stas2_market_phase_review.py tests/test_visual_entry_low_anchor_suggester.py -q`, полный run `2026-05-04..2026-05-09`, `openpyxl` load workbook, `156` PNG без пустых файлов.
+
+Граница: `WAVE` использует уже сформированный дневной swing и является review/hindsight слоем. Не переносить `macro_wave_*` в causal ML features без отдельной causal-разметки/approved-ledger. ML, Optuna, scorer, target-lock и API не запускались.
+
+## Current State 2026-07-06 STAS3 Percent Ladder Review
+
+Текущий статус: `STAS3_PERCENT_LADDER_REVIEW_READY_NO_ML_NO_OPTUNA_POST_ENTRY_AUDIT`.
+
+По новому прямому запросу `Стас3` отдельный Stas3-контур реализован и проверен. Старая пометка о переносе Stas3 в другой чат больше не является текущим состоянием для этого рабочего дерева.
+
+Созданы:
+
+1. `STAS3_PERCENT_LADDER_REVIEW/README_RU.md`;
+2. `STAS3_PERCENT_LADDER_REVIEW/run_day.ps1`;
+3. `STAS3_PERCENT_LADDER_REVIEW/run_range.ps1`;
+4. `STAS3_PERCENT_LADDER_REVIEW/open_last_run.ps1`;
+5. `src/mlbotnav/visual_entry_stas3_percent_ladder_review.py`;
+6. `tests/test_visual_entry_stas3_percent_ladder_review.py`.
+
+Stas3 читает финальный Stas2 visual-run `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_setup_quality_no_labels_v0_20260706_172535` и считает post-entry percent ladder, фазу рынка на входе, фактическое движение, reasonable TP по фазовому профилю и mismatch к механическому 1% TP.
+
+Финальный контрольный run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260502_20260503_tp_ladder_v0_20260706_183011`
+
+Сводка: `110` Stas2 rows input, `110` entry rows, `0` skipped, row-count parity `True`, полная сетка `0.2..7%`, `110` hit 1% в окне `48h`, `65` строк с reasonable TP, `73` mismatch к механическому 1% TP, `27` noise entry, только `2` быстрых clean, `90` late-pump dependent. Это важный вывод: механический факт `+1% hit` почти весь держится на долгом удержании/позднем пампе и не является чистым positive label.
+
+Ключевые артефакты: `STAS3_ENTRY_PHASE_TABLE.csv`, `STAS3_ACTUAL_MOVEMENT.csv`, `STAS3_REASONABLE_TP.csv`, `STAS3_TP_LADDER_BY_PHASE.csv`, `STAS3_TP_LADDER_BY_PROFILE.csv`, `STAS3_TP_LADDER_V0_RU.md`, `STAS3_PERCENT_LADDER_TABLES.xlsx`.
+
+Последний расширенный Stas3 run:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260504_20260509_tp_ladder_v0_20260707_055929`
+
+Источник Stas2: `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260504_20260509_setup_quality_v0_20260707_043734`. Диапазон `2026-05-04..2026-05-09`, `417` строк, `0` skipped, row-count parity `True`, `410` hit 1%, `283` reasonable TP, `285` mismatch к 1% TP, `84` noise entry, `13` fast clean, `238` late-pump dependent, `83` PNG.
+
+Актуальный визуальный run с явным выходом на графике:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260504_20260509_tp_exit_overlay_v0_20260707_072226`
+
+На `STAS3_ENTRY_LADDER_PAGE_*.png` теперь видно: entry-треугольник, TP-линия, звезда `EXIT` и подпись времени до TP. Желтый `TP v0` - фазовый TP, серый пунктир `TP 1%` - fallback для строк без рассчитанного фазового TP.
+
+Актуальный исправленный run для проверки глазами:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260504_20260509_signal_entry_exit_overlay_v0_20260707_073915`
+
+На closeup-графиках теперь разделены `SIGNAL` и `ENTRY`: оранжевый `SIGNAL` показывает `anchor_time_utc/anchor_low_price`, голубой `ENTRY` показывает `entry_time_utc/entry_price_5bps`, рядом подписана цена входа. Это исправляет визуальную путаницу, где Stas3 entry выглядел сдвинутым относительно Stas2 low-сигнала.
+
+Актуальный визуальный run после правки TP-отработки:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260504_20260509_signal_entry_tp_move_v0_20260707_080253`
+
+Теперь красная диагональная стрелка `ENTRY -> EXIT` показывает сам ход сделки от цены входа до TP. Желтая горизонталь `TP v0` и серая пунктирная `TP 1%` остаются уровнями цены, а не траекторией движения. Проверка run: `417` строк, `83` PNG, пустых PNG нет, workbook читается.
+
+Актуальный run для анализа больших ходов и обучения удержанию:
+
+`STAS3_PERCENT_LADDER_REVIEW/runs/stas3_20260504_20260509_big_move_review_v2_20260707_090246`
+
+Теперь Stas3 дополнительно считает путь `SIGNAL/ENTRY -> MFE MAX`, путь `ENTRY -> 0.2/0.5/1.0%`, остаток движения после ранних TP и review-only корзины выхода. Главная рабочая группа для ручного изучения удержания: `EARLY_1PCT_TRAIL_REVIEW` = `141` сделка. Также зафиксировано `218` `BIG_MFE_BUT_DEEP_MAE_REVIEW` и `51` `LATE_MFE_PUMP_REVIEW`. В run есть `12` страниц `STAS3_BIG_MOVE_REVIEW_PAGE_*.png` с зеленой стрелкой до `MFE MAX`.
+
+Граница: Stas3 является audit/review-слоем после входа. Это анализ и проверка, не торговая стратегия. ML/export/training, Optuna, scorer, target-lock и API не запускались и остаются запрещены без отдельного approval.
+
+## Current State 2026-07-06 STAS3 In Separate Chat
+
+Текущий статус: `STAS2_CLOSED_STAS3_IN_SEPARATE_CHAT_NO_ML_NO_OPTUNA`.
+
+Пользователь решил делать Stas3 в другом чате. Здесь активное состояние: Stas2 закрыт, дальнейшая реализация percent ladder / entry-TP validation не начинается.
+
+Следующий чат должен брать Stas2 как готовый источник pre-entry контекста и отдельно строить Stas3. В этом чате не запускать TP/MFE/MAE, ML, Optuna, scorer, target-lock или API без нового прямого запроса.
+
+## Current State 2026-07-06 STAS2 Closed For STAS3
+
+Текущий статус: `STAS2_CLOSED_FOR_STAS3_NO_ML_NO_OPTUNA`.
+
+Stas2 принят пользователем как закрытый этап для перехода к Stas3. Смысл этапа: дать контекст до входа, а не решать TP. На графиках и в таблицах теперь разделены:
+
+1. `Фон` / `background_phase` - общий режим рынка до входа.
+2. `LONG` / `long_wave` - наличие направленной волны вверх до входа.
+3. `SETUP` / `entry_setup_quality_*` - чистота конкретной точки входа.
+
+Финальный visual-run: `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_setup_quality_no_labels_v0_20260706_172535`.
+
+Финальный audit-run фаз/сессий: `reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260508_session6_daytype_v4_20260706_110942`.
+
+Граница: Stas2 остается pre-entry/no-lookahead слоем. TP, percent ladder сделки, MFE/MAE, time-to-target, drawdown после входа и 5m post-entry blocks начинаются только в Stas3. ML/Optuna/scorer/target-lock/API не запускались и остаются запрещены без отдельного approval.
+
+## Current State 2026-07-06 STAS2 Setup Quality Layer
+
+Текущий статус: `STAS2_MARKET_PHASE_REVIEW_SETUP_QUALITY_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+Stas2 теперь разделяет три понятия:
+
+1. `Фон` / `background_phase` - режим рынка и волатильность окна/часа.
+2. `LONG` / `long_wave` - был ли ход вверх до входа.
+3. `SETUP` / `entry_setup_quality_*` - качество конкретной точки входа: `CLEAN`, `OK`, `WARN`, `NOISE`.
+
+Это сделано после замечания пользователя по участку `LA045-LA047`: сильная фаза/волна после резкого выноса не должна выглядеть как хорошая точка входа. В новом run эти строки получили `NOISE` в CSV/XLSX, потому что у них есть `anchor_without_clear_wick`, `wide_signal_range` или `low_volume_confirmation`. На дневном overview текстовые названия возле точек убраны, а сами точки входа оставлены как в Stas1.
+
+Контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_setup_quality_no_labels_v0_20260706_172535`
+
+Сводка: `110` entry rows, `110` Stas1 GOOD, `0` BAD, setup `clean=17`, `working=16`, `warn=50`, `noise=27`, `bad_context_before_entry=0`, `43` PNG, `0` пустых PNG.
+
+Граница сохраняется: Stas2 не считает TP/exit/MFE/MAE, не запускает ML/Optuna/scorer/target-lock/API и использует только pre-entry данные.
+
+## Current State 2026-07-06 STAS2 Background And LONG Wave Visual Fix
+
+Текущий статус: `STAS2_MARKET_PHASE_REVIEW_BG_LONG_WAVE_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+Stas2 visual review теперь разделяет два разных понятия:
+
+1. `background_phase` / `Фон` - общий range/volatility/path часа или pre-entry окна;
+2. `long_wave_phase` / `LONG` - ход вверх `low -> subsequent high` внутри этого же часа или окна до входа.
+
+Это исправляет ситуацию, где на overview почти везде было написано `Слабая`, хотя глазами видны рабочие волны вверх. `Слабая` теперь означает слабый общий фон, а не запрет на LONG-движение.
+
+Новый полный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_bg_long_wave_v0_20260706_131201`
+
+Сводка: `110` entry rows, `78` Stas1 GOOD, `32` Stas1 BAD, `43` PNG, `0` пустых PNG, `bad_context_before_entry=0`, Excel читается, CSV BOM `EF-BB-BF`, `pre15_long_wave_min_max=(0.023728, 0.687611)`.
+
+Граница сохраняется: Stas2 pre-entry only. Stas1 не изменен. TP/exit/percent ladder/MFE/MAE/5m post-entry blocks - только Stas3. ML/Optuna/scorer/target-lock/API не запускались.
+
+## Current State 2026-07-06 STAS2 Market Phase Visual Review
+
+Текущий статус: `STAS2_MARKET_PHASE_REVIEW_READY_NO_ML_NO_OPTUNA_PRE_ENTRY_ONLY`.
+
+Stas2 теперь оформлен как отдельный визуальный контур, не ломающий Stas1:
+
+1. `STAS2_MARKET_PHASE_REVIEW/README_RU.md`;
+2. `STAS2_MARKET_PHASE_REVIEW/run_day.ps1`;
+3. `STAS2_MARKET_PHASE_REVIEW/run_range.ps1`;
+4. `STAS2_MARKET_PHASE_REVIEW/open_last_run.ps1`;
+5. `src/mlbotnav/visual_entry_stas2_market_phase_review.py`.
+
+Что рисуется:
+
+1. дневной overview с фоном UTC-сессий, phase strip и Stas1 входами;
+2. entry context pages, где окно обрезано до `entry_time_utc`, без свечей после входа;
+3. `BROWSE_BY_DAY/` по образцу Stas1;
+4. Excel/CSV/JSON/RU-report.
+
+Контрольный run:
+
+`STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260502_20260503_market_phase_review_v0_20260706_124134`
+
+Проверено: `110` entry rows, `78` Stas1 GOOD, `32` Stas1 BAD, `bad_context_before_entry=0`, `43` PNG без пустых файлов, Excel читается через `openpyxl`, CSV пишется с BOM `EF-BB-BF`, хвостов `python.exe` нет.
+
+Граница: Stas2 только pre-entry context. TP/exit/percent ladder/MFE/MAE/5m post-entry blocks - только Stas3. ML/Optuna/scorer/target-lock/API не запускались.
+
+## Current State 2026-07-06 STAS2 Excel Encoding Fix
+
+Текущий статус: `STAS2_EXCEL_EXPORT_UTF8_BOM_XLSX_READY_NO_ML_NO_OPTUNA`.
+
+Исправлен Stas 2 export для Excel:
+
+1. CSV теперь пишутся как `utf-8-sig`, чтобы Excel не ломал русский текст в кракозябры.
+2. Пустые summary CSV больше не создаются как файл на 2 байта: даже если строк нет, пишутся заголовки.
+3. Для ручного просмотра в Excel добавлен нативный workbook `STAS2_MARKET_PHASE_TABLES.xlsx` с листами `Hourly phases`, `Session buckets`, `Effective sessions`, `Weekday sessions`, `Weekend buckets`, `Weekday weekend`, `Entry context`.
+
+Проверочный run по `2026-05-02..2026-05-03`:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260503_excel_xlsx_fix_20260706_112616`
+
+Главный Excel-файл:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260503_excel_xlsx_fix_20260706_112616/STAS2_MARKET_PHASE_TABLES.xlsx`
+
+Проверки: `py_compile`, run audit, load workbook через `openpyxl`, проверка BOM `EF-BB-BF` у всех CSV. ML/Optuna/scorer/target-lock/API не запускались.
+
+## Current State 2026-07-06 STAS2 Market Phase Session Audit
+
+Текущий статус: `STAS2_MARKET_PHASE_SESSION_AUDIT_READY_NO_ML_NO_OPTUNA`.
+
+Создан отдельный Stas 2 audit-скрипт:
+
+`src/mlbotnav/visual_entry_stas2_market_phase_audit.py`
+
+Он читает OHLCV `SOLUSDT 1m`, актуальные Stas1 CSV и считает:
+
+1. фазы рынка по часам;
+2. `6` внутридневных UTC-корзин `session_time_bucket`: `Азия/Pacific time`, `Перед Лондоном`, `Лондон без Нью-Йорка`, `Пересечение Лондон/Нью-Йорк`, `Нью-Йорк без Лондона`, `После Нью-Йорка/слабые часы`;
+3. сравнение weekday/weekend;
+4. `effective_session = day_type + session_time_bucket`, чтобы выходные окна не смешивались с настоящими будними сессиями;
+5. `phase_before_entry` для Stas1 входов только по предыдущим 60 минутам, без свечей после входа;
+6. heatmap PNG.
+
+Финальные артефакты:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260508_session6_daytype_v4_20260706_110942`
+
+Главный отчет:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/stas2_market_phase_percent_ladder/stas2_20260502_20260508_session6_daytype_v4_20260706_110942/STAS2_MARKET_PHASE_AUDIT_RU.md`
+
+Проверки:
+
+```powershell
+.\.venv\Scripts\python.exe -m py_compile src\mlbotnav\visual_entry_stas2_market_phase_audit.py
+$env:PYTHONPATH='src'; .\.venv\Scripts\python.exe -m mlbotnav.visual_entry_stas2_market_phase_audit --start-day 2026-05-02 --end-day 2026-05-08 --run-label stas2_20260502_20260508_session6_daytype_v4 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260503_all_closeups_bad_x_v0_20260706_060244 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260504_20260506_browse_by_day_v0_20260706_063954 --stas1-run-dir STAS1_GOOD_LOW_REVIEW\runs\stas1_20260507_20260508_carry48_v0_20260706_084057
+```
+
+Граница: отчетный слой, не ML/export/training, не Optuna, не scorer, не target-lock и не API.
+
+## Current State 2026-07-06 STAS1 Block 1 Locked
+
+Текущий статус: `STAS1_BLOCK_1_RUN_POOL_LOCKED_NO_ML_NO_OPTUNA`.
+
+Блок 1 STAS1 зафиксирован как рабочий baseline. Он умеет запускать прогон по дню/диапазону, собирать все low-кандидаты входа, сохранять PNG/CSV/JSON/отчет и раскладывать просмотр через `BROWSE_BY_DAY/`.
+
+Процент движения цены уже управляемый:
+
+1. `run_day_1pct.ps1` - проверка `+1%`;
+2. `run_day_0p5.ps1` - проверка `+0.5%`;
+3. Python-ядро поддерживает `--target-pct` для других порогов;
+4. `-OutcomeLookaheadHours` разрешает проверять закрытие после полуночи.
+
+Вывод: этот блок больше не пересобирать заново. Следующий этап - ручная чистка шума, фиксация feedback и доработка фильтра значимого low.
+
+## Current State 2026-07-06 STAS1 Carry Outcome
+
+Текущий статус: `STAS1_CARRY_OUTCOME_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+STAS1 поддерживает перенос проверки цели через ночь. Кандидаты входа создаются только внутри выбранного диапазона `-Day .. -EndDay`, но outcome можно проверять дальше через `-OutcomeLookaheadHours`.
+
+Контракт:
+
+1. не подтягивать старые сделки до `-Day`;
+2. не создавать новые входы после `-EndDay`;
+3. future-свечи использовать только для offline outcome label;
+4. запись остается в дне входа, даже если `+1%` достигнут на следующем дне.
+
+Smoke-run: `STAS1_GOOD_LOW_REVIEW/runs/stas1_smoke_carry48_20260507_20260508_v0_20260706_081637`.
+
+Сводка: `148` кандидатов, `80` `GOOD_SAME_DAY`, `68` `GOOD_CARRIED_OVERNIGHT`, `0` missing outcome sources.
+
+Команда проверки:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-07 -EndDay 2026-05-08 -OutcomeLookaheadHours 48 -RunLabel stas1_20260507_20260508_carry48_v0 -RenderGoodLimit 0
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+```
+
+## Current State 2026-07-06 STAS1 Browse By Day
+
+Текущий статус: `STAS1_BROWSE_BY_DAY_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+STAS1 теперь создает в каждом run папку `BROWSE_BY_DAY/`, чтобы пользователь не открывал десятки окон. Внутри есть `00_RUN_INDEX.png`, затем папки дней. В каждой папке дня файлы идут по порядку просмотра: `00_YYYYMMDD_OVERVIEW.png`, затем `01/02/..._ALL_CLOSEUPS_PAGE_*.png` строго по `entry_time_utc`.
+
+Рабочий run: `STAS1_GOOD_LOW_REVIEW/runs/stas1_20260504_20260506_browse_by_day_v0_20260706_063954`.
+
+Сводка: `3` дня, `202` кандидата, `98` GOOD, `104` BAD. Дни: `2026-05-04`, `2026-05-05`, `2026-05-06`.
+
+Команды просмотра:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open index
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open browse
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open day -Day 2026-05-04
+```
+
+## Current State 2026-07-06 STAS1 ALL Closeups GOOD+BAD
+
+Текущий статус: `STAS1_ALL_CLOSEUPS_BAD_X_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+В STAS1 добавлен отдельный слой `ALL closeups`: теперь можно смотреть GOOD и BAD кандидаты вместе. GOOD рисуется зеленым треугольником, BAD - красным полупрозрачным крестом. Это нужно для ручной чистки шума и будущих negative-label примеров, но не является ML/export/training/scorer/target-lock/Optuna/API.
+
+Контрольный run: `STAS1_GOOD_LOW_REVIEW/runs/stas1_20260503_all_closeups_bad_x_v0_20260706_060244`.
+
+Сводка `2026-05-03`: `58` кандидатов, `36` GOOD, `22` BAD, `8` страниц `GOOD_1PCT_REVIEW_POOL_ALL_CLOSEUPS_PAGE_*.png`.
+
+Открыть последние ALL closeups:
+
+```powershell
+.\STAS1_GOOD_LOW_REVIEW\open_last_run.ps1 -Open allcloseups
+```
+
+## Current State 2026-07-03 STAS1 Good Low Review
+
+Текущий статус: `STAS1_V0_BASELINE_MAIN_LOW_REVIEW_SCRIPT_NO_ML_NO_OPTUNA`.
+
+Пользователь зафиксировал рабочее решение: основной скрипт для ближайшей ручной калибровки low-кандидатов - `src/mlbotnav/visual_entry_good_1pct_review_pool.py`. Не создавать новый скрипт с нуля и не откатываться вслепую.
+
+Создана видная папка `STAS1_GOOD_LOW_REVIEW/` с README и PowerShell-командами:
+
+1. `run_day_1pct.ps1`;
+2. `run_day_0p5.ps1`;
+3. `open_last_run.ps1`.
+
+Новые runs будут сохраняться в `STAS1_GOOD_LOW_REVIEW/runs/`, ручной feedback - в `STAS1_GOOD_LOW_REVIEW/feedback/`, слепки рабочих версий - в `STAS1_GOOD_LOW_REVIEW/snapshots/`.
+
+Следующий рабочий смысл: пользователь смотрит один день, затем 3-4 дня, отмечает шум/дубли/сдвиги, а затем калибруется `src/mlbotnav/visual_entry_low_anchor_suggester.py`. `+1%`/`+0.5%` остаются offline outcome label, не ML label и не feature.
+
+## Current State 2026-07-02 Bybit Hedge Mode Note
+
+Текущий статус: `HEDGE_MODE_API_NOTE_LOCKED_FUTURE_HEDGE_SIM_NO_REAL_API`.
+
+Запомнено как отдельная risk-идея: Bybit V5 hedge/both-sides mode для `linear` USDT perpetual дает возможность держать LONG и SHORT одновременно по одному символу. В API это различается через `positionIdx`: `1` для long-side, `2` для short-side.
+
+Это не меняет текущий следующий этап. Сначала остается `DCA_RISK_AUDIT_V0` на `W18-W20`: DCA-корзины, просадки, число одновременных входов, маржа и классы риска. Только после этого можно делать `HEDGE_SIM_V0` как симуляцию защиты, без реальных ордеров и без API-ключей.
+
+Граница: hedge не является entry-сигналом, ML-фичей, scorer, Optuna или target-lock. Реальные Bybit API действия запрещены без отдельного явного решения пользователя.
+
+## Current State 2026-07-02 Daily 10 Long Trades Phase Ladder
+
+Текущий статус: `DAILY_10_LONG_TRADES_PHASE_LADDER_LOCKED_FOR_DCA_AUDIT_NO_ML_NO_OPTUNA`.
+
+Пользователь уточнил дневную цель: не просто `+1%` как единственный target, а изучить фазы движения по рынку, дню и сессии. Рабочая лестница фаз:
+
+- `0.3-0.5%` - короткая scalp-фаза;
+- `0.9-1.0%` - базовая дневная фаза для одной сделки;
+- `1.5-2.0%` - расширенная фаза;
+- `2.2-4.0%+` - сильный импульс/трендовый день.
+
+Цель `10` сделок в день теперь трактуется как верхний план/лимит качественных long-входов, а не обязанность добирать любые входы до `10`. Если день дает только `1-3` качественных входа, это отдельный режим дня, а не повод брать мусор.
+
+Следующий `DCA_RISK_AUDIT_V0` должен считать фазовую разметку как offline outcome: достигнутая фаза, время до фазы, просадка до фазы, число открытых сделок, session/day context. Это не ML, не scorer и не Optuna.
+
+## Current State 2026-07-02 DCA Risk And Knife Map Rails
+
+Текущий статус: `SHORT_RANGE_DCA_RISK_RAILS_LOCKED_NO_ML_NO_OPTUNA`.
+
+Зафиксировано решение пользователя: не переходить сразу на полный `126`-дневный прогон. Сначала доводим механику на коротком учебном диапазоне `W18-W20`, то есть `2026-04-27..2026-05-17` (`21` день), run `W18_W20_learning_20260702_082819`.
+
+Причина: текущий `+1% review-pool` быстро находит много кандидатов, но среди них есть ножи, перегруженные DCA-кластеры и слабые `SOFT` входы. Если передать такие строки в ML как простой `GOOD`, модель научится покупать падающий нож.
+
+Два направления зафиксированы так:
+
+1. `DCA_RISK_AUDIT_V0` - текущий следующий этап на `21` дне. Он должен группировать входы в DCA-корзины, считать просадку, число докупок, среднюю цену, время в минусе, поддержку при `10x/20x/50x/100x` и присваивать risk-aware классы.
+2. `FULL_HISTORY_KNIFE_MAP_V0` - отложенный этап на все доступные `126` дней. Запускать только после того, как на `21` дне понятны классы, кластеры, визуальные PNG, баги и ручная логика review.
+
+Рабочие классы для следующего слоя:
+
+- `GOOD_CLEAN_RECLAIM` - чистый low/reclaim, малая просадка, мало докупок.
+- `GOOD_DCA_SURVIVABLE` - вход можно пережить как DCA-корзину с понятным запасом.
+- `BORDERLINE_SOFT` - математически слабый плюс, обычно только при идеальном исполнении.
+- `BAD_FALLING_KNIFE` - цена продолжила падать после входа, опасный нож.
+- `BAD_CLUSTER_OVERLOAD` - слишком много докупок подряд, маржа раздувается.
+- `BAD_NO_ROOM` - нет нормального хода/пространства до цели.
+- `REJECT_VISUAL` - руками отклонено после просмотра.
+
+Граница: `+1% hit` остается только review/outcome-слоем. Это не gold-разметка, не ML dataset, не scorer, не target-lock и не Optuna.
+
+## Current State 2026-07-02 Low Anchor Entry 1pct Label Review V1 13 May
+
+Текущий статус: `LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_V1_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+По `SOLUSDT 1m 2026-05-13` построен правильный full-day review после пользовательской правки:
+
+1. `signal_time_utc` = свеча значимого low;
+2. `entry_time_utc` = следующая свеча;
+3. рабочая execution-цена для графика = `entry_open + 5bps`;
+4. offline target = `entry_price * 1.01`;
+5. погрешность для обучения живет только в execution/slippage band `0bps/5bps/10bps`, а не во времени входа.
+
+Итог: `87` кандидатов, `4` дошли до `+1%` даже при `10bps`, `0` только при `5bps`, `1` только при `0bps`, `82` не дошли даже при `0bps`.
+
+Артефакты лежат в:
+`reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_entry_1pct_label_review_v1_20260513/`.
+
+Главные PNG:
+
+1. `LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_FULL_DAY_20260513.png`;
+2. `LOW_ANCHOR_ENTRY_1PCT_LABEL_REVIEW_ZOOM_PAGE_01_20260513.png`.
+
+Граница: это review/dataset-label слой. Outcome `+1%` используется только после causal low-кандидата как label/audit, не как feature выбора входа. Scorer, target-lock, Optuna и ML/export/training не запускать.
+
+## Current State 2026-07-02 Low Anchor 1pct Label Review 13 May
+
+Текущий статус: `LOW_ANCHOR_1PCT_LABEL_REVIEW_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+По `SOLUSDT 1m 2026-05-13` построен full-day review: значимый low-anchor кандидат -> entry next open + 5 bps -> offline label по цели `anchor_low_price * 1.01`.
+
+Итог: `87` кандидатов, из них `8` дошли до `+1%` от low после entry, `79` не дошли.
+
+Артефакты лежат в:
+`reports/final_review/visual_entry_v3/fresh_target_led/low_anchor_1pct_label_review_v0_20260513/`.
+
+Граница: outcome `+1%` является только label/audit, не feature выбора входа. Следующий шаг - пользовательский visual review зеленых/красных точек и возможная ручная правка.
+
+## Current State 2026-07-02 Low Anchor Suggester 13 May
+
+Текущий статус: `LOW_ANCHOR_ENTRY_SUGGESTER_V0_20260513_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+`visual_entry_low_anchor_suggester.py` применен к `SOLUSDT 1m 2026-05-13`. Скрипт обновлен так, чтобы:
+
+1. имена артефактов строились по `--day`;
+2. отсутствие ручного target-ledger не ломало прогон;
+3. при отсутствии ручных целей строился zoom-sheet по top low-anchor candidates;
+4. в CSV/JSON фиксировались `entry_price_plus_5bps` и `target_1pct_price`.
+
+Результат: полный слой `87` кандидатов, strict-слой `18` кандидатов при `min_score=5.0`.
+
+Граница: это только candidate review для глаз. Не gold-разметка, не scorer, не target-lock, не Optuna, не ML/export/training.
+
+## Current State 2026-07-02 Target 1pct Price Fix V0
+
+Текущий статус: `TARGET_1PCT_PRICE_FIX_V0_READY_NO_ML_NO_OPTUNA_NO_SCORER`.
+
+По ручным эталонам `2026-05-14 M01..M19` и `2026-05-15 T15L confirmed 7` зафиксированы цены `+1%` от `entry + 5bps`.
+
+Итог: всего `26` входов; `2026-05-14` дошли до `+1%` `13/19`; `2026-05-15` дошли до `+1%` `4/7`.
+
+Артефакты лежат в:
+`reports/final_review/visual_entry_v3/fresh_target_led/target_1pct_price_fix_v0/`.
+
+Граница: это outcome/reference-слой, не ML, не scorer, не Optuna и не target-lock. Следующий рабочий шаг должен идти по рельсам поверх ручных эталонов и паспортных блоков, без cooldown-перебора.
+
+## Current State 2026-07-01 Target-Led Dataset Base V0
+
+Текущий статус: `TARGET_LED_DATASET_BASE_V0_READY_NO_ML_EXPORT_NO_TRAINING_NO_OPTUNA`.
+
+Собрана единая база по 14 и 15 мая:
+
+1. `26` good entries;
+2. `66` rejected bad entries;
+3. `15` unlabeled review entries;
+4. всего `107` строк.
+
+Будущие supervised labels есть только для good/reject: `92` строки. `possible_entry` и `manual_shift_review` оставлены без `ml_label`, чтобы не загрязнять обучение.
+
+Каждая строка содержит causal-фичи на закрытой signal-свече: price/range/room/wick/volume/VPOC/VWAP/RSI/MACD/ADX/Stoch/Fibo/retest/BOS/pattern primitives. Entry open и `+5 bps` сохранены только как execution/control.
+
+Следующий рабочий подпункт: user review dataset summary, затем решить, нужно ли переносить выбранные core blocks на `2026-05-15` strategy overlay или сначала чистить `unlabeled_review`. ML/export/training запрещены без `APPROVED_FOR_ML`.
+
+## Current State 2026-07-01 B018 BOS Repeat 14 May
+
+Текущий статус: `B018_BOS_STRATEGY_REVIEW_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+BOS/CHOCH повторен отдельно по `SOLUSDT 1m 2026-05-14 M01..M19`.
+
+Итог: `BOS_UP=41`, `BOS_DOWN=42`, `CHOCH-like=8`. Это подтверждает прежний вывод V2E: `B018` широкий и шумный как самостоятельный фильтр. Рабочая роль `B018` — structure-context/evidence.
+
+Практическая интерпретация для лонга: искать не просто BOS, а сценарий `слом вниз -> reclaim/CHOCH -> локальный вход`, либо использовать `BOS_UP` как подтверждение продолжения после входа.
+
+Следующий рабочий подпункт: user review BOS PNG, затем вернуться к выбору первого кластера/паспорта-кандидата из V2E. Scorer, target-lock, Optuna и ML/export/promotion запрещены.
+
+## Current State 2026-07-01 V2E Summary Matrix 14 May
+
+Текущий статус: `V2E_SUMMARY_MATRIX_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+14 мая закрыт по слоям `V2A/V2B/V2C/V2D` и сведен в `V2E_SUMMARY_MATRIX`.
+
+Итог по блокам:
+
+1. Слишком широкие context-блоки: `B014`, `B018`, `B009`, `B021`, `B022`, `B023`.
+2. Evidence-кандидаты: `B015`, `B017`, `B010`, `B013`, `B019`, `B020`.
+3. Конфликтный блок: `B026` с conflict `8/19`.
+
+Следующий рабочий подпункт: user review V2E-скрина, затем выбрать первый кластер/паспорт-кандидат по 14 мая. Не переходить к scorer, target-lock, Optuna или ML/export/promotion без отдельного решения пользователя.
+
+## Current State 2026-07-01 V2D Pattern 14 May
+
+Текущий статус: `V2D_PATTERN_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+На 14 мая уже закрыто:
+
+1. `V2A_STRUCTURE_LAYER`: `B014`, `B015`, `B017`, `B018`;
+2. `V2B_FLOW_DENSITY_LAYER`: `B010`, `B013`, `B026`;
+3. `V2C_ADX_STOCH_LAYER`: `B008`, `B009`;
+4. `V2D_PATTERN_LAYER`: `B019`, `B020`, `B021`, `B022`, `B023`, `B024`.
+
+V2D результат: `B019` поддержал `15/19`, `B020` поддержал `9/19`, `B021` и `B022` поддержали `19/19`, `B023` поддержал `17/19`, `B024` поддержал `16/19`. Интерпретация: pattern-слой полезен как evidence, но часть блоков слишком широкая и не является самостоятельным entry-фильтром.
+
+Следующий рабочий подпункт: `V2E_SUMMARY_MATRIX` на 14 мая. Нужно свести `M01..M19` по слоям `V2A/V2B/V2C/V2D` и отдельно отметить, какие блоки являются контекстом, а какие потенциально могут попасть в паспорт. Scorer, target-lock, Optuna и ML/export/promotion запрещены.
+
+## Current State 2026-07-01 V2C ADX/Stochastic 14 May
+
+Текущий статус: `V2C_ADX_STOCH_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+На 14 мая уже закрыто:
+
+1. `V2A_STRUCTURE_LAYER`: `B014`, `B015`, `B017`, `B018`;
+2. `V2B_FLOW_DENSITY_LAYER`: `B010`, `B013`, `B026`;
+3. `V2C_ADX_STOCH_LAYER`: `B008`, `B009`.
+
+RSI/MACD/EMA не повторялись по пользовательской правке. Текущий аудит: `B008_ADX14` поддержал `16/19`, `B009_STOCH14` поддержал `19/19`. Это означает, что Stochastic в текущей визуальной трактовке слишком широкий; ADX является контекстом силы движения, а не направлением входа.
+
+Следующий рабочий подпункт после user review: `V2D_PATTERN_LAYER` на 14 мая (`B019-B024`). `B025` оставить unsafe/context-only без отдельного решения. Scorer, target-lock, Optuna и ML/export/promotion запрещены.
+
+## Current State 2026-07-01 V2B Flow/Density 14 May
+
+Текущий статус: `V2B_FLOW_DENSITY_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Рабочая поправка: `T15/2026-05-15` отложен. Сначала закрываем `SOLUSDT 1m 2026-05-14 M01..M19` по всем применимым паспортным слоям.
+
+Уже закрыто по 14 мая:
+
+1. `V2A_STRUCTURE_LAYER`: `B014`, `B015`, `B017`, `B018`;
+2. `V2B_FLOW_DENSITY_LAYER`: `B010`, `B013`, `B026`.
+
+V2B результат: `B010_VOLUME_FLOW` поддержал `13/19`, `B013_DENSITY_VPOC` поддержал `12/19`, `B026_VWAP_DISTANCE` поддержал `8/19` и часто конфликтует. Интерпретация: это evidence/context, не самостоятельный сигнал.
+
+Следующий рабочий подпункт: `V2C_MOMENTUM_LAYER` на 14 мая (`B006 RSI`, `B007 MACD`). `B005 EMA` пока не используем как active condition. Scorer, target-lock, Optuna и ML/export/promotion запрещены.
+
+## Current State 2026-07-01 V2A Structure User Review Audit
+
+Текущий статус: `V2A_STRUCTURE_20260514_VISUAL_AUDIT_DONE_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Закрыт короткий visual-аудит V2A по `SOLUSDT 1m 2026-05-14 M01..M19`.
+
+Audit:
+`reports/final_review/visual_entry_v3/fresh_target_led/strategy_passport_overlay_v2a/V2A_STRUCTURE_USER_REVIEW_AUDIT_20260701_RU.md`.
+
+Рабочее решение: `B014/B018` считать широким контекстом, `B017` оставить кандидатом для retest/reclaim evidence, `B015 Fibo` оставить `context_only` до правила свежести ноги. Эта строка про следующий переход на `2026-05-15` superseded: сначала закрываем `V2B/V2C/V2D/V2E` по 14 мая. Scorer/target-lock/Optuna/ML запрещены.
+
 ## Current State 2026-07-01 V2A Structure Overlay 14 May
 
 Текущий статус: `V2A_STRUCTURE_LAYER_20260514_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
@@ -21,7 +3541,7 @@ JSON/CSV/RU:
 
 Наложенные блоки: `B014 LEVEL/RANGE/CHANNEL`, `B015 FIBONACCI_GRID`, `B017 BREAKOUT_RETEST`, `B018 MARKET_STRUCTURE`. `B016` не active, только muted/context-only позже.
 
-Следующий шаг: пользователь смотрит 14 мая и дает `норм/фиксить`. После подтверждения идти на `2026-05-15` с тем же V2A. Scorer, target-lock, Optuna и ML не запускать.
+Следующий шаг superseded пользовательской правкой: не идти на `2026-05-15`, пока 14 мая не закрыт по всем паспортным слоям. Scorer, target-lock, Optuna и ML не запускать.
 
 ## Current State 2026-07-01 Existing Passport Reconciliation
 
@@ -3834,3 +7354,482 @@ PNG: `reports/final_review/visual_entry_v3/fresh_target_led/visual_confirm/M01_u
 Следующий zoom-кандидат показан: `M02`, предполагаемый signal `2026-05-14T03:58:00Z`, LONG entry `2026-05-14T03:59:00Z`.
 
 PNG: `reports/final_review/visual_entry_v3/fresh_target_led/visual_confirm/M02_user_marked_order_zoom_signal_0358_entry_0359.png`.
+# Current State 2026-07-01 Dataset Base V1 After Unlabeled15 Feedback
+
+Текущий статус: `TARGET_LED_DATASET_BASE_V1_AFTER_UNLABELED15_FEEDBACK_READY_NO_ML_EXPORT_NO_TRAINING_NO_OPTUNA`.
+
+Разбор `15` спорных кандидатов закрыт по текущим авто-точкам: `LA018` и `LA020` приняты как нормальные входы, остальные `13` текущих entry отклонены. Для `LA026`, `LA048`, `LA057`, `LA059`, `LA062` пользователь указал стрелками возможные другие места входа, но они пока не внесены как gold, потому что нужна точная минута через zoom/time.
+
+Новая база V1: `107` строк, `28` positive, `79` negative, `0` unlabeled. Это не ML-export и не обучение.
+
+Рабочий визуал: `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_base_v1_after_unlabeled15_feedback_v1/TARGET_LED_UNLABELED15_USER_FEEDBACK_V1_ON_CHART_20260701.png`.
+# Current State 2026-07-01 Dataset Quality Audit V0
+
+Текущий статус: `TARGET_LED_DATASET_QUALITY_AUDIT_V0_READY_NO_ML_EXPORT_NO_TRAINING_NO_OPTUNA`.
+
+По базе `28/79` выполнен аудит качества блоков. Главный вывод: нельзя использовать простую сумму совпавших блоков как сигнал. `safe_core_hit_count=5/6` шумит.
+
+Первый рабочий путь: строить узкий паспорт по `SUPPORT_RETEST_LOW` или `TREND_DIP_CONTINUATION`. `LOW_ANCHOR_RECLAIM` в текущем виде блокируется как standalone allow.
+
+Рабочий отчет: `reports/final_review/visual_entry_v3/fresh_target_led/target_led_dataset_quality_audit_v0/TARGET_LED_DATASET_QUALITY_AUDIT_V0_20260701_RU.md`.
+# Current State 2026-07-01 ML Dataset Ladder
+
+Текущий статус: `FRESH_TARGET_LED_ML_DATASET_LADDER_LOCKED_NO_ML_NO_OPTUNA`.
+
+Чтобы не перепрыгивать шаги, создана лестница: `docs/CALIBRATION_NODE_CURRENT/FRESH_TARGET_LED_ML_DATASET_LADDER_RU.md`.
+
+Текущий следующий подпункт: `2.1_SUPPORT_RETEST_LOW_REVIEW_SHEET_9_GOOD_16_BAD_NO_ML_NO_OPTUNA`.
+
+После этого разрешен только draft-паспорт `SUPPORT_RETEST_LOW`. ML/export/training/Optuna остаются запрещены.
+# Current State 2026-07-01 SUPPORT_RETEST_LOW Review Sheet V0
+
+Текущий статус: `SUPPORT_RETEST_LOW_REVIEW_SHEET_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Пункт `2.1_SUPPORT_RETEST_LOW_REVIEW_SHEET_9_GOOD_16_BAD_NO_ML_NO_OPTUNA` выполнен. Собран PNG по `25` примерам: `9` good, `16` bad.
+
+Рабочий PNG: `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_review_sheet_v0/SUPPORT_RETEST_LOW_REVIEW_SHEET_V0_9GOOD_16BAD_20260701.png`.
+
+Следующий шаг только после user review: если `норм`, делать draft-паспорт `SUPPORT_RETEST_LOW`; если `фиксить`, править разметку/точки.
+# Current State 2026-07-01 SUPPORT_RETEST_LOW Passport Draft V0
+
+Текущий статус: `SUPPORT_RETEST_LOW_PASSPORT_DRAFT_V0_READY_FOR_USER_REVIEW_NO_SCORER_NO_ML_NO_OPTUNA`.
+
+Draft-паспорт `SUPPORT_RETEST_LOW` создан после user `норм` по review-sheet. Это contract draft, не scorer и не target-lock.
+
+Рабочие артефакты:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_passport_draft_v0/SUPPORT_RETEST_LOW_PASSPORT_DRAFT_V0_20260701_RU.md`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_passport_draft_v0/SUPPORT_RETEST_LOW_PASSPORT_DRAFT_V0_CARD_20260701.png`.
+
+Следующий шаг только после user `норм / фиксить`: entry-only PNG/scorer seed-check по этому паспорту. ML/Optuna запрещены.
+# Current State 2026-07-02 SUPPORT_RETEST_LOW Entry-Only Scorer V0
+
+Текущий статус: `SUPPORT_RETEST_LOW_ENTRY_ONLY_SCORER_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_TARGET_LOCK`.
+
+Entry-only seed-check V0 выполнен: good kept `9/9`, bad rejected `8/16`, false entries `8/16`. Статус результата: `SEED_MUST_KEEP_PASS_FALSE_ENTRIES_TOO_MANY`.
+
+Рабочий PNG: `reports/final_review/visual_entry_v3/fresh_target_led/support_retest_low_entry_only_scorer_v0/SUPPORT_RETEST_LOW_ENTRY_ONLY_SCORER_V0_SEED_CHECK_20260702.png`.
+
+Следующий шаг: user review PNG, затем `V1_REJECT_GUARDS` по 8 оранжевым false-positive. Не делать lock, multi-day, Optuna или ML.
+
+# Current State 2026-07-02 Outcome Low Miner V0
+
+Текущий статус: `OUTCOME_LOW_MINER_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_SCORER`.
+
+Создан отдельный тест по предложению пользователя: low-кандидат строится без future-признаков, entry считается на следующем `open` с `+5 bps`, затем offline проверяется, был ли ход `+1.5%` в течение `360` минут.
+
+Результат на `SOLUSDT 1m`:
+
+- `2026-05-14`: `14` кандидатов, `5` hit `+1.5%`;
+- `2026-05-15`: `12` кандидатов, `1` hit `+1.5%`.
+
+Главный вывод: тест полезен как быстрый сбор сильных примеров, но `+1.5%` слишком строгий, чтобы заменить ручную target-led разметку. Это не ML, не scorer, не target-lock и не Optuna.
+
+Рабочие PNG для пользователя:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260514_20260702.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260515_20260702.png`.
+
+# Current State 2026-07-02 Outcome Low Miner 1pct Comparison
+
+Текущий статус: `OUTCOME_LOW_MINER_V0_TARGET_1PCT_COMPARISON_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_SCORER`.
+
+Сделан повтор того же теста с target `+1.0%`. Логика low-кандидата не менялась, изменена только offline outcome-метка.
+
+Результат:
+
+- `2026-05-14`: `14` кандидатов, `7` hit `+1.0%`;
+- `2026-05-15`: `12` кандидатов, `3` hit `+1.0%`.
+
+Рабочие PNG:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0_target_1pct/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260514_20260702.png`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/outcome_low_miner_v0_target_1pct/OUTCOME_LOW_MINER_V0_HIT_ZOOM_20260515_20260702.png`.
+
+Вывод: `+1.0%` лучше подходит как mining/review threshold, чем `+1.5%`, но остается только outcome-layer.
+
+# Current State 2026-07-02 Outcome Miner Correction
+
+Текущий статус: `RETURN_TO_SIGNIFICANT_LOCAL_LEVELS_NO_ML_NO_OPTUNA`.
+
+Пользователь указал, что широкий sweep является перебором и противоречит нашей текущей учебе по значимым локальным low/уровням. Рельсы перечитаны: `cooldown-сетки` запрещены как замена логике входа.
+
+Широкий sweep остается только диагностикой. Рабочий следующий путь: `SIGNIFICANT_LEVEL_LOW_REVIEW_V0`, где сначала ищется значимый локальный уровень/low по left-context, а outcome `+0.8%/+1.0%` используется только после этого как метка проверки движения.
+## Current State 2026-07-02 Good 1pct Review Pool
+
+Текущий статус: `GOOD_1PCT_REVIEW_POOL_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Создан быстрый сборщик review-пула по диапазону дат: `src/mlbotnav/visual_entry_good_1pct_review_pool.py`.
+
+Правило сохранено без подмены рельс: значимый low = `signal`, вход = `entry open` следующей свечи, расчетная цена исполнения = `entry open + 5bps`, цель = `+1%` от расчетной цены исполнения. Диапазон `0/5/10bps` сохраняется только как execution band для аудита.
+
+Smoke-запуск на `2026-05-13`:
+
+- run_id: `smoke_20260513_20260702_080455`;
+- кандидатов: `87`;
+- GOOD: `5` (`4` strong, `1` soft);
+- BAD: `82`.
+
+Артефакты smoke:
+
+1. `reports/final_review/visual_entry_v3/fresh_target_led/good_1pct_review_pool/smoke_20260513_20260702_080455/GOOD_1PCT_REVIEW_POOL_RECORDS.csv`;
+2. `reports/final_review/visual_entry_v3/fresh_target_led/good_1pct_review_pool/smoke_20260513_20260702_080455/GOOD_1PCT_REVIEW_POOL_PAYLOAD.json`;
+3. `reports/final_review/visual_entry_v3/fresh_target_led/good_1pct_review_pool/smoke_20260513_20260702_080455/GOOD_1PCT_REVIEW_POOL_REPORT_RU.md`;
+4. `reports/final_review/visual_entry_v3/fresh_target_led/good_1pct_review_pool/smoke_20260513_20260702_080455/GOOD_1PCT_REVIEW_POOL_DAY_OVERVIEW_20260513.png`;
+5. `reports/final_review/visual_entry_v3/fresh_target_led/good_1pct_review_pool/smoke_20260513_20260702_080455/GOOD_1PCT_REVIEW_POOL_GOOD_CLOSEUPS_PAGE_01.png`.
+
+Добавлена VS Code задача: `Visual Entry: Good 1pct Review Pool (NO ML/OPTUNA)`.
+
+Дополнительный mini-run W20 `2026-05-13..2026-05-15` после фикса zoom-окна:
+
+- run_id: `W20_mini_zoomfix_20260702_081003`;
+- кандидатов: `261`;
+- GOOD: `73`;
+- BAD: `188`;
+- по дням: `2026-05-13` = `5` GOOD / `82` BAD, `2026-05-14` = `55` GOOD / `30` BAD, `2026-05-15` = `13` GOOD / `76` BAD.
+
+Вывод по W20 mini: механический `+1%` быстро находит много потенциальных сделок, но не является gold-разметкой. Его использовать как review-pool для глаз, затем руками переносить только подтвержденные входы в approved-ledger.
+
+Граница: это не ML/export/training, не scorer, не target-lock и не Optuna. Future outcome хранится только как offline label после найденного low-кандидата.
+
+## Current State 2026-07-02 DCA Risk Audit V0
+
+Текущий статус: `DCA_RISK_AUDIT_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA_NO_API`.
+
+Создан risk-audit для `GOOD_1PCT` learning pool W18-W20. Скрипт читает готовые кандидаты, считает `+0.5/+1.0/+1.5/+2.0/+4.0%` outcome-фазы, active open count, hold time, basket drawdown и классы риска.
+
+Рабочий ранс: `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260702_154415`.
+
+Итог:
+
+- `573` GOOD из `1528` записей;
+- all GOOD max active = `44`;
+- first `10` GOOD/day max active = `10`;
+- selected10: `41` fast clean, `52` survivable, `77` late-pump dependent, `17` falling-knife, `2` no-room.
+
+Вывод: нельзя обучать ML просто на всех `+1%` hit. Сначала надо руками определить, какие risk classes разрешены как positive, а какие идут в hard-negative или отдельную DCA/hedge-политику.
+
+Entry-marker fix: после замечания пользователя top-day PNG перегенерирован так, чтобы треугольник стоял на `entry_open_price`, а `entry +5bps` был отдельной белой execution-меткой. Новый run для просмотра: `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_entryopen_fix_20260702_161630`.
+
+Closeup fix: для `2026-05-02` собраны отдельные страницы ручной проверки всех `44` GOOD-сделок, по `9` панелей на страницу. Run: `reports/final_review/visual_entry_v3/fresh_target_led/dca_risk_audit_v0/W18_W20_dca_risk_20260502_closeups_20260702_162715`.
+## Current State 2026-07-02 Significant Low Calibration V0
+
+Текущий статус: `SIGNIFICANT_LOW_CALIBRATION_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+После ручного feedback по `2026-05-02` создан слой калибровки значимого low: `src/mlbotnav/visual_entry_significant_low_calibration_v0.py`. Он не ищет новые сделки через ML/Optuna, а фильтрует уже собранные low-кандидаты:
+
+- user reject остается hard reject;
+- user shift становится `USER_SHIFT_PENDING_REANCHOR`, то есть требуется отдельный zoom и точный перенос anchor/entry;
+- машинный keep требует новый low в 60/180m left-context и достаточное падение от prior high;
+- дубли внутри одного basin отбрасываются.
+
+Актуальный user-layer run после правок пользователя по `LA048/LA050`:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_20260502_user_actual_v1c3_20260702_190227`
+
+Итог по `2026-05-02`: `6` keep (`LA002`, `LA015`, `LA018`, `LA021`, `LA040`, `LA050`), `2` shift-pending (`LA007`, `LA028`), `38` user-reject, `6` not-significant, `2` duplicate-basin. Контроль: `LA048` и `LA049` отклонены, `LA050` принят, `LA051` не good. Следующий шаг: визуально проверить актуальный overview V1C3 и затем решать параметры V1. ML/export/training/scorer/target-lock/Optuna/API запрещены.
+
+После нового скриншота пользователя собран рабочий zoom для точных стрелок:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_zoom_v0_20260702_191450/SIGNIFICANT_LOW_REANCHOR_ZOOM_V0_20260502.png`
+
+Текущий следующий шаг: дождаться стрелок пользователя по `RB01_LA007_REANCHOR`, `RB02_LA028_REANCHOR`, `RB03_LA050_AREA`, затем создать новый reanchor layer с точным `signal_time_utc` и `entry_time_utc = next open`.
+
+Стрелки применены в run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v0_20260702_192103`
+
+Итог reanchor:
+
+- `RA001_FROM_LA007`: signal `03:14`, entry `03:15`, `entry +5bps=83.76186000`;
+- `RA002_PENDING_FROM_LA028`: новой стрелки нет, остается pending;
+- `RA003_CONFIRM_LA050`: signal `22:25`, entry `22:26`, `entry +5bps=84.26211000`.
+
+Текущий следующий шаг: показать пользователю `SIGNIFICANT_LOW_REANCHOR_APPLIED_V0_20260502_ZOOM.png` и `OVERVIEW.png`, получить `норм / фиксить / показать стрелку по LA028`.
+
+Пользователь уточнил `LA050`: сдвинуть на одну свечу влево и поставить на самый низ. Создан актуальный V1:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v1_20260703_060258`
+
+Изменение V1:
+
+- `RA003_SHIFT_LEFT_LA050`: visual marker `22:25` на low `84.02000000`;
+- execution сохранен отдельно: `entry_open=84.06000000`, `entry +5bps=84.10203000`;
+- `LA028` по-прежнему pending.
+
+Текущий следующий шаг: показать пользователю V1 zoom/overview и получить `норм / фиксить`.
+
+## Current State 2026-07-03 Reanchor Applied V2 RA004
+
+Текущий статус: `SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+Стрелка пользователя применена как новая ручная точка `RA004_USER_ENTRY_2049`:
+
+- signal `2026-05-02T20:48:00Z`;
+- entry `2026-05-02T20:49:00Z`;
+- low свечи `84.05000000`;
+- `entry_open=84.09000000`;
+- `entry +5bps=84.13204500`.
+
+Run: `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904`.
+
+Главный PNG для user review: `reports/final_review/visual_entry_v3/fresh_target_led/significant_low_calibration_v0/siglow_reanchor_applied_v2_20260703_081904/SIGNIFICANT_LOW_REANCHOR_APPLIED_V2_20260502_CLOSE_ZOOM_RA004.png`.
+
+Следующий шаг: пользователь смотрит close-zoom/overview и говорит `норм / фиксить`. ML/export/training/scorer/target-lock/Optuna/API не запускать.
+
+## Current State 2026-07-03 Manual Reanchors V0 Source Of Truth
+
+Текущий статус: `SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+После жалобы пользователя, что на графике снова появились другие сделки, ручные reanchor-точки вынесены в отдельный JSON source-of-truth:
+
+`configs/visual_entry/manual_reanchors/SOLUSDT_1m_2026-05-02_SIGNIFICANT_LOW_MANUAL_REANCHORS_V0.json`.
+
+Создан renderer `src/mlbotnav/visual_entry_manual_reanchor_review_v0.py`, который читает только этот JSON и не подтягивает старые DCA/GOOD_1PCT rows. В clean overview попадают только подтвержденные ручные строки: `RA001_FROM_LA007`, `RA003_SHIFT_LEFT_LA050`, `RA004_USER_ENTRY_2049`. `RA002_PENDING_FROM_LA028` остается в review sheet, но не считается confirmed.
+
+Актуальный run:
+
+`reports/final_review/visual_entry_v3/fresh_target_led/significant_low_manual_reanchors_v0/siglow_manual_reanchors_v0_20260703_083936`.
+
+Главный следующий шаг: пользователь проверяет `SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_20260502_REVIEW_SHEET.png` и close-zoom по `RA003/RA004`. Если фикс нужен, править только JSON source-of-truth и перегенерировать этот же слой. ML/export/training/scorer/target-lock/Optuna/API запрещены.
+
+## Current State 2026-07-03 STAS1 anchor-next-open fix
+
+Текущий статус: `STAS1_GOOD_1PCT_ANCHOR_NEXT_OPEN_FIX_V0_VERIFIED_NO_ML_NO_OPTUNA`.
+
+По `2026-05-02` подтвержден баг старого `GOOD_1PCT_REVIEW_POOL`: часть сделок брала `entry` от confirmation-свечи, а не от фактического low. В старом run было `44` GOOD, из них `12` имели вход через 2-4 свечи после `anchor_time_utc`.
+
+Исправлено:
+
+- `src/mlbotnav/visual_entry_low_anchor_suggester.py`: `signal_idx = anchor_idx`, `entry_idx = anchor_idx + 1`;
+- `confirmation_idx` и `confirmation_time_utc` сохранены отдельно как справочный контекст;
+- `src/mlbotnav/visual_entry_good_1pct_review_pool.py`: в CSV добавлены индексы для аудита;
+- добавлен тест `tests/test_visual_entry_low_anchor_suggester.py`.
+
+Контрольный run:
+
+`STAS1_GOOD_LOW_REVIEW/runs/stas1_20260502_1pct_anchor_next_open_fix_v0_20260703_165034`
+
+Итог: `52` строки, `42` GOOD, `10` BAD, нарушений `entry_time_utc != anchor_time_utc + 1 minute` нет. Хвостов `python.exe` после проверки нет.
+
+Следующий шаг: пользователь смотрит новый overview/closeups из STAS1 run и отмечает шум/неправильные low уже поверх исправленного правила `low -> next open +5bps`. ML/export/training/scorer/target-lock/Optuna/API не запускать.
+
+## Current State 2026-07-07 Codex/VS Code load audit
+
+Текущий статус: `CODEX_VSCODE_LOAD_AUDIT_LOCAL_FIX_APPLIED`.
+
+Причина нагрузки была локальная: Codex запустил `git add -A`, а проект содержал большие неигнорируемые STAS run-артефакты. Вложенных `.git` внутри проекта нет, отдельная проблема GitHub-веток не подтверждена.
+
+Что применено:
+
+- `.gitignore`: STAS `runs` исключены из Git;
+- `.vscode/settings.json`: тяжелые папки исключены из file watcher, search и Pylance analysis;
+- зависшие `git add -A` остановлены, `.git/index.lock` отсутствует.
+
+Проверено: `git status` быстрый, `git check-ignore` подтверждает `STAS1/2/3 .../runs`.
+
+Проверка после reload VS Code: тяжелых Git-процессов нет, старый хвост `git status --porcelain` остановлен, новых `git add -A` нет. `git status --short --untracked-files=normal` выполняется примерно за `0.03s`. VS Code почти idle; остаточная CPU-активность относится к активному Codex-приложению во время текущего чата/проверок, а не к сканированию проекта.
+
+## Current State 2026-07-03 STAS1 EndDay wrapper fix
+
+Текущий статус: `STAS1_WRAPPER_ENDDAY_FIX_VERIFIED_NO_ML_NO_OPTUNA`.
+
+Исправлены `STAS1_GOOD_LOW_REVIEW/run_day_1pct.ps1` и `STAS1_GOOD_LOW_REVIEW/run_day_0p5.ps1`: теперь параметр `-EndDay` реально передается в `visual_entry_good_1pct_review_pool` как `--end-day`. Если `-EndDay` не задан, остается режим одного дня.
+
+Smoke-run `2026-05-03 -> 2026-05-04` дал `days_requested=2`, `days_processed=2`, `records_total=132`, `bad_anchor_to_entry=0`.
+
+Проверенный run: `STAS1_GOOD_LOW_REVIEW/runs/stas1_smoke_20260503_20260504_endday_fix_v0_20260703_173534`.
+
+Следующая команда на 7 дней теперь может идти через wrapper:
+
+```powershell
+$env:PYTHONPATH='src'
+.\STAS1_GOOD_LOW_REVIEW\run_day_1pct.ps1 -Day 2026-05-03 -EndDay 2026-05-09 -RunLabel stas1_20260503_20260509_1pct_anchor_next_open_fix_v0
+```
+## Current State 2026-07-09 STAS4 combo strategies 3 days
+
+Статус: `STAS4_COMBO_4_STRATEGIES_3D_READY_FOR_USER_REVIEW_NO_ML_NO_OPTUNA`.
+
+По рабочему Stas2 run `STAS2_MARKET_PHASE_REVIEW/runs/stas2_20260510_20260512_short_macro_wave_review_20260709_071233` прогнаны 4 комбинированные стратегии Stas4 на трех днях `2026-05-10..2026-05-12`: `structure_ta+trend_momentum`, `structure_ta+volume_flow`, `pattern+structure_ta`, `density_profile+structure_ta`.
+
+Итоги: `structure_ta+trend_momentum` = `172` старых входа помечены как шум, `5` новых кандидатов; `structure_ta+volume_flow` = `158` / `2`; `pattern+structure_ta` = `106` / `6`; `density_profile+structure_ta` = `72` / `11`.
+
+Главный отчет: `STAS4_FEATURE_HYPOTHESIS_REVIEW/STAS4_COMBO_4_STRATEGIES_3D_SUMMARY_20260709_RU.md`.
+
+ML, Optuna, scorer, target-lock и API не запускались. Старая логика Stas1/Stas2 не менялась.
+## Current State 2026-07-11 Codex Startup Disk Load Audit
+
+Текущий статус: `CODEX_STARTUP_DISK_LOAD_AUDIT_READY_NO_DELETE_NO_CODE_CHANGE`.
+
+Проверена жалоба на минутную нагрузку диска после перезагрузки и запуска Codex. Сейчас постоянной проблемы не найдено: диск во время аудита падал к нормальной нагрузке, `git status` и `git ls-files --others --exclude-standard` быстрые, зависшего `git add -A` нет, автозапуск Codex/VS Code/Git через `Win32_StartupCommand` не найден.
+
+Главный найденный вес: `C:\Users\007\.codex` около `13.2 GB`, из них `sessions` около `7.5 GB`, backup/archived-сессии около `4.4 GB`, `logs_2.sqlite` около `724 MB`. Внутри проекта есть `_codex_offload_20260530` около `5.9 GB`, который уже игнорируется Git/VS Code, но физически остается в рабочей папке и может прогреваться Windows/Defender при холодном старте.
+
+Подробный отчет: `docs/codex/CODEX_STARTUP_DISK_LOAD_AUDIT_20260711_RU.md`.
+
+Граница: файлы, кеши, сессии, логи и артефакты не удалялись и не переносились. Любая очистка/перенос старой истории Codex требует отдельного подтверждения пользователя.
+
+## Current State 2026-07-14 STAS5 V4 Group Ranker
+
+Текущий статус: `STAS5_V4_OFFLINE_GROUP_REVIEW_DONE__V4L_LIVE_SAFE_REQUIRED`.
+
+V4 больше не обучается как построчный KEEP/CUT. Рабочая единица теперь локальная группа кандидатов: старые `274` признака сохранены как контекст, а решение делается через `group_id`, V4 group features и ранжирование внутри группы.
+
+Актуальный train:
+
+- `2026-05-01..2026-05-14` - legacy база из V2 snapshot;
+- `2026-05-15..2026-05-25` - пользовательские исправленные V4 group-rank правки, включая снятый с карантина `2026-05-15`;
+- dataset `PASS`, `1710` строк, `103` winners, `287` features;
+- corrected review join `738/738`, дублей `0`;
+- запрещенные old ML/future/postfact/TP/Stas3/exit features не попали в модель.
+
+Актуальная модель:
+
+`STAS5_ML_CORE/artifacts/v4/model/runs/stas5_v4_train_20260714_163911/stas5_v4_group_ranker_20260501_20260525_v0.joblib`
+
+OOF group metrics: `top1_group_accuracy=0.679612`, `winner_in_top2=0.834951`, `MRR=0.797006`, `NDCG@3=0.805523`, `BAD top1=15`.
+
+Актуальный forward:
+
+`STAS5_ML_CORE/artifacts/v4/forward/runs/stas5_v4_forward_20260526_20260530_20260714_164144`
+
+Forward totals: `363` rows, `25` auto-groups, `ENTER=24`, `UNSURE=16`, `SKIP=323`. По дням: `2026-05-26` ENTER `4`, `2026-05-27` ENTER `5`, `2026-05-28` ENTER `5`, `2026-05-29` ENTER `5`, `2026-05-30` ENTER `5`.
+
+Важная граница после no-future аудита: текущий V4 нельзя считать live-safe моделью. Он не использует TP/Stas3/future outcome, но использует full-group признаки, рассчитанные по уже собранной группе. Будущий состав группы тоже считается future leakage.
+
+Текущий V4 run остается полезным как `OFFLINE_GROUP_REVIEW_NOT_LIVE_SAFE`: teacher/audit слой для понимания красивых human-style входов.
+
+Следующий рабочий контур: `STAS5_ML_CORE/08_STAS5_V4L_LIVE_SAFE_GROUP_RANKER_PLAN_RU.md`.
+
+V4L должен:
+
+- считать только `v4l_*_so_far` признаки;
+- хранить full-group/best-low поля только как audit/label;
+- проходить `LIVE_SAFE_FEATURE_ALLOWLIST`;
+- проходить `prefix invariance`;
+- делать sequential forward replay, где score/decision доступны не позже `entry_time_utc`.
+
+## Current State 2026-07-14 STAS5 V4L Live-Safe Group Ranker
+
+Текущий статус: `STAS5_V4L_LIVE_SAFE_TRAIN_FORWARD_READY_20260501_20260530`.
+
+Реализован отдельный live-safe контур V4L, чтобы не путать его со старым offline V4:
+
+- dataset builder: `src/mlbotnav/stas5_v4l_live_safe_dataset.py`;
+- trainer: `src/mlbotnav/stas5_v4l_live_safe_train.py`;
+- blind forward: `src/mlbotnav/stas5_v4l_live_safe_forward.py`;
+- единая команда: `STAS5_ML_CORE/run_stas5_v4l_live_safe_train_forward.ps1`.
+
+Train окно зафиксировано как `2026-05-01..2026-05-25`: legacy `01..14` плюс исправленный user-review ledger `15..25`, включая `2026-05-15`. Dataset `PASS`: `1710` строк, `25` дней, `103` winners, `289` признаков = старый V2-контекст плюс `15` live-safe `v4l_*_so_far` признаков. Prefix-invariance guard: `1710/1710`, failures `0`. Запрещенные full-group/future/old-ML признаки в feature list: `0`.
+
+Последний проверенный train run:
+
+`STAS5_ML_CORE/artifacts/v4l/model/runs/stas5_v4l_train_20260714_181635`
+
+Последний проверенный blind forward `2026-05-26..2026-05-30`:
+
+`STAS5_ML_CORE/artifacts/v4l/forward/runs/stas5_v4l_forward_20260526_20260530_20260714_181635`
+
+Forward totals: `363` rows, `ENTER=23`, `UNSURE=80`, `SKIP=260`. По дням: `2026-05-26` ENTER `4`, `2026-05-27` ENTER `5`, `2026-05-28` ENTER `5`, `2026-05-29` ENTER `5`, `2026-05-30` ENTER `4`.
+
+Правило no-future теперь технически закреплено: V4L не использует final group low/rank/size, `post_candidate_lower_low_exists`, day-end top-N selection и не переписывает прошлые решения после появления будущих кандидатов. Postfact audit добавляется только после решения для визуальной проверки PNG.
+
+## Current State 2026-07-15 STAS5 V5 Row-Label Pivot / Day23 Pre-Knife Correction
+
+Текущий рабочий статус: `V4_V4L_FROZEN_AS_FAILED_STRATEGY__V5_ROW_LABEL_PREP`.
+
+Пользователь отклонил V4/V4L как финальную торговую логику: стратегия с group-rank/sequential one-entry behavior дает слишком ранние или не те входы и не должна быть основой следующего обучения. Новый правильный контур: дорабатывать ML-обучение по строкам кандидатов, используя ручные good/bad правки `2026-05-15..2026-05-25` как эталонные метки. `group_id`, `reason_code` и визуальные блоки остаются объяснением/аудитом метки, но не должны навязывать ограничение "один ENTER на группу".
+
+Разбор нового скрина `2026-05-23` выполнен по оригинальным данным, не по пикселям:
+
+- forward CSV: `STAS5_ML_CORE/artifacts/v3/forward/runs/stas5_v3_wrapper_smoke2_20260714/20260523/STAS5_V3_FORWARD_ENTRIES_20260523.csv`;
+- OHLCV: `data/core/bybit_ohlcv/dt=2026-05-23/tf=1m/symbol=SOLUSDT/part-final.csv`;
+- исходный corrected ledger: `STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_LEDGER_20260523_USER_CORRECTED_V1.csv`.
+
+Новая пользовательская пометка: верхний широкий прямоугольник перед ножом - зона, где покупать нельзя; нижняя зона после flush - место для хороших входов. По свечам локальный flush low найден в `2026-05-23T07:50:00Z`, `low=81.35`.
+
+Создана новая версия day23-разметки без перезаписи V1:
+
+`STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_LEDGER_20260523_USER_CORRECTED_V2_PRE_KNIFE.csv`
+
+Сопроводительный отчет:
+
+`STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_REVIEW_20260523_USER_CORRECTED_V2_PRE_KNIFE_RU.md`
+
+Numeric audit:
+
+`STAS5_ML_CORE/artifacts/v4/group_rank_review/20260523/STAS5_V4_GROUP_RANK_REVIEW_20260523_PRE_KNIFE_NUMERIC_AUDIT.csv`
+
+Главные изменения day23 V2:
+
+- `LA001..LA016` / `G20260523_001_0032_0638` переведены в `NO_TRADE_GROUP`;
+- `LA007` больше не `BEST_GOOD`, потому что попал в верхнюю pre-knife зону и до flush low имел аудит-просадку около `-3.42%`;
+- `LA002` и `LA014` больше не `GOOD_ALT`;
+- `LA017..LA021` остаются плохими immediate pre-knife входами, просадка до flush low около `-3.10..-3.43%`;
+- `LA022` остается `BEST_GOOD / GOOD_BEST_DEEP_LOW_AFTER_KNIFE`;
+- `LA025` остается `GOOD_ALT` как второй низ в нижней зоне;
+- `LA033` остается `BEST_GOOD` как retest базы.
+
+Итог day23 V2: `63` строк, `BEST_GOOD=6`, `GOOD_ALT=2`, `BAD_IN_GROUP=27`, `NO_TRADE_GROUP=28`, winners `LA022,LA033,LA034,LA036,LA042,LA051`.
+
+Важно: drawdown/flush-low расчеты являются audit/label explanation only. Их нельзя отдавать в model features. В будущем V5 row-level обучении разрешены только признаки, доступные на момент `entry_time_utc`.
+
+Создан общий V5 label-source для `2026-05-15..2026-05-25`, где day23 заменен на `USER_CORRECTED_V2_PRE_KNIFE`:
+
+`STAS5_ML_CORE/artifacts/v5/labels/STAS5_V5_ROW_LABEL_SOURCE_20260515_20260525_WITH_DAY23_PRE_KNIFE_V1.csv`
+
+Manifest:
+
+`STAS5_ML_CORE/artifacts/v5/labels/STAS5_V5_ROW_LABEL_SOURCE_20260515_20260525_WITH_DAY23_PRE_KNIFE_V1.manifest.json`
+
+Guard `PASS`: `738` строк, `11` дней, дублей `0`, day23 rows replaced `63 -> 63`. Counts: `BAD_IN_GROUP=420`, `NO_TRADE_GROUP=215`, `BEST_GOOD=63`, `GOOD_ALT=40`. Если для V5 считать `BEST_GOOD + GOOD_ALT` положительными row-level метками, получается `103` positive и `635` negative.
+## Current State 2026-07-15 Codex CPU Load Check
+
+Текущий статус: `CODEX_CPU_LOAD_CHECK_READY_NO_KILL_NO_DELETE_NO_CODE_CHANGE`.
+
+Проверена жалоба, что Codex снова активно грузит CPU. Процессы не останавливались, файлы не удалялись. Текущий сценарий отличается от аудита диска 2026-07-11: диск во время проверки был умеренный (`3.5%..26.1%`), а CPU прыгал `22.8%..44.4%`.
+
+Codex по замерам потреблял примерно `5.3%..9.2% CPU` суммарно по группе и около `3.5..3.6 GB PrivateMB`. От `Codex.exe` наблюдались повторяющиеся `git diff --find-renames --numstat -z` между внутренними состояниями, а также краткие `git add -u`/`git add -A`. `git status` остается быстрым, около `51 ms`; `git diff --cached --name-only` пустой, `.git/index.lock` нет, то есть реального staging в пользовательский индекс не обнаружено.
+
+Главное изменение с 2026-07-11: неигнорируемый dirty worktree вырос с `393` файлов на `58.7 MB` до `1574` файлов на `424.8 MB`, из них `1220` файлов и около `389.8 MB` в `STAS5_ML_CORE`. Вероятная причина нагрузки - внутренний пересчет Git/diff Codex по большой пачке незакрытых изменений.
+
+Подробный отчет: `docs/codex/CODEX_CPU_LOAD_CHECK_20260715_RU.md`.
+
+Граница: ничего не убивать и не удалять без отдельного решения. Безопасная разгрузка - уменьшить dirty worktree: коммит/стейдж согласованных файлов, перенос generated artifacts или аккуратное расширение `.gitignore` только после решения, что является source-of-truth.
+## Current State 2026-07-16 Codex Unload Applied
+
+Текущий статус: `CODEX_UNLOAD_APPLIED_NO_DELETE_NO_PROCESS_KILL_CODEX`.
+
+Codex разгружен без удаления файлов: процессы Codex не остановлены, приоритет `Codex`/`codex` понижен до `BelowNormal`, generated/run-папки `STAS5_ML_CORE/artifacts/` и `STAS5_ML_CORE/runs/` добавлены в `.gitignore` и локальные VS Code excludes.
+
+Результат: неигнорируемые untracked снизились с `1574` файлов / `424.8 MB` до `381` файла / `41.6 MB`; `git status` около `51..79 ms`; `.git/index.lock` отсутствует; после финального контроля активных `git.exe` нет. CPU Codex на контрольном 10-секундном замере около `4.1%`, диск умеренный.
+
+Отчет: `docs/codex/CODEX_UNLOAD_ACTION_20260716_RU.md`.
+
+## Current State 2026-07-16 Codex Idle Relief
+
+Текущий статус: `CODEX_IDLE_RELIEF_APPLIED_NO_DELETE_NO_STAS_TOUCH`.
+
+После повторной жалобы на движение диска/памяти/CPU в простое выполнена мягкая разгрузка без удаления и без изменения `STAS*`: остановлены read-only `git status --porcelain` и внутренний `git diff --find-renames --numstat -z`, активных `git.exe` после контроля нет, `.git/index.lock` нет. Приоритет `Codex`/`codex`/`Code` установлен в `Idle`. Отдельный VS Code OpenAI/Codex extension server остановлен до следующего запуска VS Code.
+
+Оставшийся источник коротких дисковых всплесков по процессным счетчикам - `MsMpEng` (Microsoft Defender). Defender не отключался. Свободная память оставалась около `13.3..13.8 GB`, то есть давления по RAM не найдено. Отчет: `docs/codex/CODEX_IDLE_RELIEF_20260716_RU.md`.
+
+## Current State 2026-07-22 Codex Update Load Audit
+
+Текущий статус: `CODEX_UPDATE_LOAD_AUDIT_RELIEF_APPLIED_NO_DELETE`.
+
+После обновления Codex установлен как `OpenAI.Codex_26.715.10079.0`, но главная оболочка в процессах теперь `ChatGPT.exe`. Это объясняет, почему прежняя разгрузка `Codex`/`codex` не полностью работала: активный renderer/gpu Codex был под другим именем.
+
+Мягкая разгрузка выполнена без удаления и без изменения `STAS*`: VS Code OpenAI/Codex extension server остановлен, `ChatGPT`/`codex`/`Code`/`node_repl` переведены в `Idle`. Активных `git.exe` нет, `.git/index.lock` нет, `git status` быстрый (`~52 ms`). Финальный системный диск не висит: чтение `0`, Disk Time `0.8..10.4%`, свободная память `13.5..13.7 GB`. Отчет: `docs/codex/CODEX_UPDATE_LOAD_AUDIT_20260722_RU.md`.
+
+## Current State 2026-07-23 Codex VS Code Fix
+
+Текущий статус: `CODEX_VSCODE_EXTENSION_RESTARTED_NO_DELETE`.
+
+Панель Codex в VS Code восстановлена: штатная кнопка `Перезапустить` подняла сервер расширения `openai.chatgpt-26.715.31925...\codex.exe app-server`. Приоритеты `ChatGPT`/`codex` стоят в `Idle`. После краткого стартового чтения контрольный срез показал VS Code Codex server без CPU и без дискового I/O. Папки `STAS*` и `config.toml` не изменялись. Отчет: `docs/codex/CODEX_VSCODE_FIX_20260723_RU.md`.
+
+## Current State 2026-07-23 STAS9 Shortcut And CPU Fix
+
+Текущий статус: `STAS9_VSCODE_LAUNCH_READY_LIGHTWEIGHT`.
+
+Оба ярлыка STAS9 на рабочем столе указывают на `Code.exe` с аргументом открытия `MLbotNav_STAS9.code-workspace`. Старый terminal launcher оставлен только как технический файл внутри проекта и после контрольного запуска ярлыка не активен. Простое открытие STAS9 больше не инициирует полный аудит или чтение больших журналов. Контрольный замер показал низкую постоянную нагрузку: `Code ~1.56%`, все `codex ~0.10%`. STAS5–STAS8 не изменялись.

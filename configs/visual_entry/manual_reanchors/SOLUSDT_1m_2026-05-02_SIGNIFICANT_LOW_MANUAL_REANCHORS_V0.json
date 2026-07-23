@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "status": "SIGNIFICANT_LOW_MANUAL_REANCHORS_V0_SOURCE_OF_TRUTH_NO_ML_NO_OPTUNA",
+  "symbol": "SOLUSDT",
+  "timeframe": "1m",
+  "day_utc": "2026-05-02",
+  "slippage_bps": 5,
+  "execution_rule": "LONG_MARKET_NEXT_OPEN_PLUS_5BPS",
+  "guardrails": [
+    "NO_ML",
+    "NO_OPTUNA",
+    "NO_SCORER",
+    "NO_TARGET_LOCK",
+    "NO_API"
+  ],
+  "notes": [
+    "Manual visual reanchors are stored here so repeated renders do not drift into old DCA/GOOD_1PCT rows.",
+    "visual_marker fields are for eye review only; execution fields are the market entry contract.",
+    "PENDING rows are not treated as confirmed good entries."
+  ],
+  "entries": [
+    {
+      "manual_id": "RA001_FROM_LA007",
+      "source_candidate_id": "LA007",
+      "status": "CONFIRMED_MANUAL_REANCHOR",
+      "review_status": "USER_CONFIRMED",
+      "user_marker_role": "SIGNAL_LOW",
+      "signal_time_utc": "2026-05-02T03:14:00Z",
+      "entry_time_utc": "2026-05-02T03:15:00Z",
+      "anchor_time_utc": "2026-05-02T03:14:00Z",
+      "visual_marker_time_utc": "2026-05-02T03:14:00Z",
+      "visual_marker_price": 83.67,
+      "include_in_clean_overview": true,
+      "include_in_review_sheet": true,
+      "user_note": "User arrow: low at 03:14, entry next open 03:15."
+    },
+    {
+      "manual_id": "RA002_PENDING_FROM_LA028",
+      "source_candidate_id": "LA028",
+      "status": "PENDING_REANCHOR",
+      "review_status": "WAIT_USER_ARROW",
+      "user_marker_role": "PENDING",
+      "signal_time_utc": "2026-05-02T11:37:00Z",
+      "entry_time_utc": "2026-05-02T11:38:00Z",
+      "anchor_time_utc": "2026-05-02T11:37:00Z",
+      "visual_marker_time_utc": "2026-05-02T11:37:00Z",
+      "visual_marker_price": 83.53,
+      "include_in_clean_overview": false,
+      "include_in_review_sheet": true,
+      "user_note": "No confirmed user arrow yet; keep out of clean confirmed overview."
+    },
+    {
+      "manual_id": "RA003_SHIFT_LEFT_LA050",
+      "source_candidate_id": "LA050",
+      "status": "CONFIRMED_MANUAL_REANCHOR",
+      "review_status": "USER_CONFIRMED_VISUAL_LOW_EXECUTION_SEPARATED",
+      "user_marker_role": "VISUAL_LOW_ON_ENTRY_CANDLE",
+      "signal_time_utc": "2026-05-02T22:24:00Z",
+      "entry_time_utc": "2026-05-02T22:25:00Z",
+      "anchor_time_utc": "2026-05-02T22:25:00Z",
+      "visual_marker_time_utc": "2026-05-02T22:25:00Z",
+      "visual_marker_price": 84.02,
+      "include_in_clean_overview": true,
+      "include_in_review_sheet": true,
+      "user_note": "User asked to shift LA050 one candle left and show the lowest area. Execution remains entry open plus 5bps."
+    },
+    {
+      "manual_id": "RA004_USER_ENTRY_2049",
+      "source_candidate_id": "USER_ARROW_2049",
+      "status": "CONFIRMED_MANUAL_REANCHOR",
+      "review_status": "USER_MARKED_ENTRY_REVIEW",
+      "user_marker_role": "ENTRY_OPEN_AREA",
+      "signal_time_utc": "2026-05-02T20:48:00Z",
+      "entry_time_utc": "2026-05-02T20:49:00Z",
+      "anchor_time_utc": "2026-05-02T20:49:00Z",
+      "visual_marker_time_utc": "2026-05-02T20:49:00Z",
+      "visual_marker_price": 84.09,
+      "include_in_clean_overview": true,
+      "include_in_review_sheet": true,
+      "user_note": "User arrow marks the intended entry area around 20:49; signal is previous closed candle 20:48."
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+schema_version: "1.0"
+pipeline_id: SOL_DATASET_PIPELINE
+symbol: SOL
+mode: SAFE
+phase: EVENT_DISCOVERY
+execution:
+  training_allowed: false
+  parameter_search_allowed: false
+  model_changes_allowed: false
+stages:
+  - id: candles
+    input: existing_sol_candles
+    output: validated_candle_reference
+    checks:
+      - timestamps
+      - gaps
+      - duplicates
+      - timeframe
+  - id: events
+    input: validated_candle_reference
+    output: observed_market_events
+    exclude_record_status:
+      - TEMPLATE_NOT_OBSERVED
+      - CANDIDATE
+    required_fields:
+      - event_id
+      - record_status
+      - symbol
+      - timeframe
+      - event_type
+      - provenance.source_id
+      - provenance.interval_start
+      - provenance.interval_end
+  - id: features
+    input: observed_market_events
+    output: versioned_feature_rows
+    requirements:
+      - feature_contract_version
+      - value_type
+      - availability_time
+      - no_future_information
+  - id: labels
+    input: observed_market_events
+    output: versioned_label_rows
+    requirements:
+      - label_contract_version
+      - future_horizon
+      - measurable_outcome
+      - ambiguity_rule
+  - id: dataset
+    input:
+      - versioned_feature_rows
+      - versioned_label_rows
+    output: versioned_ml_dataset
+    checks:
+      - unique_event_id
+      - schema
+      - missing_values
+      - duplicates
+      - class_balance
+      - temporal_leakage
+      - provenance
+release_gate:
+  required:
+    - all_events_observed_or_labeled
+    - all_contract_versions_present
+    - no_template_rows
+    - no_temporal_leakage
+    - dataset_manifest_created
+  next_action: "Передать результат на проверку; обучение не запускать."

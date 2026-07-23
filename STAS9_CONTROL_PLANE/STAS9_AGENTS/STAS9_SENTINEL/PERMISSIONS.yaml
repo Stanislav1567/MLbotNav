@@ -1,0 +1,54 @@
+policy_version: "1.1"
+agent_id: "STAS9_SENTINEL"
+inherits: "../../PERMISSIONS/GLOBAL_POLICY.yaml"
+default_mode: "SAFE"
+default_access: "READ_ONLY"
+
+read:
+  allowed: true
+  scopes:
+    - "STAS9_CONTROL_PLANE/**"
+    - "PROJECT_FILES_READ_ONLY"
+
+write:
+  default_allowed: false
+  requires_user_confirmation: true
+  safe_operational_exceptions:
+    - "STAS9_CONTROL_PLANE/LOGS/agent_activity.log"
+    - "STAS9_CONTROL_PLANE/LOGS/audit.log"
+    - "STAS9_CONTROL_PLANE/LOGS/conversations/**"
+    - "STAS9_CONTROL_PLANE/STAS9_INTERFACE/CHAT/conversations/**"
+  scopes_after_confirmation:
+    - "STAS9_CONTROL_PLANE/LOGS/**"
+    - "STAS9_CONTROL_PLANE/REPORTS/**"
+    - "STAS9_CONTROL_PLANE/MEMORY/PROJECT_MEMORY.yaml"
+
+modes:
+  config: "../../CONFIG/INTERACTION_MODES.yaml"
+  implicit_escalation: false
+  user_confirmation_required:
+    - "DEVELOPMENT"
+    - "EXPERIMENT"
+  return_to_safe_after_task: true
+
+delegate:
+  allowed: true
+  mode: "ON_DEMAND_SEQUENTIAL"
+  allowed_agents:
+    - "STAS9_AUDITOR"
+    - "STAS9_MARKET_RESEARCH"
+    - "STAS9_MODEL_MANAGER"
+    - "STAS9_FEATURE_MANAGER"
+    - "STAS9_LAB"
+    - "STAS9_VALIDATOR"
+    - "STAS9_GUARDIAN"
+
+prohibited:
+  delete_files: true
+  move_files: true
+  modify_models: true
+  train_models: true
+  run_optuna: true
+  trade_live: true
+  modify_stas5_stas8: true
+  fix_broken_pointer: true
