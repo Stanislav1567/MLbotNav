@@ -24,7 +24,9 @@ watcher/search/Pylance и отключён Codex comment CodeLens. В локал
 Финальный 15-секундный замер: новых Git `0`, taskkill `0`, суммарная
 нагрузка Codex/VS Code около `3.33%` на `12` логических процессорах. Данные,
 модели, `.env`, обучение, Optuna и торговля не затрагивались. Push в remote
-не выполнялся.
+первоначально не выполнялся. После отдельного подтверждения пользователя
+ветка `codex/git-normalization-cpu-relief` опубликована в `origin`; Pull
+Request не создавался.
 
 ## 2026-07-23 SOL Event Contract and Dry-Run Pipeline
 

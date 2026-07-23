@@ -2,14 +2,16 @@
 
 ## Codex Desktop CPU/Git Repair 2026-07-23
 
-Статус: `stable_clean_local_branch`.
+Статус: `stable_clean_remote_branch`.
 
 ```text
 Codex Desktop: 26.715.10079.0
 active branch: codex/git-normalization-cpu-relief
 checkpoint commit: 346cd3a
 working tree: clean
-origin push: NOT_PERFORMED
+origin push: DONE
+upstream: origin/codex/git-normalization-cpu-relief
+pull request: NOT_CREATED
 git fsck --full: PASS
 core.fsmonitor: true / active
 core.untrackedCache: true

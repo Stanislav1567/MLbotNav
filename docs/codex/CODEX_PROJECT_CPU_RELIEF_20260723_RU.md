@@ -34,6 +34,10 @@
 только штатный fsmonitor. Совокупная нагрузка Codex/VS Code во время активной
 сессии составила около `3.33%` по шкале Диспетчера задач.
 
+После отдельного подтверждения пользователя ветка
+`codex/git-normalization-cpu-relief` опубликована в GitHub. Pull Request не
+создавался.
+
 ## Причина
 
 Нагрузка шла не от STAS5 и не от обучения. Активных `python.exe` не было. Процесс Codex Desktop циклически запускал `git hash-object`, `git diff --no-index` и `git config` по неигнорируемым сгенерированным файлам `STAS4_FEATURE_HYPOTHESIS_REVIEW`. Повторное чтение тех же PNG/CSV/JSON дополнительно нагружало Microsoft Defender.
