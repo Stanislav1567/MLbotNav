@@ -1,5 +1,30 @@
 # Current State
 
+## Codex Desktop CPU/Git Repair 2026-07-23
+
+Статус: `stable_clean_local_branch`.
+
+```text
+Codex Desktop: 26.715.10079.0
+active branch: codex/git-normalization-cpu-relief
+checkpoint commit: 346cd3a
+working tree: clean
+origin push: NOT_PERFORMED
+git fsck --full: PASS
+core.fsmonitor: true / active
+core.untrackedCache: true
+feature.manyFiles: true
+core.preloadIndex: true
+final 15 s window: 0 new git.exe / 0 taskkill.exe
+remaining git.exe: 1 fsmonitor daemon
+training / Optuna / live trading: NOT_RUN
+data / models: UNCHANGED
+```
+
+Два старых повреждённых, но не связанных с ветками loose-объекта сохранены
+в `.git/corrupt-object-backup-20260723`. Это локальная резервная копия,
+которая не отправляется в GitHub.
+
 ## SOL Event Pipeline Design 2026-07-23
 
 Статус: `safe_schema_dry_run_ready`.

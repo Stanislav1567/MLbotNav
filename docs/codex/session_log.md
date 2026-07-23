@@ -1,5 +1,31 @@
 # Session Log
 
+## 2026-07-23 Codex Desktop CPU/Git Repair
+
+По просьбе пользователя выполнен неразрушающий аудит нагрузки после
+обновления Codex Desktop. Повторный живой замер подтвердил цикл Git
+review/snapshot: `112 git.exe`, `86 taskkill.exe` и около `800 MiB` чтения
+основным процессом приложения за `8` секунд. Активных Python/ML/Optuna/live
+trading процессов не было.
+
+Проверены `264` кандидата Git: явных секретов `0`, подозрительных имён `0`,
+бинарных и крупных generated artifacts в индексе `0`. Создана ветка
+`codex/git-normalization-cpu-relief`, выполнена проверка синтаксиса Python и
+создан checkpoint-коммит `346cd3a`. В workspace закреплены исключения Git,
+watcher/search/Pylance и отключён Codex comment CodeLens. В локальном Git
+включены fsmonitor, untracked cache, many-files и preload-index.
+
+При post-commit maintenance обнаружены два старых повреждённых
+неиспользуемых loose-объекта. Связность refs была исправна; объекты сохранены
+в карантине `.git/corrupt-object-backup-20260723`. После переноса полный
+`git fsck` завершился `PASS`.
+
+Четыре зависших read-only Git-процесса завершены, штатный fsmonitor оставлен.
+Финальный 15-секундный замер: новых Git `0`, taskkill `0`, суммарная
+нагрузка Codex/VS Code около `3.33%` на `12` логических процессорах. Данные,
+модели, `.env`, обучение, Optuna и торговля не затрагивались. Push в remote
+не выполнялся.
+
 ## 2026-07-23 SOL Event Contract and Dry-Run Pipeline
 
 По явному ТЗ пользователя создан безопасный документальный event-контур

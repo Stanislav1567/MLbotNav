@@ -1,5 +1,26 @@
 # Known Errors
 
+## Codex Desktop Git Review Storm 2026-07-23
+
+Статус: `LOCAL_WORKAROUND_EFFECTIVE_UPSTREAM_REGRESSION_REMAINS`.
+
+После обновления `26.715.10079.0` Codex Desktop циклически запускал
+Git snapshot/review над большим незакоммиченным состоянием. До ремонта:
+`112 git.exe` и `86 taskkill.exe` за `8` секунд. Локальный обход выполнен:
+репозиторий приведён к чистому checkpoint, включены Git performance caches,
+workspace watcher/indexing ограничены.
+
+Дополнительно найдены два повреждённых loose-объекта Git:
+`293cbe267e6c17b6d19aba9d1ad964f380962566` и
+`4dc706bd74e10812504051bfad490a64178ee125`. Они не входят ни в одну
+ветку/тег/remote ref и перенесены без удаления в
+`.git/corrupt-object-backup-20260723`. После этого полный `git fsck` проходит.
+
+Финальный контроль: `0` новых Git и `0` taskkill за `15` секунд. Сам дефект
+Codex Desktop остаётся внешним: при появлении большого незакоммиченного diff
+он может проявиться снова. Практическое правило — небольшие тематические
+коммиты и хранение generated artifacts только в уже игнорируемых каталогах.
+
 ## SOL Event Pipeline Design 2026-07-23
 
 Статус: `NO_NEW_ERRORS_EXPECTED_DESIGN_GAPS_RECORDED`.

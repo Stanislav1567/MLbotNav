@@ -1,5 +1,34 @@
 # Handoff
 
+## Handoff 2026-07-23 Codex Desktop CPU/Git Repair
+
+Статус:
+`PASS_CODEX_GIT_STORM_STOPPED_REPOSITORY_CLEAN_REMOTE_NOT_PUSHED`.
+
+После обновления Codex Desktop до `26.715.10079.0` открытие проектного чата
+запускало цикл Git review/snapshot. В контрольном окне до ремонта появлялось
+`112 git.exe` и `86 taskkill.exe` за `8` секунд. Репозиторий содержал `251`
+неотслеживаемый и `13` изменённых файлов, а также два повреждённых
+неиспользуемых loose-объекта Git.
+
+Создана локальная ветка `codex/git-normalization-cpu-relief`. Проверенные
+текстовые исходники и документы сохранены коммитом `346cd3a`; исходные
+данные, модели, `.env`, `reports`, `runs`, `artifacts` и `.venv` в коммит не
+попали. В Git локально включены `core.fsmonitor`, `core.untrackedCache`,
+`feature.manyFiles` и `core.preloadIndex`. Два повреждённых объекта, не
+входивших ни в одну ссылку, сохранены в
+`.git/corrupt-object-backup-20260723`; `git fsck --full` проходит.
+
+В `MLbotNav_STAS9.code-workspace` закреплены облегчённые настройки watcher,
+search, Python analysis, Git и Codex CodeLens. Финальный контроль после
+остановки четырёх зависших read-only Git-процессов: за `15` секунд новых
+`git.exe` — `0`, новых `taskkill.exe` — `0`, активен только штатный
+`fsmonitor`; нагрузка процессов Codex/VS Code во время активной сессии около
+`3.33%` по шкале Диспетчера задач на `12` логических процессорах.
+
+Ветка ещё не отправлена в `origin`; для push требуется отдельное решение
+пользователя.
+
 ## Handoff 2026-07-23 SOL Event Contract and Dry-Run Pipeline
 
 Статус:

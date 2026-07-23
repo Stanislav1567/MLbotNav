@@ -1,5 +1,18 @@
 # Todo
 
+## 2026-07-23 Codex Desktop CPU/Git Repair
+
+Статус: `local_fix_done_remote_pending`.
+
+| Задача | Статус | Следующее действие |
+|---|---|---|
+| Остановить Git/taskkill storm | done | Сохранять рабочее дерево небольшим и чистым |
+| Проверить секреты и тяжёлые артефакты | done, совпадений `0` | Не добавлять `.env`, data/models/reports/runs |
+| Зафиксировать накопленные рабочие файлы | done, `346cd3a` | Работать в `codex/git-normalization-cpu-relief` |
+| Проверить целостность Git | done, full fsck `PASS` | Хранить карантин до отдельного решения |
+| Проверить CPU после ремонта | done, `0` новых Git/taskkill за `15 s` | Повторить визуальный контроль после следующего перезапуска приложения |
+| Отправить ветку в GitHub | pending_user_confirmation | Push выполнять только после отдельного подтверждения |
+
 ## 2026-07-23 SOL Event Pipeline Design
 
 Статус: `schema_dry_run_done`.
